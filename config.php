@@ -3,7 +3,7 @@
 // $root=$_SERVER["DOCUMENT_ROOT"];
 $site_url="/";
 $root="D:/all/projects/git/piwidict";
-// $site_url="/~dadada/";
+// $site_url="/~lalala/";
 
 $PHP_SELF=$_SERVER["PHP_SELF"];
 
