@@ -1,5 +1,5 @@
 <?php
-include("../config.php");
+include("../../config.php");
 global $LINK_DB;
 global $NAME_DB;
 
