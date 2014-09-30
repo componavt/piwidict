@@ -1,6 +1,6 @@
 <?php
 
-global $LINK_DB;
+//global $LINK_DB;
 
 class TLang {
     
@@ -47,36 +47,55 @@ class TLang {
     public function getName() {
         return $this->name;
     }
+   
+    /** Gets number of parts of speech (POS) in this language. <br><br>
+     * SELECT COUNT(*) FROM index_en WHERE native_page_title is NULL;
+     */
+    public function getForeignPOS() {
+        return $this->n_foreign_POS;
+    }
+
+    /** Gets number of translation into this language. <br><br>
+     * SELECT COUNT(*) FROM index_en WHERE native_page_title is not NULL;
+     */
+    public function getNumberTranslations() {
+        return $this->n_translations;
+    }
+
+    static public function getAllLang() {
+      	global $LINK_DB;
+
+    	$tlang_arr = array();
+
+    	// lang (id, code, name, n_foreign_POS, n_translation)
+    	$query = "SELECT id, code, name, n_foreign_POS, n_translations FROM lang";
+//      $result = $LINK_DB -> query($query,"Query failed in TLang::getAllLang in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+    	while($row = $LINK_DB -> fetch_object($result)){
+          $tlang_arr[$row -> id] = new TLang(
+                $row -> id,
+                $row -> code,
+                $row -> name,
+                $row -> n_foreign_POS,
+                $row -> n_translations);
+    	}
     
-/** Gets data from the database table 'lang' with English and Russian names of POS,
- * from code to ID, name_en and name_ru
- */
-//static public function get_lang_by_code($db_connect, $db_name) {
-static public function getAllLang() {
-    global $LINK_DB;
-
-    $tlang_arr = array();
-
-    // lang (id, code, name, n_foreign_POS, n_translation)
-    $query = "SELECT id, code, name, n_foreign_POS, n_translations FROM lang";
-    $result = mysqli_query($LINK_DB, $query) or die("Query failed (line 64) in TLang::getAllLang: " . mysqli_error($LINK_DB).". Query: ".$query);
-
-    while($row = mysqli_fetch_array($result)){
-        $code = $row['code'];
-        
-        $la = new TLang(
+/*
+    	$result = mysqli_query($LINK_DB, $query) or die("Query failed (line 64) in TLang::getAllLang in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"); //. mysqli_error($LINK_DB).". Query: ".$query);
+    	while($row = $LINK_DB -> fetch_assoc($result)){
+          $tlang_arr[$row['id']] = new TLang(
                 $row['id'],
                 $row['code'],
                 $row['name'],
                 $row['n_foreign_POS'],
                 $row['n_translations']);
-        
-        array_push($tlang_arr, $la);
+    	}
+*/
+    	return $tlang_arr;
     }
-    
-    return $tlang_arr;
-}
-    /** Gets language ID, code and name.
+
+    /* Gets language ID, code and name.
      * @return string
      */
     public function toString() {
@@ -88,41 +107,51 @@ static public function getAllLang() {
         return "ID:$id $name ($code)";
     }
 
-/* Gets TLang object (code, ID and name) by ID.
- * Returns NULL if it is unknown ID.
- */
-static public function getByID($id) {
+    /* Gets TLang object (code, ID and name) by ID.
+     * Returns NULL if it is unknown ID.
+     */
+    static public function getByID($_id) {
+    global $LINK_DB;
+
+    	$query = "SELECT id, code, name, n_foreign_POS, n_translations FROM lang where id=".(int)$_id;
+//    	$result = mysqli_query($LINK_DB, $query) or die("Query failed (line 64) in TLang::getAllLang in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"); //. mysqli_error($LINK_DB).". Query: ".$query);
+        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
+
+        return new TLang(
+                $row->id,
+                $row->code,
+                $row->name,
+                $row->n_foreign_POS,
+                $row->n_translations);
+//    return NULL;
+    }
+
+    /* Gets language name by ID. 
+     * The language of the result (e.g. Russian) depends on the '$result_language_code' e.g. ru en. 
+     * Returns NULL if it is unknown code.
+     */
+    static public function getNameByID($_id) {
     global $LANG_ALL;
     
-    foreach ($LANG_ALL as $tlang) {
-        if($id == $tlang->getID()) {
-            return $tlang;
-        }
+    	$query = "SELECT name FROM lang where id=".(int)$_id;
+        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
+
+	return $row -> name;
+//    return NULL;
     }
-    return NULL;
-}
 
-/* Gets language name by ID. 
- * The language of the result (e.g. Russian) depends on the '$result_language_code' e.g. ru en. 
- * Returns NULL if it is unknown code.
- */
-static public function getNameByID($id) {
-    global $LANG_ALL;
-    
-    foreach ($LANG_ALL as $tlang) {
-        if($id == $tlang->getID()) {
-            return $tlang->getName();
-        }
-    }
-    return NULL;
-}
+    /* Gets ID from the table lang by the language code, e.g. ru en. 
+     * @return NULL if it is unknown code.
+     */
+    static public function getIDByLangCode($_code) {
+    global $LINK_DB;
 
+    	$query = "SELECT id FROM lang where code like '$_code'";
+        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
 
-/* Gets ID from the table lang by the language code, e.g. ru en. 
- * @return NULL if it is unknown code.
- */
-static public function getIDByLangCode($_code) {
-    global $LANG_ALL;
+	return $row -> id;
+/* 
+   global $LANG_ALL;
     
     foreach($LANG_ALL as $la) {
         if($la->getCode() == $_code) {
@@ -130,57 +159,50 @@ static public function getIDByLangCode($_code) {
         }
     }
     return NULL;
-}
-
-
-// ===============================
-// Visual forms
-// ===============================
-
-
-/** Gets a drop-down languages list.
- * 
- * @param int $selected_language_id - language selected for this object in this drop-down menu
- * @param string $select_name - name of HTML "select" element
- * @return string
- * 
- * Example:
- * 
- * Язык <select name="lang_id">
-            <option></option>   // empty field for empty translation of text
-            <option value="1"  selected>вепсский</option>
-            <option value="2" >русский</option>
-            <option value="3" >английский</option>
-        </select>
- */
-static public function getDropDownLanguagesList($lang_all, $selected_language_id, $select_name) {
-    global $INTERFACE_LANGUAGE;
-    
-    $s = "<SELECT name=\"$select_name\">\n";
-    
-    if(empty($selected_language_id)) {  // empty language for translation
-        $s .= "<OPTION></OPTION>\n";
+*/
     }
-    
-    foreach ($lang_all as $key => $value) {
-        
-        $language_name = "";
-        if("en" == $INTERFACE_LANGUAGE) {
-            $language_name = $value['name_en'];
-        } else if("ru" == $INTERFACE_LANGUAGE) {
-            $language_name = $value['name_ru'];
-        }
-        
-        $selected = "";
-        if($selected_language_id == $value['id']) {
-            $selected = " selected"; // selected option
-        }
-        
-        $s .= "<OPTION value=\"${value['id']}\"$selected>$language_name</OPTION>\n";
-    }
-    $s .= "</SELECT>";
-    return $s;
-}
 
+    // ===============================
+    // Visual forms
+    // ===============================
+
+    /* Gets a drop-down languages list.
+     * 
+     * @param int $selected_language_id - language selected for this object in this drop-down menu
+     * @param string $select_name - name of HTML "select" element
+     * @return string
+     * 
+     * Example:
+     * 
+     * Язык <select name="lang_id">
+                <option></option>   // empty field for empty translation of text
+                <option value="1"  selected>вепсский</option>
+                <option value="2" >русский</option>
+                <option value="3" >английский</option>
+            </select>
+     */
+    static public function getDropDownLanguagesList($selected_language_id, $select_name) {
+    
+    	$s = "<SELECT name=\"$select_name\">\n";
+    
+    	if(empty($selected_language_id)) {  // empty language for translation
+          $s .= "<OPTION></OPTION>\n";
+    	}
+    
+    	$query = "SELECT id, name order by id";
+//    	$result = mysqli_query($LINK_DB, $query) or die("Query failed (line 64) in TLang::getAllLang in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"); //. mysqli_error($LINK_DB).". Query: ".$query);
+        $result = $LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+    	while($row = $LINK_DB -> fetch_object($result)) {
+          $s .= "<OPTION value=\"". $row->id ."\"";
+          if($selected_language_id == $row->id) {
+            $s .= " selected"; // selected option
+          }
+	  $s .= ">".$row->name."</OPTION>\n";
+    	}
+
+    	$s .= "</SELECT>";
+    	return $s;
+    }
 }
 ?>

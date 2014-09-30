@@ -1,8 +1,8 @@
 <?php
 
-global $LINK_DB;
-
 /** Operations with the table 'lang_pos' in MySQL Wiktionary parsed database.
+ * Different objects TLangPos correspond to subsections of the Wiktionary entry with different etymologies or different POS, 
+ * for example, http://en.wiktionary.org/wiki/bread  
  */
 class TLangPOS {
     
@@ -19,7 +19,7 @@ class TLangPOS {
     private $pos;                   // int pos_id
     
     /** @var int etymology number (from 0 till max(ruwikt,now)=7) */
-    private $etymology_id;          //private TEtymology etimology;     // int etymology_id
+    private $etymology_n;          //private TEtymology etimology;    
     // see WPOSRu.splitToPOSSections in WPOSRuTest.java
 
     /** @var Type of soft redirect (to the page .lemma):
@@ -37,34 +37,91 @@ class TLangPOS {
     private $lemma;
 
     /** @var array of TMeaning[], where TMeaning consists of Definition + Quotations, Semantic relations and Translations. */
-    private $meaning;
+    private $meaning_arr;
     
-    
-    
-/* Gets ID from the table 'relation_type' by the relation type name, e.g. "hyponyms", "hypernyms", "synonyms".
- * Returns NULL if it is unknown name.
- */
-static public function getIDByName($relation_type_all, $_name) {
-
-    foreach ($relation_type_all as $key => $value) {
-      if($_name == $value['name'])
-          return $key;
+    public function __construct($id, $page, $lang, $pos, $etymology_n, $lemma)
+//, $meaning
+    {
+        $this->id   = $id;
+        $this->page = $page;
+        $this->lang = $lang;
+        $this->pos = $pos;
+        $this->etymology_n  = $etymology_n;
+        $this->lemma = $lemma;
+//        $this->meaning = $meaning;
     }
-    return NULL;
-}
+    
+    /* Gets unique ID from database 
+     * @return int */
+    public function getID() {
+        return $this->id;
+    }
+    
+    /* Gets object of page 
+    /* @return int */
+    public function getPage() {
+        return $this->page;
+    }
+    
+    /* Gets object of lang 
+    /* @return int */
+    public function getLang() {
+        return $this->lang;
+    }
 
+    /* Gets object of part of speach 
+    /* @return int */
+    public function getPOS() {
+        return $this->pos;
+    }
 
-/** Selects row from the table 'lang_pos' by ID.<br><br>
-* SELECT page_id,lang_id,pos_id,etymology_n,lemma FROM lang_pos WHERE id=8;
-* @return null if data is absent. */
-static public function getByID ($lang_pos_id) {
+    /* Gets number of etimology 
+    /* @return int */
+    public function getEtymologyN() {
+        return $this->etymology_n;
+    }
+
+    /* Gets lemma 
+    /* @return string */
+    public function getLemma() {
+        return $this->lemma;
+    }
+
+    /* Gets meanings 
+    /* @return array */
+/*
+    public function getMeaning() {
+        return $this->meaning;
+    }
+*/    
+    /** Selects row from the table 'lang_pos' by ID.
+     * SELECT page_id,lang_id,pos_id,etymology_n,lemma FROM lang_pos WHERE id=8;
+     * @return null if data is absent. */
+    static public function getByID ($lang_pos_id) {
     global $LINK_DB;
         
-    $lang_pos = NULL;
+//    	$lang_pos = NULL;
     
-    $query = "SELECT page_id,lang_id,pos_id,etymology_n,lemma FROM lang_pos WHERE id=$lang_pos_id";
-    $result = mysqli_query($LINK_DB, $query) or die("Query failed (line 31) in TLangPOS::getByID: " . mysqli_error($LINK_DB).". Query: ".$query);
+    	$query = "SELECT page_id,lang_id,pos_id,etymology_n,lemma FROM lang_pos WHERE id=".(int)$lang_pos_id;
+        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
 
+        $lang = TLang::getByID($row->lang_id);
+	$pos = TPOS::getByID($row->pos_id);
+
+        if( NULL == $lang || NULL == $pos )
+	  return NULL;
+
+        return new TLangPOS (
+		$row->id, 
+//                $row->page_id,
+		TPage::getByID($row->page_id), 
+		$lang, 
+		$pos, 
+		$row->etymology_n, 
+		$row->lemma 
+//		TMeaning::getByID($row->id)
+	);
+/*
     while($row = mysqli_fetch_array($result)){
         $page_id = $row['page_id'];
         $lang_id = $row['lang_id'];
@@ -93,7 +150,8 @@ static public function getByID ($lang_pos_id) {
             $lang_pos = NULL;
     }    
     return (object)$lang_pos;
-}
+*/
+    }
 
 }
 ?>

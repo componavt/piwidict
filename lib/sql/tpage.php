@@ -1,7 +1,5 @@
 <?php
 
-global $LINK_DB;
-
 /** An operations with the table 'page' in MySQL wiktionary_parsed database. */
 class TPage {
     
@@ -100,32 +98,26 @@ class TPage {
         return $this->redirect_target;
     }
 
-/* Gets TPage object by page ID.
- * @return TPage or NULL in case of error
- */
-static public function getByID($page_id) {
+   /* Gets TPage object by page ID.
+    * @return TPage or NULL in case of error
+    */
+    static public function getByID($page_id) {
     global $LINK_DB;
         
-    $page = NULL;
+    	$page = NULL;
     
-    $query = "SELECT page_title, word_count, wiki_link_count, is_in_wiktionary, is_redirect, redirect_target FROM page WHERE id=$page_id";
-    $result = mysqli_query($LINK_DB, $query) or die("Query failed (line 18) in TPage::getByID: " . mysqli_error().". Query: ".$query);
+    	$query = "SELECT page_title, word_count, wiki_link_count, is_in_wiktionary, is_redirect, redirect_target FROM page WHERE id=".(int)$page_id;
+        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
 
-    if($row = mysqli_fetch_array($result)){
-        
         $page = new TPage(
                 $page_id,
-                $row['page_title'],
-                $row['word_count'],
-                $row['wiki_link_count'],
-                $row['is_in_wiktionary'],
-                $row['is_redirect'],
-                $row['redirect_target']);
+                $row->page_title,
+                $row->word_count,
+                $row->wiki_link_count,
+                $row->is_in_wiktionary,
+                $row->is_redirect,
+                $row->redirect_target);
+    	return $page;
     }
-    // print_r($page);
-    
-    return $page;
-}
-
 }
 ?>

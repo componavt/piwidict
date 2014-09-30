@@ -11,47 +11,43 @@ if (substr($root,-1,1) != "/") $root.="/";
 define("SITE_ROOT",$root);
 define("LIB_DIR",SITE_ROOT."lib/");
 
+define ('NAME_DB','ruwikt20140904_parsed');
+define ('INTERFACE_LANGUAGE', 'en'); 
+
 // misc classes
 /*include_once(LIB_DIR."sessione.php");
 include_once(LIB_DIR."array_util.php");
 include_once(LIB_DIR."string_util.php");
 include_once(LIB_DIR."db/mysql_util.php");
 */
+
 // dictionary classes
+include_once(LIB_DIR."sql/db.php");
 include_once(LIB_DIR."sql/tlang.php");
-include_once(LIB_DIR."sql/trelation_type.php");
 include_once(LIB_DIR."sql/tlang_pos.php");
-include_once(LIB_DIR."sql/tpos.php");
+include_once(LIB_DIR."sql/tmeaning.php");
 include_once(LIB_DIR."sql/tpage.php");
+include_once(LIB_DIR."sql/tpos.php");
+include_once(LIB_DIR."sql/trelation_type.php");
+include_once(LIB_DIR."sql/twiki_text.php");
 
-foreach ($_REQUEST as $var=>$value)
+$LINK_DB=new DB;
+
+foreach ($_REQUEST as $var=>$value) {
+/*
+TODO!!! check vars
+*/
    $$var = $value;
-
-//if (!isset($query_to_db)) $query_to_db = '';
-
-$NAME_DB = 'ruwikt20130815_parsed';
-global $NAME_DB;
+}
+/*
+$NAME_DB = 'ruwikt20140904_parsed';
 
 $config['hostname']   = 'localhost';
 $config['login']      = 'javawiki';
 $config['password']   = '';
 $config['dbname']     = $NAME_DB;
     
-//$link_db = mysql_connect($config['db']['hostname'], $config['db']['login'], $config['db']['password']) or die("[DB]: Could not connect : ". mysql_error());
-
-//$sock = mysqli_connect($config['hostname'], $config['login'], $config['password']);//, $config[$db]);
-
-//if (!$sock) { 
-//    echo 'Problem connecting!' . mysqli_connect_error();
-//}
-
-//exit(0);
-global $LINK_DB;
-//$LINK_DB = connectMySQL($config);
-
-global $INTERFACE_LANGUAGE;
-$INTERFACE_LANGUAGE = "ru"; 
-// $INTERFACE_LANGUAGE = "en"; 
+*/
 
 ##------------------------------------------------------------------------------------------------------
 ## DB connection 
@@ -59,6 +55,7 @@ $INTERFACE_LANGUAGE = "ru";
 ## mysql>FLUSH PRIVILEGES;
 ##
 //function connectMySQL($config) {
+/*
 function connectMySQL() {
     global $config;
     // print_r ($config);
@@ -72,4 +69,5 @@ function connectMySQL() {
     mysqli_set_charset($sock, "binary"); // utf8
     return $sock;
 }
+*/
 ?>
