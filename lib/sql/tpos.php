@@ -40,26 +40,14 @@ class TPOS {
     	$pos_array = array(); // all partS of Speech
 
     	// part_of_speech (id, name)
-    	$query = "SELECT id, name FROM part_of_speech";
-        $result = $LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    	$query = "SELECT id, name FROM part_of_speech order by id";
+        $result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
     	while($row = $LINK_DB -> fetch_object($result)){
           $pos_array[$row->id] = new TPOS(
                 $row->id,
                 $row->name);
     	}
-/*
-    $result = mysqli_query($LINK_DB, $query) or die("Query failed in TPOS::getAllPOS: " . mysqli_error($LINK_DB).". Query: ".$query);
-
-    while($row = mysqli_fetch_array($result)){
-        
-        $p = new TPOS(
-                $row['id'],
-                $row['name']);
-        
-        array_push($pos_array, $p);
-    }
-*/    
     	return $pos_array;
     }
 
@@ -71,13 +59,16 @@ class TPOS {
     global $LINK_DB;
 
     	$query = "SELECT id, name FROM part_of_speech where id=".(int)$_id;
-        $row = $LINK_DB -> fetch_assoc($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+        $row = $LINK_DB -> fetch_object($result);
 
         return new TPOS(
-                $row['id'],
-                $row['name']);
-    
-//    return NULL;
+                $row->id,
+                $row->name);
     }
 
    /* Gets ID from the table 'part_of_speech' by the part of speech name, e.g. "noun", "verb", "phrase".
@@ -86,11 +77,15 @@ class TPOS {
     static public function getIDByName($_name) {
     global $LINK_DB;
 
-    	$query = "SELECT id FROM part_of_speech where name like '$_name'";
-        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
+    	$query = "SELECT id FROM part_of_speech where name like '$_name' order by id";
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+        $row = $LINK_DB -> fetch_object($result);
 
 	return $row -> id;
-//    	return NULL;
     }
 
 }

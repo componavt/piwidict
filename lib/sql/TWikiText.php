@@ -53,15 +53,18 @@ class TWikiText {
     static public function getByID($_id) {
     global $LINK_DB;
 
-    	$query = "SELECT text, wiki_text FROM lang where id=".(int)$_id;
-        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
+    	$query = "SELECT * FROM wiki_text where id=".(int)$_id;
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+        $row = $LINK_DB -> fetch_object($result);
 
         return new TWikiText(
                 $row->id,
                 $row->text,
-                $row->wiki_text);
-//    return NULL;
+                $row->wikified_text);
     }
-
 }
 ?>

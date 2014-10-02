@@ -1,17 +1,22 @@
 <?php
 
 /** Operations with the table 'meaning' in MySQL Wiktionary parsed database.
- * @see wikt.word.WPOS
+ * @see wikt.word.WMeaning
  */
 class TMeaning {
     
     /** @var int unique identifier in the table 'meaning' */
     private $id;
 
-    /** @var TLangPOS Link to the table 'lang_pos', which defines language and POS.
+    /** @var TLangPOS link to the table 'lang_pos', which defines language and POS.
      * If lang_pos != null, then lang_pos_id is not used; lazy DB access.
      */
     private $lang_pos;                 // int lang_pos_id
+
+    /** @var int link to the table 'lang_pos', which defines language and POS. 
+     * If lang_pos != null, then lang_pos_id is not used.
+     */
+    private $lang_pos_id;
 
     /** @var int meaning (sense) number. */
     private $meaning_n;
@@ -20,59 +25,149 @@ class TMeaning {
      * If wiki_text != null, then wiki_text_id is not used; lazy DB access.
      */
     private $wiki_text;        // int wiki_text_id
+
+    /** @var int ID of wikified text in a table 'wiki_text.
+     * If wiki_text != null, then wiki_text_id is not used; lazy DB access.
+     */
+    private $wiki_text_id;
     
-    public function __construct($id, $lang_pos, $meaning_n, $wiki_text)
+    /** @var array of TQuote[] Quotations illustrate the meaning. */
+    private $quotation;
+
+    /** @var array of TRelation[] Semantic relations: synonymy, antonymy, etc.
+     * The map from semantic relation (e.g. synonymy) to array of WRelation
+     * (one WRelation contains a list of synonyms for one meaning).
+     */
+    private $relation;
+
+    /** @var TTranslation  */
+    private $translation;
+
+    public function __construct($id, $lang_pos, $lang_pos_id, $meaning_n, $wiki_text, $wiki_text_id)
     {
         $this->id   = $id;
         $this->lang_pos = $lang_pos;
+        $this->lang_pos_id = $lang_pos_id;
         $this->meaning_n = $meaning_n;
         $this->wiki_text = $wiki_text;
+        $this->wiki_text_id = $wiki_text_id;
+
+	$this->relation = NULL;
+	$this->translation = NULL;
     }
     
-    /* Gets unique ID from database 
+    /** Gets unique ID from database 
      * @return int */
     public function getID() {
         return $this->id;
     }
     
-    /* Gets object of TLangPOS
+    /** Gets object of TLangPOS
     /* @return object */
     public function getLangPOS() {
         return $this->lang_pos;
     }
     
-    /* Gets number of meaning 
+    /** Gets ID of lang_pos
+    /* @return int */
+    public function getLangPOSID() {
+        return $this->lang_pos_id;
+    }
+    
+    /** Gets number of meaning 
     /* @return int */
     public function getMeaningN() {
         return $this->meaning_n;
     }
 
-    /* Gets object of WikiText
+    /** Gets object of WikiText
     /* @return object */
     public function getWikiText() {
         return $this->wiki_text;
     }
 
-    /** Selects row from the table 'meaning' by ID.
-     * SELECT lang_pos_id,meaning_n,wiki_text_id FROM meaning WHERE id=1;
-     * @return empty array if data is absent
+    /** Gets id of wiki_text
+    /* @return int */
+    public function getWikiTextID() {
+        return $this->wiki_text_id;
+    }
+
+    /** Gets array of TRelation objects
+    /* @return array */
+    public function getRelation() {
+        return $this->relation;
+    }
+
+    /** Gets array of TTranslation objects
+    /* @return array */
+    public function getTranslation() {
+        return $this->translation;
+    }
+
+    /** Gets TMeaning object by property $property_name with value $property_value.
+     * @return TMeaning or NULL in case of error
      */
-    static public function getByID ($_id) {
+    static public function getMeaning($property_name, $property_value,$lang_pos_obj=NULL) {
     global $LINK_DB;
         
-//    	$meaning = NULL;
-    
+     	$query = "SELECT * FROM meaning WHERE `$property_name`='$property_value' order by id";
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+	$meaning_arr = array();
+
+        while ($row = $LINK_DB -> fetch_object($result)) {
+	    if ($lang_pos_obj == NULL)
+	  	$lang_pos_obj = TLangPOS::getByID($row->lang_pos_id);
+
+            $meaning = new TMeaning(
+		$row->id, 
+		$lang_pos_obj,
+		$row->lang_pos_id, 
+		$row->meaning_n,
+		TWikiText::getByID($row->wiki_text_id),
+		$row->wiki_text_id 
+	    );
+	    $meaning->relation = TRelation::getByMeaning($row->id,$meaning);
+	    $meaning->translation = TTranslation::getByMeaning($row->id,$meaning);
+	    $meaning_arr[]=$meaning;
+	}
+
+	return $meaning_arr;
+    }
+
+    /** Gets TMeaning object by ID
+     * @return TMeaning or NULL in case of error
+     */
+    static public function getByID ($_id) {
+	$meaning_arr = TMeaning::getMeaning("id",$_id);
+	return $meaning_arr[0];
+/*
+    global $LINK_DB;
+        
     	$query = "SELECT lang_pos_id,meaning_n,wiki_text_id FROM meaning WHERE id=".(int)$_id;
-        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+        $row = $LINK_DB -> fetch_object($result);
 
         return new TMeaning (
 		$row->id, 
-//		$row->lang_pos_id,
 		TLangPOS::getByID($row->lang_pos_id),
 		$row->meaning_n,
 		TWikiText::getByID($row->wiki_text_id) 
 	);
+*/
     }
 
+    /** Gets TMeaning object by lang_pos
+     * @return TMeaning or NULL in case of error
+     */
+    static public function getByLangPOS ($lang_pos_id,$lang_pos_obj=NULL) {
+	return TMeaning::getMeaning("lang_pos_id",$lang_pos_id,$lang_pos_obj);
+    }
 }
 ?>

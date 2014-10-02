@@ -12,6 +12,7 @@ define("SITE_ROOT",$root);
 define("LIB_DIR",SITE_ROOT."lib/");
 
 define ('NAME_DB','ruwikt20140904_parsed');
+define ('WIKT_LANG','ru');
 define ('INTERFACE_LANGUAGE', 'en'); 
 
 // misc classes
@@ -22,14 +23,18 @@ include_once(LIB_DIR."db/mysql_util.php");
 */
 
 // dictionary classes
-include_once(LIB_DIR."sql/db.php");
-include_once(LIB_DIR."sql/tlang.php");
-include_once(LIB_DIR."sql/tlang_pos.php");
-include_once(LIB_DIR."sql/tmeaning.php");
-include_once(LIB_DIR."sql/tpage.php");
-include_once(LIB_DIR."sql/tpos.php");
-include_once(LIB_DIR."sql/trelation_type.php");
-include_once(LIB_DIR."sql/twiki_text.php");
+include_once(LIB_DIR."sql/DB.php");
+include_once(LIB_DIR."sql/TLabel.php");
+include_once(LIB_DIR."sql/TLang.php");
+include_once(LIB_DIR."sql/TLangPOS.php");
+include_once(LIB_DIR."sql/TMeaning.php");
+include_once(LIB_DIR."sql/TPage.php");
+include_once(LIB_DIR."sql/TPOS.php");
+include_once(LIB_DIR."sql/TRelation.php");
+include_once(LIB_DIR."sql/TRelationType.php");
+include_once(LIB_DIR."sql/TTranslation.php");
+include_once(LIB_DIR."sql/TTranslationEntry.php");
+include_once(LIB_DIR."sql/TWikiText.php");
 
 $LINK_DB=new DB;
 

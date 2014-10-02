@@ -44,6 +44,8 @@ class TPage {
         $this->is_in_wiktionary = $is_in_wiktionary;
         $this->is_redirect      = $is_redirect;
         $this->redirect_target  = $redirect_target;
+	$this->lang_pos = $lang_pos;
+//        $this->lang_pos = TLangPOS::getByPage($this->id,$this);
     }
     
     /** Gets page unique ID and word itself. 
@@ -98,17 +100,61 @@ class TPage {
         return $this->redirect_target;
     }
 
-   /* Gets TPage object by page ID.
-    * @return TPage or NULL in case of error
-    */
-    static public function getByID($page_id) {
+    /** Gets TLangPOS[] language-POS parts of page which have the same page_title 
+     *  @return array
+     */
+    public function getLangPOS() {
+	return $this->lang_pos;
+    }
+
+    /** Gets TPage object by property $property_name with value $property_value.
+     * @return TPage or NULL in case of error
+     */
+    static public function getPage($property_name, $property_value) {
     global $LINK_DB;
         
-    	$page = NULL;
-    
-    	$query = "SELECT page_title, word_count, wiki_link_count, is_in_wiktionary, is_redirect, redirect_target FROM page WHERE id=".(int)$page_id;
-        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
+     	$query = "SELECT * FROM page WHERE `$property_name` like '$property_value' order by page_title";
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+	$page_arr = array();
+
+        while ($row = $LINK_DB -> fetch_object($result)) {
+            $page = new TPage(
+                $row->id,
+                $row->page_title,
+                $row->word_count,
+                $row->wiki_link_count,
+                $row->is_in_wiktionary,
+                $row->is_redirect,
+                $row->redirect_target);
+	    $page->lang_pos = TLangPOS::getByPage($row->id,$page);
+	    $page_arr[]=$page;
+	}
+
+//	if (sizeof($page_arr
+
+	return $page_arr;
+    }
+
+    /** Gets TPage object by page ID.
+     * @return TPage or NULL in case of error
+     */
+
+    static public function getByID($page_id) {
+	$page_arr = TPage::getPage("id",$page_id);
+	return $page_arr[0];
+/*
+    global $LINK_DB;
+    	$query = "SELECT page_title, word_count, wiki_link_count, is_in_wiktionary, is_redirect, redirect_target FROM page WHERE id=".(int)$page_id;
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+        $row = $LINK_DB -> fetch_object($result);
         $page = new TPage(
                 $page_id,
                 $row->page_title,
@@ -117,7 +163,38 @@ class TPage {
                 $row->is_in_wiktionary,
                 $row->is_redirect,
                 $row->redirect_target);
-    	return $page;
+	$page->lang_pos = TLangPOS::getByPage($row->id,$page);
+	return $page;
+*/
+    }
+
+   /** Gets TPage object by page title.
+    * @return TPage or NULL in case of error
+    */
+
+    static public function getByTitle($page_title) {
+	return Tpage::getPage("page_title",$page_title);
+/*
+    global $LINK_DB;
+    	$query = "SELECT id, word_count, wiki_link_count, is_in_wiktionary, is_redirect, redirect_target FROM page WHERE page_title like '$page_title'";
+	$result = $LINK_DB->query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+//print "<P>".$LINK_DB->query_count($result);
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+        $row = $LINK_DB -> fetch_object($result);
+	$page = new TPage(
+                $row->id,
+                $page_title,
+                $row->word_count,
+                $row->wiki_link_count,
+                $row->is_in_wiktionary,
+                $row->is_redirect,
+                $row->redirect_target);
+	$page->lang_pos = TLangPOS::getByPage($row->id,$page);
+	return $page;
+*/
     }
 }
 ?>

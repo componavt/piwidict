@@ -67,10 +67,11 @@ class TLang {
 
     	$tlang_arr = array();
 
-    	// lang (id, code, name, n_foreign_POS, n_translation)
     	$query = "SELECT id, code, name, n_foreign_POS, n_translations FROM lang";
-//      $result = $LINK_DB -> query($query,"Query failed in TLang::getAllLang in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-        $result = $LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
 
     	while($row = $LINK_DB -> fetch_object($result)){
           $tlang_arr[$row -> id] = new TLang(
@@ -114,8 +115,12 @@ class TLang {
     global $LINK_DB;
 
     	$query = "SELECT id, code, name, n_foreign_POS, n_translations FROM lang where id=".(int)$_id;
-//    	$result = mysqli_query($LINK_DB, $query) or die("Query failed (line 64) in TLang::getAllLang in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"); //. mysqli_error($LINK_DB).". Query: ".$query);
-        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+        $row = $LINK_DB -> fetch_object($result);
 
         return new TLang(
                 $row->id,
@@ -123,7 +128,6 @@ class TLang {
                 $row->name,
                 $row->n_foreign_POS,
                 $row->n_translations);
-//    return NULL;
     }
 
     /* Gets language name by ID. 
@@ -134,10 +138,14 @@ class TLang {
     global $LANG_ALL;
     
     	$query = "SELECT name FROM lang where id=".(int)$_id;
-        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+        $row = $LINK_DB -> fetch_object($result);
 
 	return $row -> name;
-//    return NULL;
     }
 
     /* Gets ID from the table lang by the language code, e.g. ru en. 
@@ -147,19 +155,14 @@ class TLang {
     global $LINK_DB;
 
     	$query = "SELECT id FROM lang where code like '$_code'";
-        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+        $row = $LINK_DB -> fetch_object($result);
 
 	return $row -> id;
-/* 
-   global $LANG_ALL;
-    
-    foreach($LANG_ALL as $la) {
-        if($la->getCode() == $_code) {
-            return $la->getID();
-        }
-    }
-    return NULL;
-*/
     }
 
     // ===============================
@@ -190,8 +193,7 @@ class TLang {
     	}
     
     	$query = "SELECT id, name order by id";
-//    	$result = mysqli_query($LINK_DB, $query) or die("Query failed (line 64) in TLang::getAllLang in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"); //. mysqli_error($LINK_DB).". Query: ".$query);
-        $result = $LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
     	while($row = $LINK_DB -> fetch_object($result)) {
           $s .= "<OPTION value=\"". $row->id ."\"";

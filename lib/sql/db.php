@@ -29,7 +29,7 @@ class DB {
 		$this->result=mysql_query($q, $this->_connect);
 //print mysql_num_rows($this->result);
 		if (!$this->result)	{
-			die("<div style=\"font-size:10px; color:#666666;\">$war_string</div>");
+			die("<div style=\"font-size:10px; color:#666666;\">$war_string: ".mysql_error()."</div>");
 		}
 		return $this->result;
 	}
@@ -43,14 +43,16 @@ class DB {
 	/* Перевести строку в ассоциативный массив */
 	public function fetch_assoc($result) {
 		$this->fetch=mysql_fetch_assoc($result);
-//	  	if (!$this->fetch)
-//			return NULL;
+	  	if (!$this->fetch)
+			return NULL;
 		return $this->fetch;
 	}
 
 
 	public function fetch_object($result) {
 		$this->fetch=mysql_fetch_object($result);
+	  	if (!$this->fetch)
+			return NULL;
 		return $this->fetch;
 	}
 

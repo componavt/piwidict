@@ -1,8 +1,8 @@
 <?php
 
 /** Operations with the table 'lang_pos' in MySQL Wiktionary parsed database.
- * Different objects TLangPos correspond to subsections of the Wiktionary entry with different etymologies or different POS, 
- * for example, http://en.wiktionary.org/wiki/bread  
+ * Different objects TLangPOS correspond to subsections of the Wiktionary entry with different etymologies or different POS, 
+ * e.g., http://en.wiktionary.org/wiki/bread  has different TLangPOS "Etymology 1#Noun", "Etymology 1#Verb", "Etymology 2#Noun"... 
  */
 class TLangPOS {
     
@@ -37,18 +37,27 @@ class TLangPOS {
     private $lemma;
 
     /** @var array of TMeaning[], where TMeaning consists of Definition + Quotations, Semantic relations and Translations. */
-    private $meaning_arr;
+    private $meaning;
     
     public function __construct($id, $page, $lang, $pos, $etymology_n, $lemma)
-//, $meaning
+
     {
-        $this->id   = $id;
+        $this->id = $id;
+        $this->etymology_n = $etymology_n;
+        $this->lemma = $lemma;
+
         $this->page = $page;
         $this->lang = $lang;
         $this->pos = $pos;
-        $this->etymology_n  = $etymology_n;
-        $this->lemma = $lemma;
-//        $this->meaning = $meaning;
+
+        $this->meaning_arr = NULL;
+
+//        $this->meaning = TMeaning::getByLangPOS($id);
+/*
+        $this->page = TPage::getByID($page);
+        $this->lang = TLang::getByID($lang);
+        $this->pos = TPOS::getByID($pos);
+*/
     }
     
     /* Gets unique ID from database 
@@ -89,38 +98,82 @@ class TLangPOS {
 
     /* Gets meanings 
     /* @return array */
-/*
     public function getMeaning() {
         return $this->meaning;
     }
-*/    
-    /** Selects row from the table 'lang_pos' by ID.
-     * SELECT page_id,lang_id,pos_id,etymology_n,lemma FROM lang_pos WHERE id=8;
-     * @return null if data is absent. */
-    static public function getByID ($lang_pos_id) {
+    
+    /** Gets TLangPOS object by property $property_name with value $property_value.
+     * @return TLangPOS or NULL in case of error
+     */
+    static public function getLangPOS($property_name, $property_value,$page_obj=NULL) {
     global $LINK_DB;
         
-//    	$lang_pos = NULL;
-    
-    	$query = "SELECT page_id,lang_id,pos_id,etymology_n,lemma FROM lang_pos WHERE id=".(int)$lang_pos_id;
-        $row = $LINK_DB -> fetch_object($LINK_DB -> query($query,"Query failed in ".__CLASS__."::".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"));
+     	$query = "SELECT * FROM lang_pos WHERE lang_id is not NULL and pos_id is not NULL and `$property_name`='$property_value' order by id";
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+	
+	$lang_pos_arr = array();
+
+        while ($row = $LINK_DB -> fetch_object($result)) {
+
+            $lang = TLang::getByID($row->lang_id);
+	    $pos = TPOS::getByID($row->pos_id);
+
+            if( NULL == $lang || NULL == $pos )
+	    	return NULL;
+
+	    if ($page_obj == NULL)
+	        $page_obj = TPage::getByID($row->page_id);
+
+            $lang_pos = new TLangPOS(
+		$row->id, 
+		$page_obj, 
+		$lang, 
+		$pos, 
+		$row->etymology_n, 
+		$row->lemma);
+	    
+	    $lang_pos->meaning = TMeaning::getByLangPOS($row->id,$lang_pos);
+
+	    $lang_pos_arr[] = $lang_pos;
+	}
+
+	return $lang_pos_arr;
+    }
+
+    /** Gets TLangPOS object by ID.
+     * @return TLangPOS or NULL if data is absent. */
+    static public function getByID ($lang_pos_id) {
+	$lang_pos_arr = TLangPOS::getLangPOS("id",$lang_pos_id);
+	return $lang_pos_arr[0];
+/*
+    global $LINK_DB;
+        
+    	$query = "SELECT page_id,lang_id,pos_id,etymology_n,lemma FROM lang_pos WHERE lang_id is not NULL and pos_id is not NULL and id=".(int)$lang_pos_id;
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+        $row = $LINK_DB -> fetch_object($result);
 
         $lang = TLang::getByID($row->lang_id);
 	$pos = TPOS::getByID($row->pos_id);
 
         if( NULL == $lang || NULL == $pos )
-	  return NULL;
+	    return NULL;
 
         return new TLangPOS (
 		$row->id, 
-//                $row->page_id,
 		TPage::getByID($row->page_id), 
 		$lang, 
 		$pos, 
 		$row->etymology_n, 
-		$row->lemma 
-//		TMeaning::getByID($row->id)
+		$row->lemma
 	);
+*/
 /*
     while($row = mysqli_fetch_array($result)){
         $page_id = $row['page_id'];
@@ -153,5 +206,43 @@ class TLangPOS {
 */
     }
 
+    /** Gets TLangPOS object by page_id.
+     * @return TLangPOS or NULL if data is absent. */
+    static public function getByPage ($page_id,$page_obj=NULL) {
+	return TLangPOS::getLangPOS("page_id",$page_id,$page_obj);
+/*
+    global $LINK_DB;
+        
+    	$query = "SELECT id,lang_id,pos_id,etymology_n,lemma FROM lang_pos WHERE lang_id is not NULL and pos_id is not NULL and page_id=".(int)$page_id;
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+	$lp = array();
+
+        while ($row = $LINK_DB -> fetch_object($result)) {
+            $lang = TLang::getByID($row->lang_id);
+	    $pos = TPOS::getByID($row->pos_id);
+
+            if( NULL == $lang || NULL == $pos )
+	        continue;
+	    
+            $lp[]= new TLangPOS (
+		$row->id, 
+		$page_obj, 
+		$lang, 
+		$pos, 
+		$row->etymology_n, 
+		$row->lemma
+	    );
+	    
+	    
+	}
+
+	if (!sizeof($lp)) return NULL;
+	return $lp;
+*/
+    }
 }
 ?>
