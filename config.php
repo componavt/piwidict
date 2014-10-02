@@ -25,6 +25,8 @@ include_once(LIB_DIR."db/mysql_util.php");
 // dictionary classes
 include_once(LIB_DIR."sql/DB.php");
 include_once(LIB_DIR."sql/TLabel.php");
+include_once(LIB_DIR."sql/TLabelCategory.php");
+include_once(LIB_DIR."sql/TLabelMeaning.php");
 include_once(LIB_DIR."sql/TLang.php");
 include_once(LIB_DIR."sql/TLangPOS.php");
 include_once(LIB_DIR."sql/TMeaning.php");

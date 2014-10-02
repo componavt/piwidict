@@ -43,6 +43,9 @@ class TMeaning {
     /** @var TTranslation  */
     private $translation;
 
+    /** @var TLabelMeaning  */
+    private $label_meaning;
+
     public function __construct($id, $lang_pos, $lang_pos_id, $meaning_n, $wiki_text, $wiki_text_id)
     {
         $this->id   = $id;
@@ -54,6 +57,7 @@ class TMeaning {
 
 	$this->relation = NULL;
 	$this->translation = NULL;
+	$this->label_meaning = NULL;
     }
     
     /** Gets unique ID from database 
@@ -104,6 +108,12 @@ class TMeaning {
         return $this->translation;
     }
 
+    /** Gets array of TLabelMeaning objects
+    /* @return array */
+    public function getLabelMeaning() {
+        return $this->label_meaning;
+    }
+
     /** Gets TMeaning object by property $property_name with value $property_value.
      * @return TMeaning or NULL in case of error
      */
@@ -131,6 +141,7 @@ class TMeaning {
 	    );
 	    $meaning->relation = TRelation::getByMeaning($row->id,$meaning);
 	    $meaning->translation = TTranslation::getByMeaning($row->id,$meaning);
+	    $meaning->label_meaning = TLabelMeaning::getByMeaning($row->id,$meaning);
 	    $meaning_arr[]=$meaning;
 	}
 

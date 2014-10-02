@@ -115,10 +115,9 @@ class TTranslation {
     /** Gets TTranslation object by meaning_id
      * @return TTranslation or NULL in case of error
      */
-    static public function getByMeaning ($meaning_id,$meaning_obj) {
-	$translation_arr = $translation_arr = TTranslation::getTranslation("meaning_id",$meaning_id,$meaning_obj);
+    static public function getByMeaning ($meaning_id,$meaning_obj=NULL) {
+	$translation_arr = TTranslation::getTranslation("meaning_id",$meaning_id,$meaning_obj);
 	return $translation_arr[0];
     }
-
 }
 ?>

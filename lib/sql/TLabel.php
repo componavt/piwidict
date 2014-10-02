@@ -4,103 +4,81 @@ class TLabel {
     
 /** Gets data from the database table 'label'.
  */
-    /** @var int Unique Label identifier. */
+    /** @var int Unique identifier in the table 'label' */
     private $id;
 
-    /** @var String  */
+    /** @var String Context label short name */
+    private $short_name;
+
+    /** @var String Context label full name */
     private $name;
 
-    public function __construct($id, $name)
+    /** @var TLabelCategory Category of context label (category_id). NULL means that label_category is unknown. 
+     * 
+     * A] The label was gathered automatically by parser if:     * 
+     * (1) category_id is NULL or (2) category_id = "regional automatic".
+     * 
+     * B] The label was added manually to the code of parser if 
+     * (1) category_id is not NULL and (2) category_id != "regional automatic".
+     */
+    private $label_category;
+
+    /** @var Int Number of definitions with this context label. */
+    private $counter;
+
+    public function __construct($id, $short_name, $name, $label_category)
     {
         $this->id   = $id;
+        $this->short_name = $short_name;
         $this->name = $name;
+	$this->label_category = NULL;
     }
 
-    /** Gets unique ID of the relation type 
+    /** Gets unique ID of the label 
      * @return int */
     public function getID() {
         return $this->id;
     }
     
-    /* @return String */
+    /** @return String */
+    public function getShortName() {
+        return $this->short_name;
+    }
+
+    /** @return String */
     public function getName() {
         return $this->name;
     }
 
-    static public function getAllRelations() {
-    global $LINK_DB;
-  
-    	$rr = array(); // rrrelations
-
-    	// relation_type (id, name)
-    	$query = "SELECT id, name FROM relation_type order by id";
-        $result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-    	while($row = $LINK_DB -> fetch_object($result)){
-          $rr[$row->id] = new TLabel(
-                $row->id,
-                $row->name);
-    	}
-    	return $rr;
+    /** @return TLabelCategory */
+    public function getLabelCategory() {
+        return $this->label_category;
     }
 
-    /* Gets name of relation type by ID from the table 'relation_type'.
-     * Returns NULL if ID is absent in the table.
-     */
-    static public function getNameByID($_id) {
-    global $LINK_DB;
-
-    	$query = "SELECT name FROM relation_type where id=".(int)$_id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-	if ($LINK_DB -> query_count($result) == 0)
-	    return NULL;
-
-        $row = $LINK_DB -> fetch_object($result);
-
-	return $row -> name;
-    }
-
-
-    /* Gets ID from the table 'relation_type' by the relation type name, e.g. "hyponyms", "hypernyms", "synonyms".
-     * Returns NULL if it is unknown name.
-     */
-    static public function getIDByName($_name) {
-    global $LINK_DB;
-
-    	$query = "SELECT id FROM label where name like '$_name'";
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-	if ($LINK_DB -> query_count($result) == 0)
-	    return NULL;
-
-        $row = $LINK_DB -> fetch_object($result);
-
-	return $row -> id;
-    }  
-
-    /** Gets TRelation object by property $property_name with value $property_value.
+    /** Gets TLabel object by property $property_name with value $property_value.
      * @return TLabel or NULL in case of error
      */
     static public function getLabel($property_name, $property_value) {
     global $LINK_DB;
         
-     	$query = "SELECT * FROM relation_type WHERE `$property_name`='$property_value' order by id";
+     	$query = "SELECT * FROM label WHERE `$property_name`='$property_value' order by id";
 	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
 	
-	$relation_type_arr = array();
+	$label_arr = array();
 
         while ($row = $LINK_DB -> fetch_object($result)) {
-            $relation_type_arr[] = new TLabel(
+            $label_arr[] = new TLabel(
 		$row->id, 
-		$row->name 
+		$row->short_name, 
+		$row->name,
+		TLabelCategory::getByID($row->category_id) 
 	    );
 	}
 
-	return $relation_type_arr;
+	return $label_arr;
     }
 
     /** Gets TLabel object by ID

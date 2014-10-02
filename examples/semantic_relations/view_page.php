@@ -55,7 +55,17 @@ function toggle(id) {
 		    $count_meaning = 1;
 		    if (is_array($meaning_arr)) foreach ($meaning_arr as $meaningObj) {
 			$meaning_id = $meaningObj->getID();
-			print "<p title=\"TPage::TLangPOS::TMeaning::TWikiText->text\">".$count_meaning++.". ". $meaningObj->getWikiText()->getText() ."</p>\n".
+
+		        // LABELS OF MEANING
+			$labelMeaning_arr = $meaningObj->getLabelMeaning();
+			$label_name_arr = array();
+			
+			if (is_array($labelMeaning_arr)) foreach ($labelMeaning_arr as $labelMeaningObj) {
+			    $label_name_arr[] = "<i><span title=\"".$labelMeaningObj->getLabel()->getName()."\">".$labelMeaningObj->getLabel()->getShortName()."</span></i>";
+			}
+
+		        // MEANING
+			print "<p title=\"TPage::TLangPOS::TMeaning::TWikiText->text\">".$count_meaning++.". ". join(', ',$label_name_arr). " ". $meaningObj->getWikiText()->getText() ."</p>\n".
 			    "<ul>\n";
 
 			// RELATIONS
@@ -99,7 +109,7 @@ function toggle(id) {
 		    }
 		}
 	
-//print "<PRE>";
+print "<PRE>";
 //print_r($meaningObj);
 //print "</PRE>";
 //var_dump($pageObj);
