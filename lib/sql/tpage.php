@@ -121,7 +121,7 @@ class TPage {
 
 	$page_arr = array();
 
-        while ($row = $LINK_DB -> fetch_object($result)) {
+        while ($row = $result -> fetch_object()) {
             $page = new TPage(
                 $row->id,
                 $row->page_title,
@@ -146,26 +146,6 @@ class TPage {
     static public function getByID($page_id) {
 	$page_arr = TPage::getPage("id",$page_id);
 	return $page_arr[0];
-/*
-    global $LINK_DB;
-    	$query = "SELECT page_title, word_count, wiki_link_count, is_in_wiktionary, is_redirect, redirect_target FROM page WHERE id=".(int)$page_id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-	if ($LINK_DB -> query_count($result) == 0)
-	    return NULL;
-
-        $row = $LINK_DB -> fetch_object($result);
-        $page = new TPage(
-                $page_id,
-                $row->page_title,
-                $row->word_count,
-                $row->wiki_link_count,
-                $row->is_in_wiktionary,
-                $row->is_redirect,
-                $row->redirect_target);
-	$page->lang_pos = TLangPOS::getByPage($row->id,$page);
-	return $page;
-*/
     }
 
    /** Gets TPage object by page title.
@@ -174,27 +154,6 @@ class TPage {
 
     static public function getByTitle($page_title) {
 	return Tpage::getPage("page_title",$page_title);
-/*
-    global $LINK_DB;
-    	$query = "SELECT id, word_count, wiki_link_count, is_in_wiktionary, is_redirect, redirect_target FROM page WHERE page_title like '$page_title'";
-	$result = $LINK_DB->query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-//print "<P>".$LINK_DB->query_count($result);
-	if ($LINK_DB -> query_count($result) == 0)
-	    return NULL;
-
-        $row = $LINK_DB -> fetch_object($result);
-	$page = new TPage(
-                $row->id,
-                $page_title,
-                $row->word_count,
-                $row->wiki_link_count,
-                $row->is_in_wiktionary,
-                $row->is_redirect,
-                $row->redirect_target);
-	$page->lang_pos = TLangPOS::getByPage($row->id,$page);
-	return $page;
-*/
     }
 }
 ?>

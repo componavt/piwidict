@@ -69,7 +69,7 @@ class TLabel {
 	
 	$label_arr = array();
 
-        while ($row = $LINK_DB -> fetch_object($result)) {
+        while ($row = $result -> fetch_object()) {
             $label_arr[] = new TLabel(
 		$row->id, 
 		$row->short_name, 

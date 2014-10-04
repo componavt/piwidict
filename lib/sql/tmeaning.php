@@ -127,10 +127,11 @@ class TMeaning {
 	    return NULL;
 	$meaning_arr = array();
 
-        while ($row = $LINK_DB -> fetch_object($result)) {
+        while ($row = $result -> fetch_object()) {
+/*
 	    if ($lang_pos_obj == NULL)
 	  	$lang_pos_obj = TLangPOS::getByID($row->lang_pos_id);
-
+*/
             $meaning = new TMeaning(
 		$row->id, 
 		$lang_pos_obj,
@@ -163,7 +164,7 @@ class TMeaning {
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
 
-        $row = $LINK_DB -> fetch_object($result);
+        $row = $result -> fetch_object();
 
         return new TMeaning (
 		$row->id, 

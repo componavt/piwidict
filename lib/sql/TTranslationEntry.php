@@ -65,7 +65,7 @@ class TTranslationEntry {
 	    return NULL;
 	$translationEntry_arr = array();
 
-        while ($row = $LINK_DB -> fetch_object($result)) {
+        while ($row = $result -> fetch_object()) {
 	    if ($translation_obj == NULL)
 	  	$translation_obj = TTranslation::getByID($row->translation_id);
 

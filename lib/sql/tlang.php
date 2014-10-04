@@ -73,26 +73,14 @@ class TLang {
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
 
-    	while($row = $LINK_DB -> fetch_object($result)){
-          $tlang_arr[$row -> id] = new TLang(
+    	while($row = $result->fetch_object()){
+          $tlang_arr[$row->id] = new TLang(
                 $row -> id,
                 $row -> code,
                 $row -> name,
                 $row -> n_foreign_POS,
                 $row -> n_translations);
     	}
-    
-/*
-    	$result = mysqli_query($LINK_DB, $query) or die("Query failed (line 64) in TLang::getAllLang in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>"); //. mysqli_error($LINK_DB).". Query: ".$query);
-    	while($row = $LINK_DB -> fetch_assoc($result)){
-          $tlang_arr[$row['id']] = new TLang(
-                $row['id'],
-                $row['code'],
-                $row['name'],
-                $row['n_foreign_POS'],
-                $row['n_translations']);
-    	}
-*/
     	return $tlang_arr;
     }
 
@@ -120,7 +108,7 @@ class TLang {
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
 
-        $row = $LINK_DB -> fetch_object($result);
+        $row = $result -> fetch_object();
 
         return new TLang(
                 $row->id,
@@ -143,7 +131,7 @@ class TLang {
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
 
-        $row = $LINK_DB -> fetch_object($result);
+        $row = $result -> fetch_object();
 
 	return $row -> name;
     }
@@ -160,7 +148,7 @@ class TLang {
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
 
-        $row = $LINK_DB -> fetch_object($result);
+        $row = $result -> fetch_object();
 
 	return $row -> id;
     }
@@ -195,7 +183,7 @@ class TLang {
     	$query = "SELECT id, name order by id";
         $result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-    	while($row = $LINK_DB -> fetch_object($result)) {
+    	while($row = $result -> fetch_object()) {
           $s .= "<OPTION value=\"". $row->id ."\"";
           if($selected_language_id == $row->id) {
             $s .= " selected"; // selected option

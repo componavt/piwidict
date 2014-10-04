@@ -1,7 +1,11 @@
 <?php
+$mtime = microtime();        // Read the current time
+$mtime = explode(" ",$mtime);    // Separate the seconds and milliseconds
+$tstart = $mtime[1] + $mtime[0];  // Write start time from amount of the seconds and milliseconds
+
 include("../../config.php");
 
-mb_internal_encoding("UTF-8");
+//mb_internal_encoding("UTF-8");
 
 include(LIB_DIR."header.php");
 
@@ -11,7 +15,7 @@ $relation_type_id_hyponyms  = TRelationType::getIDByName("hyponyms");
 $relation_type_id_hypernyms = TRelationType::getIDByName("hypernyms");
 
 
-print "<h3>Generation of list of hyponyms and hypernyms (LIMIT 500)</h3>\n".
+print "<h3>Generation of list of hyponyms and hypernyms (LIMIT 100)</h3>\n".
       "Database version: ".NAME_DB."<BR>\n".
 
       "lang_id_ru = $lang_id_ru<BR>\n".
@@ -21,33 +25,27 @@ print "<h3>Generation of list of hyponyms and hypernyms (LIMIT 500)</h3>\n".
       "ID of relation type \"hyponyms\" = $relation_type_id_hyponyms<BR>\n".
       "ID of relation type \"hypernyms\" = $relation_type_id_hypernyms<BR>\n<BR>\n";
 
-$query_lang_pos = "SELECT id FROM lang_pos WHERE lang_id=".(int)$lang_id_ru." LIMIT 500";
+$query_lang_pos = "SELECT id FROM lang_pos WHERE lang_id=".(int)$lang_id_ru." and pos_id='$pos_id_noun' LIMIT 100";
 $result_lang_pos = $LINK_DB -> query($query_lang_pos,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 print "<table border=1>\n";
 $counter = 0;
-while($row = $LINK_DB-> fetch_object($result_lang_pos)){
+while($row = $result_lang_pos -> fetch_object()){
     $lang_pos_id = $row->id;
     $lang_pos = TLangPOS::getByID($lang_pos_id);
    
-    // 1. filter by part of speech
-    $pos_obj = $lang_pos->getPOS();
-    $pos_id = $pos_obj->getID();    // [39] => Array ( [id] => 39 [name] => noun )
-    if($pos_id != $pos_id_noun)
-        continue;
-    
     // 2. get meaning.id by lang_pos_id
     $query_meaning = "SELECT id FROM meaning WHERE lang_pos_id=".(int)$lang_pos_id;
     $result_meaning = $LINK_DB -> query($query_meaning,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-    while($row_m = $LINK_DB -> fetch_object($result_meaning)){
+    while($row_m = $result_meaning -> fetch_object()){
         $meaning_id = $row_m->id;
         
         // 3. get relation by meaning_id
         $query_relation = "SELECT wiki_text_id, relation_type_id FROM relation WHERE meaning_id=".(int)$meaning_id;
         $result_relation = $LINK_DB -> query($query_relation,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-        while($row_rel = $LINK_DB -> fetch_object($result_relation)){
+        while($row_rel = $result_relation -> fetch_object()){
             $relation_type_id = $row_rel->relation_type_id;
             $wiki_text_id     = $row_rel->wiki_text_id;
             
@@ -61,7 +59,7 @@ while($row = $LINK_DB-> fetch_object($result_lang_pos)){
             $query_rwt = "SELECT text FROM wiki_text WHERE id=".(int)$wiki_text_id;
             $result_rwt = $LINK_DB -> query($query_rwt,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-            if($row_rwt = $LINK_DB -> fetch_object($result_rwt)){
+            if($row_rwt = $result_rwt -> fetch_object()){
                 $relation_wiki_text = $row_rwt->text;
                 print "<tr><td>".(++$counter).".</td><td>".$lang_pos->getPage()->getPageTitle()."</td><td>".$relation_type_name."</td><td>".$relation_wiki_text."</td></tr>\n";
             }
@@ -69,4 +67,8 @@ while($row = $LINK_DB-> fetch_object($result_lang_pos)){
     } // eo meaning
 }
 print "</table><br />\nTotal semantic relations (with these parameters): $counter<BR>";
+$mtime = explode(" ",microtime());
+$mtime = $mtime[1] + $mtime[0];
+$totaltime = ($mtime - $tstart);
+printf ("Page generated in %f seconds!", $totaltime);
 ?>

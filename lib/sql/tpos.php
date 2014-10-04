@@ -43,7 +43,7 @@ class TPOS {
     	$query = "SELECT id, name FROM part_of_speech order by id";
         $result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-    	while($row = $LINK_DB -> fetch_object($result)){
+    	while($row = $result -> fetch_object()){
           $pos_array[$row->id] = new TPOS(
                 $row->id,
                 $row->name);
@@ -64,7 +64,7 @@ class TPOS {
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
 
-        $row = $LINK_DB -> fetch_object($result);
+        $row = $result -> fetch_object();
 
         return new TPOS(
                 $row->id,
@@ -83,7 +83,7 @@ class TPOS {
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
 
-        $row = $LINK_DB -> fetch_object($result);
+        $row = $result -> fetch_object();
 
 	return $row -> id;
     }

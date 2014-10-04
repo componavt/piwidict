@@ -83,14 +83,15 @@ class TTranslation {
 	
 	$translation_arr = array();
 
-        while ($row = $LINK_DB -> fetch_object($result)) {
+        while ($row = $result -> fetch_object()) {
+/*
 	    if ($meaning_obj == NULL)
 	  	$meaning_obj = TMeaning::getByID($row->meaning_id);
 	   
 	    if ($meaning_obj != NULL)
 		$lang_pos_obj = $meaning_obj->getLangPOS();
 	    else $lang_pos_obj = NULL;
-	
+*/	
             $translation = new TTranslation(
 		$row->id, 
 	        $lang_pos_obj,

@@ -45,10 +45,11 @@ class TLabelMeaning {
 	
 	$labelMeaning_arr = array();
 
-        while ($row = $LINK_DB -> fetch_object($result)) {
+        while ($row = $result -> fetch_object()) {
+/*
 	    if ($meaning_obj == NULL)
 	  	$meaning_obj = TMeaning::getByID($row->meaning_id);
-	   
+*/	   
             $labelMeaning_arr[] = new TLabelMeaning(
 		TLabel::getByID($row->label_id),
 		$meaning_obj

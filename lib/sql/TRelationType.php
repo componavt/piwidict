@@ -37,7 +37,7 @@ class TRelationType {
     	$query = "SELECT id, name FROM relation_type order by id";
         $result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-    	while($row = $LINK_DB -> fetch_object($result)){
+    	while($row = $result -> fetch_object()){
           $rr[$row->id] = new TRelationType(
                 $row->id,
                 $row->name);
@@ -57,7 +57,7 @@ class TRelationType {
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
 
-        $row = $LINK_DB -> fetch_object($result);
+        $row = $result -> fetch_object();
 
 	return $row -> name;
     }
@@ -75,7 +75,7 @@ class TRelationType {
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
 
-        $row = $LINK_DB -> fetch_object($result);
+        $row = $result -> fetch_object();
 
 	return $row -> id;
     }  
@@ -94,7 +94,7 @@ class TRelationType {
 	
 	$relation_type_arr = array();
 
-        while ($row = $LINK_DB -> fetch_object($result)) {
+        while ($row = $result -> fetch_object()) {
             $relation_type_arr[] = new TRelationType(
 		$row->id, 
 		$row->name 

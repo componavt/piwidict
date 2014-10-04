@@ -59,7 +59,7 @@ class TWikiText {
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
 
-        $row = $LINK_DB -> fetch_object($result);
+        $row = $result -> fetch_object();
 
         return new TWikiText(
                 $row->id,

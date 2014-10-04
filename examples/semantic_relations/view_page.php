@@ -1,11 +1,13 @@
 <?php
+$mtime = explode(" ",microtime()); 
+$tstart = $mtime[1] + $mtime[0];  // Write start time of execution
+
 include("../../config.php");
 
-mb_internal_encoding("UTF-8");
+//mb_internal_encoding("UTF-8");
 
 include(LIB_DIR."header.php");
-
-//if (!isset($page_title)) { ?>
+?>
 <script type="text/javascript">
 function toggle(id) {
  	var ele = document.getElementById("toggleText"+id);
@@ -32,7 +34,7 @@ function toggle(id) {
     <input type="submit" value="view page">
 </form>
 <?
-//} else {
+if (isset($page_title)) {
 	if (isset($search_type) && $search_type=='sub') $page_title = "%$page_title%";
 
 	$pageObj_arr = Tpage::getByTitle($page_title);
@@ -109,12 +111,15 @@ function toggle(id) {
 		    }
 		}
 	
-print "<PRE>";
+//print "<PRE>";
 //print_r($meaningObj);
 //print "</PRE>";
 //var_dump($pageObj);
 //print_r($pageObj);
 	    }
 	}
-//}
+}
+$mtime = explode(" ",microtime());
+$mtime = $mtime[1] + $mtime[0];
+printf ("Page generated in %f seconds!", ($mtime - $tstart));
 ?>

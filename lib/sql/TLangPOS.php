@@ -51,13 +51,6 @@ class TLangPOS {
         $this->pos = $pos;
 
         $this->meaning_arr = NULL;
-
-//        $this->meaning = TMeaning::getByLangPOS($id);
-/*
-        $this->page = TPage::getByID($page);
-        $this->lang = TLang::getByID($lang);
-        $this->pos = TPOS::getByID($pos);
-*/
     }
     
     /* Gets unique ID from database 
@@ -69,6 +62,19 @@ class TLangPOS {
     /* Gets object of page 
     /* @return int */
     public function getPage() {
+/*
+    global $LINK_DB;
+	if ($this->page == NULL) {
+     	    $query = "SELECT page_id FROM lang_pos";
+	    $result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	    if ($LINK_DB -> query_count($result) == 0)
+	    	return NULL;
+            $row = $result -> fetch_object();
+
+	    $this->page = TPage::getByID($row->page_id);
+	}
+*/
         return $this->page;
     }
     
@@ -116,7 +122,7 @@ class TLangPOS {
 	
 	$lang_pos_arr = array();
 
-        while ($row = $LINK_DB -> fetch_object($result)) {
+        while ($row = $result -> fetch_object()) {
 
             $lang = TLang::getByID($row->lang_id);
 	    $pos = TPOS::getByID($row->pos_id);
@@ -148,101 +154,22 @@ class TLangPOS {
     static public function getByID ($lang_pos_id) {
 	$lang_pos_arr = TLangPOS::getLangPOS("id",$lang_pos_id);
 	return $lang_pos_arr[0];
-/*
-    global $LINK_DB;
-        
-    	$query = "SELECT page_id,lang_id,pos_id,etymology_n,lemma FROM lang_pos WHERE lang_id is not NULL and pos_id is not NULL and id=".(int)$lang_pos_id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-	if ($LINK_DB -> query_count($result) == 0)
-	    return NULL;
-
-        $row = $LINK_DB -> fetch_object($result);
-
-        $lang = TLang::getByID($row->lang_id);
-	$pos = TPOS::getByID($row->pos_id);
-
-        if( NULL == $lang || NULL == $pos )
-	    return NULL;
-
-        return new TLangPOS (
-		$row->id, 
-		TPage::getByID($row->page_id), 
-		$lang, 
-		$pos, 
-		$row->etymology_n, 
-		$row->lemma
-	);
-*/
-/*
-    while($row = mysqli_fetch_array($result)){
-        $page_id = $row['page_id'];
-        $lang_id = $row['lang_id'];
-        $pos_id = $row['pos_id'];
-        $etymology_n = $row['etymology_n'];
-        $lemma = $row['lemma'];
-
-        $lang_pos ['page'] = TPage::getByID ($page_id);
-        
-        
-//print "TLangPOS::getByID    lang_id = $lang_id<BR>";
-//print "TLangPOS::getByID    pos_id = $pos_id<BR>";
-
-        $lang_pos ['lang'] = TLang::getByID($lang_id);
-//print "TLangPOS::getByID    TLang lang = "; print_r ($lang_pos ['lang']); print "<BR>";
-
-        $lang_pos ['pos']  = TPOS:: getByID ($pos_id);
-//print "TLangPOS::getByID    TPOS  pos  = "; print_r($lang_pos ['pos']); print "<BR>";
-        
-        $lang_pos ['etymology_n'] = $etymology_n;
-        $lang_pos ['lemma'] = $lemma;
-        
-        $lang = $lang_pos ['lang'];
-        $pos  = $lang_pos ['pos'];
-        if(null == $lang || null == $pos)
-            $lang_pos = NULL;
-    }    
-    return (object)$lang_pos;
-*/
     }
 
     /** Gets TLangPOS object by page_id.
      * @return TLangPOS or NULL if data is absent. */
     static public function getByPage ($page_id,$page_obj=NULL) {
-	return TLangPOS::getLangPOS("page_id",$page_id,$page_obj);
 /*
-    global $LINK_DB;
-        
-    	$query = "SELECT id,lang_id,pos_id,etymology_n,lemma FROM lang_pos WHERE lang_id is not NULL and pos_id is not NULL and page_id=".(int)$page_id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-	if ($LINK_DB -> query_count($result) == 0)
-	    return NULL;
-
-	$lp = array();
-
-        while ($row = $LINK_DB -> fetch_object($result)) {
-            $lang = TLang::getByID($row->lang_id);
-	    $pos = TPOS::getByID($row->pos_id);
-
-            if( NULL == $lang || NULL == $pos )
-	        continue;
-	    
-            $lp[]= new TLangPOS (
-		$row->id, 
-		$page_obj, 
-		$lang, 
-		$pos, 
-		$row->etymology_n, 
-		$row->lemma
-	    );
-	    
-	    
-	}
-
-	if (!sizeof($lp)) return NULL;
-	return $lp;
+	if ($page_obj == NULL)
+	     $page_obj = TPage::getByID($row->page_id);
 */
+	return TLangPOS::getLangPOS("page_id",$page_id,$page_obj);
+    }
+
+    /** Gets TLangPOS object by lang_id.
+     * @return TLangPOS or NULL if data is absent. */
+    static public function getByLang ($lang_id,$lang_obj=NULL) {
+	return TLangPOS::getLangPOS("lang_id",$lang_id,$lang_obj);
     }
 }
 ?>

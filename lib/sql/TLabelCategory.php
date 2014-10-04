@@ -51,10 +51,11 @@ class TLabelCategory {
 
 	$category_arr = array();
 
-        while ($row = $LINK_DB -> fetch_object($result)) {
+        while ($row = $result -> fetch_object()) {
+/*
 	    if ($parent_obj == NULL)
 	  	$parent_obj = TLabelCategory::getByID($row->parent_category_id); 
-
+*/
             $category_arr[] = new TLabelCategory(
 		$row->id, 
 		$row->name,
