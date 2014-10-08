@@ -3,9 +3,6 @@ $mtime = explode(" ",microtime());
 $tstart = $mtime[1] + $mtime[0];  // Write start time of execution
 
 include("../../config.php");
-
-//mb_internal_encoding("UTF-8");
-
 include(LIB_DIR."header.php");
 
 $lang_id_ru        = TLang::getIDByLangCode("ru");

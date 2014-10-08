@@ -25,7 +25,7 @@ TODO:</li>
 
 <h2>Complex or misc. examples</h2>
 <ul>
-<li>Reverse dictionary<br />
+<li><a href="complex/reverse_dict.php">Reverse dictionary</a><br />
 TODO:</li>
     <ol>
 	<li>Dropdown menu of POS.

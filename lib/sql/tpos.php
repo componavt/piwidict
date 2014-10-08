@@ -88,5 +88,33 @@ class TPOS {
 	return $row -> id;
     }
 
+    /* Check if POS with this ID exists */
+    static public function isExist($id) {
+    global $LINK_DB;
+	
+	if ($id == '' || (int)$id != $id) return false;
+
+    	$query = "SELECT id FROM part_of_speech where id=".(int)$id;
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return false;
+	return true;
+    }
+
+    // ===============================
+    // Visual forms
+    // ===============================
+
+    /* Gets a drop-down part of speech list.
+     * 
+     * @param int $selected_id - POS selected for this object in this drop-down menu
+     * @param string $select_name - name of HTML "select" element
+     * @return string
+     */
+    static public function getDropDownList($selected_id, $select_name, $first_option) {
+        $s = WForm::getDropDownList($selected_id, $select_name, $first_option, 'part_of_speech', 'name', 'id');
+    	return $s;
+    }
 }
 ?>

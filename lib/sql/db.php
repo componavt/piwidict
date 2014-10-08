@@ -1,21 +1,17 @@
 <?php
 class DB extends mysqli {
-	protected $dbname = NAME_DB;
-	protected $dbuser = 'javawiki';
-	protected $dbhost = 'localhost';
-	protected $dbpass = '';
-
 	public $result;
 	public $row;
 	public $row_count;
+	public $error;
 
 	/* Connection to database */
-	public function __construct() {
+	public function __construct($dbhost, $dbuser, $dbpass, $dbname) {
             @parent::__construct(
-		$this->dbhost,
-		$this->dbuser, 
-		$this->dbpass,
-                $this->dbname
+		$dbhost,
+		$dbuser, 
+		$dbpass,
+                $dbname
             );
             if ($this->connect_error) {
     		printf("Connect failed: %s\n", $this->connect_error);
@@ -36,7 +32,7 @@ class DB extends mysqli {
 	    $this->result = @parent::query($q);
 
 	    if (!$this->result)	{
-		die("<div style=\"font-size:10px; color:#666666;\">$war_string: ".mysql_error()."</div>");
+		die("<div style=\"font-size:10px; color:#666666;\">$war_string: ".$this->error." ($q)</div>");
 	    }
 	    return $this->result;
 	}
