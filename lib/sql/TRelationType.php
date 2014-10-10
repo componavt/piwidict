@@ -112,5 +112,19 @@ class TRelationType {
 	return $relation_arr[0];
     }
 
+    // ===============================
+    // Visual forms
+    // ===============================
+
+    /* Gets a drop-down relation type list.
+     * 
+     * @param int $selected_id - relation type selected for this object in this drop-down menu
+     * @param string $select_name - name of HTML "select" element
+     * @return string
+     */
+    static public function getDropDownList($selected_id, $select_name, $first_option) {
+        $s = WForm::getDropDownList($selected_id, $select_name, $first_option, 'relation_type', 'name', 'id');
+    	return $s;
+    }
 }
 ?>

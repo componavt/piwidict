@@ -10,7 +10,7 @@ include(LIB_DIR."header.php");
 
 <h2>Semantic relations</h2>
 <ul>
-<li><a href="semantic_relations/list_hypo.obj.php">Generation of list of hyponyms and hypernyms</a><br />
+<li><a href="semantic_relations/list_hypo.obj.php">Generation of list of relations</a><br />
 TODO:</li>
     <ol> 
 	<li>Dropdown menu of languages (sort by name or sort by size)</li>
