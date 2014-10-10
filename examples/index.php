@@ -32,7 +32,7 @@ TODO:</li>
 	<li>only words with non-empty definitions
 	<li>only words with semantic relations
     </ol>	
-<li>List of definitions<br />
+<li><a href="complex/list_def.php">List of definitions</a><br />
 TODO:</li>
     <ol>
 	<li>A: Search all definitions by substring (bad, to heavy) 

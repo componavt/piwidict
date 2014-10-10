@@ -14,6 +14,8 @@ define("LIB_DIR",SITE_ROOT."lib/");
 define ('WIKT_LANG','ru');
 define ('INTERFACE_LANGUAGE', 'en'); 
 
+mb_internal_encoding("UTF-8");
+
 // misc classes
 /*include_once(LIB_DIR."sessione.php");
 include_once(LIB_DIR."array_util.php");

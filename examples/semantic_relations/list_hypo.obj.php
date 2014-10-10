@@ -23,7 +23,14 @@ Database version: <?=NAME_DB;?>
 </form>
 <?
 if (isset($view_list) && $view_list) {
-    $query_lang_pos = "SELECT lang_pos.id as id, page_title FROM lang_pos, page WHERE lang_pos.page_id=page.id and lang_id=".(int)$lang_id." and pos_id='$pos_id' and page_title like '%$page_title%' LIMIT $limit";
+    $query_lang_pos = "SELECT lang_pos.id as id, page_title FROM lang_pos, page WHERE lang_pos.page_id=page.id";
+    if ($lang_id) 
+        $query_lang_pos .= " and lang_id=".(int)$lang_id;
+    if ($pos_id) 
+        $query_lang_pos .= " and pos_id='".(int)$pos_id;
+    if ($page_title) 
+        $query_lang_pos .= " and page_title like '%$page_title%'";
+    $query_lang_pos .= " LIMIT $limit";
 //print $query_lang_pos;
     $result_lang_pos = $LINK_DB -> query($query_lang_pos,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 //print $LINK_DB -> query_count($result_lang_pos);
@@ -49,7 +56,7 @@ if (isset($view_list) && $view_list) {
             	$relation_wiki_text = $relation_obj->getWikiText();
 
             	if ($relation_wiki_text != NULL){
-                    print "<tr><td>".(++$counter).".</td><td>".$row->page_title."</td><td>".$relation_wiki_text->getText()."</td></tr>\n";
+                    print "<tr><td>".(++$counter).".</td><td>".TPage::getURL($row->page_title)."</td><td>".$relation_type->getName()."</td><td>".$relation_wiki_text->getText()."</td></tr>\n";
             	}
             } // eo relation
     	} // eo meaning

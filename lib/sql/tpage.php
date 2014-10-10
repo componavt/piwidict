@@ -142,7 +142,6 @@ class TPage {
     /** Gets TPage object by page ID.
      * @return TPage or NULL in case of error
      */
-
     static public function getByID($page_id) {
 	$page_arr = TPage::getPage("id",$page_id);
 	return $page_arr[0];
@@ -151,9 +150,16 @@ class TPage {
    /** Gets TPage object by page title.
     * @return TPage or NULL in case of error
     */
-
     static public function getByTitle($page_title) {
 	return Tpage::getPage("page_title",$page_title);
+    }
+
+   /** Gets URL to Wikipedia page
+    * @return string
+    */
+    static public function getURL($page_title, $link_text='') {
+	if (!$link_text) $link_text = $page_title;
+	return "<a href=\"http://".WIKT_LANG.".wiktionary.org/wiki/$page_title\">$link_text</a>";
     }
 }
 ?>

@@ -10,8 +10,6 @@
 Attention: beta-testing mode</div>
 
 <?php
-mb_internal_encoding("UTF-8");
-
 //  print "Session _user_name = ".$_SESSION['_user_name']."<BR>"; // debug
 //  print "Session _user_password = ".$_SESSION['_user_password']."<BR>";
   

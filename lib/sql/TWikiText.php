@@ -47,8 +47,8 @@ class TWikiText {
         return $this->wikified_text;
     }
    
-    /* Gets TWikiText object (text, ID and wiki_text) by ID.
-     * Returns NULL if it is unknown ID.
+    /** Gets TWikiText object (text, ID and wiki_text) by ID.
+     * @return object or NULL if it is unknown ID.
      */
     static public function getByID($_id) {
     global $LINK_DB;
@@ -65,6 +65,21 @@ class TWikiText {
                 $row->id,
                 $row->text,
                 $row->wikified_text);
+    }
+    /** Selection of text in a special way (e.g., by bold font)
+     * @return string
+     */
+    static public function selectText($string,$substring,$start='<b>',$finish='</b>') {
+	$out = '';
+	$pos = mb_strpos($string,$substring);
+
+	while ($pos !== false) {
+	  $out .= mb_substr($string,0,$pos). $start. $substring. $finish;
+	  $string = mb_substr($string, $pos+mb_strlen($substring));
+	  $pos = mb_strpos($string,$substring);
+	}
+
+	return $out.$string;
     }
 }
 ?>
