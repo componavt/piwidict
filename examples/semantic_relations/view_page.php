@@ -46,7 +46,7 @@ if (isset($page_title)) {
 
 	    if (is_array($pageObj_arr)) foreach ($pageObj_arr as $pageObj) {
 	        print "<h2 title=\"TPage->page_title\" style=\"color: #006a4e\">".$pageObj->getPageTitle()."</h2>\n".
-			"<p>Original page in ".TPage::getURL($pageObj->getPageTitle(), WIKT_LANG.".wiktionary.org")."</p>";
+			"<p>Source page at ".TPage::getURL($pageObj->getPageTitle(), WIKT_LANG.".wiktionary.org")."</p>";
 		$lang_pos_arr = $pageObj -> getLangPOS();
 
 		if (is_array($lang_pos_arr)) foreach ($lang_pos_arr as $langPOSObj) {

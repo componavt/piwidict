@@ -83,7 +83,7 @@ class TRelationType {
     /** Gets TRelation object by property $property_name with value $property_value.
      * @return TRelationType or NULL in case of error
      */
-    static public function geTRelationType($property_name, $property_value) {
+    static public function getRelationType($property_name, $property_value) {
     global $LINK_DB;
         
      	$query = "SELECT * FROM relation_type WHERE `$property_name`='$property_value' order by id";

@@ -70,6 +70,7 @@ class TWikiText {
      * @return string
      */
     static public function selectText($string,$substring,$start='<b>',$finish='</b>') {
+/*
 	$out = '';
 	$pos = mb_strpos($string,$substring);
 
@@ -80,6 +81,10 @@ class TWikiText {
 	}
 
 	return $out.$string;
+*/
+	$substring = mb_ereg_replace("%",".*",$substring);
+	return mb_ereg_replace($substring, $start."\\0".$finish,$string, 'mi');
+
     }
 }
 ?>

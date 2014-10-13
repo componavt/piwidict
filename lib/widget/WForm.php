@@ -43,5 +43,51 @@ class WForm {
 
     	return $s;
     }
+
+    /*========================================
+     * The form for pagination
+     * format: 1 ... 5 6 7 8 9 ... 20
+     * k - the count of the preceding and following digits (7-5, 9-7)
+     */
+    function goNextStep($numRows,$portion,$url="",$k=2,$text='') {
+    global $PHP_SELF,$step_s;
+   	$out = '';
+   	$remainder = $numRows % $portion;
+        $steps = ceil($numRows/$portion);
+	$new_url="$PHP_SELF?";
+	if ($url!="") $new_url.="$url&";
+
+        if ($steps > 1) { 
+	  $out .= "<div class='pages'>$text\n";
+
+	  if ($step_s > $k+1 && $steps >2*$k+1)  {
+	    if ($step_s==1) $out .= "<span class='current'>1</span>\n";
+	    else $out .= "<a href=".$new_url."step_s=1>1</a>\n";
+	    $out .= " ... ";
+	  }
+
+	  if ($step_s > $steps-$k)
+	    $start = $steps-2*$k;
+	  else $start = $step_s - $k;
+	  if ($start<1) $start = 1;
+
+	  if ($step_s < $k + 1)
+	    $finish = 2*$k + 1;
+	  else $finish = $step_s + $k;
+	  if ($finish >$steps) $finish = $steps;
+
+	  for ($i=$start; $i<=$finish; $i++) 
+	    if ($step_s==$i) $out .= "<span class='current'>$i</span>\n";
+	    else $out .= "<a href=".$new_url."step_s=$i>$i</a>\n";
+
+	  if ($steps > 2*$k+1 && $step_s< $steps-$k)  {
+	    $out .= " ... ";
+	    if ($step_s==$steps) $out .= "<span class='current'>$steps</span>\n";
+	    else $out .= "<a href=".$new_url."step_s=$steps>$steps</a>\n";
+	  }
+	  $out .= "</div>\n";
+	}
+	return $out;
+   }
 }
 ?>
