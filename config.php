@@ -1,4 +1,8 @@
 <?php
+if (isset($count_exec_time) && $count_exec_time) {
+    $mtime = explode(" ",microtime()); 
+    $tstart = $mtime[1] + $mtime[0];  // Write start time of execution
+}
 
 $root=$_SERVER["DOCUMENT_ROOT"];
 $site_url="/";
@@ -25,6 +29,7 @@ include_once(LIB_DIR."db/mysql_util.php");
 
 // dictionary classes
 include_once(LIB_DIR."PWString.php");
+include_once(LIB_DIR."PWStats.php");
 
 include_once(LIB_DIR."sql/DB.php");
 include_once(LIB_DIR."sql/TLabel.php");

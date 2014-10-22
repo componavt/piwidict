@@ -1,7 +1,5 @@
 <?php
-$mtime = explode(" ",microtime()); 
-$tstart = $mtime[1] + $mtime[0];  // Write start time of execution
-
+$count_exec_time = 1;
 include("../../config.php");
 include(LIB_DIR."header.php");
 
@@ -51,7 +49,6 @@ if (isset($view_list) && $view_list) {
     print "</table><br />\n".
 	WForm::goNextStep($numAll,$limit,"lang_id=$lang_id&pos_id=$pos_id&relation_type_id=$relation_type_id&page_title=$page_title&view_list=1",2,"Go to");
 }
-$mtime = explode(" ",microtime());
-$mtime = $mtime[1] + $mtime[0];
-printf ("Page generated in %f seconds!", ($mtime - $tstart));
+
+include(LIB_DIR."footer.php");
 ?>

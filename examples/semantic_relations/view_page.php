@@ -1,7 +1,4 @@
 <?php
-$mtime = explode(" ",microtime()); 
-$tstart = $mtime[1] + $mtime[0];  // Write start time of execution
-
 include("../../config.php");
 
 //mb_internal_encoding("UTF-8");
@@ -119,7 +116,6 @@ if (isset($page_title)) {
 	    }
 	}
 }
-$mtime = explode(" ",microtime());
-$mtime = $mtime[1] + $mtime[0];
-printf ("Page generated in %f seconds!", ($mtime - $tstart));
+
+include(LIB_DIR."footer.php");
 ?>

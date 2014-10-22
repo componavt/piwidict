@@ -1,8 +1,5 @@
 <?php
-$mtime = microtime();        // Read the current time
-$mtime = explode(" ",$mtime);    // Separate the seconds and milliseconds
-$tstart = $mtime[1] + $mtime[0];  // Write start time from amount of the seconds and milliseconds
-
+$count_exec_time = 1;
 include("../../config.php");
 
 //mb_internal_encoding("UTF-8");
@@ -67,8 +64,6 @@ while($row = $result_lang_pos -> fetch_object()){
     } // eo meaning
 }
 print "</table><br />\nTotal semantic relations (with these parameters): $counter<BR>";
-$mtime = explode(" ",microtime());
-$mtime = $mtime[1] + $mtime[0];
-$totaltime = ($mtime - $tstart);
-printf ("Page generated in %f seconds!", $totaltime);
+
+include(LIB_DIR."footer.php");
 ?>

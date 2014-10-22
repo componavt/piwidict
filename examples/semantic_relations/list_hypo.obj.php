@@ -1,7 +1,5 @@
 <?php
-$mtime = explode(" ",microtime()); 
-$tstart = $mtime[1] + $mtime[0];  // Write start time of execution
-
+$count_exec_time = 1;
 include("../../config.php");
 include(LIB_DIR."header.php");
 
@@ -64,7 +62,6 @@ if (isset($view_list) && $view_list) {
     }
     print "</table><br />\nTotal semantic relations (with these parameters): $counter<BR>";
 }
-$mtime = explode(" ",microtime());
-$mtime = $mtime[1] + $mtime[0];
-printf ("Page generated in %f seconds!", ($mtime - $tstart));
+
+include(LIB_DIR."footer.php");
 ?>

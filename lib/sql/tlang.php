@@ -118,12 +118,12 @@ class TLang {
                 $row->n_translations);
     }
 
-    /* Gets language name by ID. 
+    /** Gets language name by ID. 
      * The language of the result (e.g. Russian) depends on the '$result_language_code' e.g. ru en. 
-     * Returns NULL if it is unknown code.
+     * @return string or NULL if it is unknown code.
      */
     static public function getNameByID($_id) {
-    global $LANG_ALL;
+    global $LINK_DB;
     
     	$query = "SELECT name FROM lang where id=".(int)$_id;
 	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
@@ -136,8 +136,8 @@ class TLang {
 	return $row -> name;
     }
 
-    /* Gets ID from the table lang by the language code, e.g. ru en. 
-     * @return NULL if it is unknown code.
+    /** Gets ID from the table lang by the language code, e.g. ru en. 
+     * @return int or NULL if it is unknown code.
      */
     static public function getIDByLangCode($_code) {
     global $LINK_DB;
@@ -151,6 +151,23 @@ class TLang {
         $row = $result -> fetch_object();
 
 	return $row -> id;
+    }
+
+    /** Gets language code by ID. 
+     * @return string or NULL if it is unknown code.
+     */
+    static public function getCodeByID($_id) {
+    global $LINK_DB;
+    
+    	$query = "SELECT code FROM lang where id=".(int)$_id;
+	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	if ($LINK_DB -> query_count($result) == 0)
+	    return NULL;
+
+        $row = $result -> fetch_object();
+
+	return $row -> code;
     }
 
     /* Check if language with this ID exists */
