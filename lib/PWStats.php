@@ -16,12 +16,15 @@ class PWStats {
 
     /** Counts number of Wiktionary phrases in given language defined by $lang_code.  
       * @return int */
-    static public function countPhrases($lang_code) {
+    static public function countLangPOS($lang_code, $pos_name) {
     global $LINK_DB;
     	$lang_id = TLang::getIDByLangCode($lang_code);
 	if (!$lang_id) return 0;
 
-    	$query = "SELECT page_id FROM lang_pos, page WHERE lang_pos.page_id=page.id and trim(page_title) like '% %' and lang_id=". (int)$lang_id. " group by page_id";
+	$pos_id = TPOS::getIDByName($pos_name);
+	if (!$pos_id) return 0;
+
+    	$query = "SELECT DISTINCT page_id FROM lang_pos WHERE pos_id=". (int)$pos_id. " and lang_id=". (int)$lang_id;
         $result_page = $LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
     	return $LINK_DB -> query_count($result_page);
@@ -36,7 +39,6 @@ class PWStats {
 
     	$query = "SELECT id FROM lang_pos WHERE lang_id=". (int)$lang_id;
     	$result_lang_pos = $LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-//return $LINK_DB -> query_count($result_lang_pos);
     	$counter = 0;
 
         while ($row_lang_pos = $result_lang_pos-> fetch_object()) {
@@ -48,31 +50,10 @@ class PWStats {
 	        $counter++;
     	}
 	return $counter;
-/*
-    	$query = "SELECT page_id FROM lang_pos WHERE lang_id=". (int)$lang_id. " group by page_id";
-        $result_page = $LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-    	$counter = 0;
-    	while ($row = $result_page-> fetch_object()){
-            $query = "SELECT id FROM lang_pos WHERE lang_id=". (int)$lang_id. " and page_id=".(int)$row->page_id;
-    	    $result_lang_pos = $LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-//$counter += $LINK_DB -> query_count($result_lang_pos);
-
-            while ($row_lang_pos = $result_lang_pos-> fetch_object()){
-
-            	$query = "SELECT wiki_text.id FROM meaning, wiki_text WHERE meaning.lang_pos_id=".(int)$row_lang_pos->id.
-			" AND meaning.wiki_text_id=wiki_text.id AND wiki_text.text is not null";
-    	    	$result = $LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-	    	$num = $LINK_DB -> query_count($result);
-    	    	if ($num > 0)
-		    $counter++;
-            }
-    	}
-	return $counter;
-*/
     }
 
-    /* Counts number of semantic relations filtered by language code and type of semantic relation.  */
+    /** Counts number of semantic relations filtered by language code and type of semantic relation.  
+      * @return int */
     static public function countRelations($lang_code, $relation_type_name) {
     global $LINK_DB;
     	$lang_id = TLang::getIDByLangCode($lang_code);
@@ -85,7 +66,5 @@ class PWStats {
 	return $LINK_DB -> query_count($result);
 
     }
-
-    
 }
 ?>

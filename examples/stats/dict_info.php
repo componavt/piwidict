@@ -17,8 +17,10 @@ if (isset($view_list) && $view_list && $lang_id) {
     $lang_name = TLang::getNameByID($lang_id);
     $lang_code = TLang::getCodeByID($lang_id);
     $relation_type_name = 'synonyms';
+    $pos_name = 'phrase';
 
-    print "<p>Total number of $lang_name Wiktionary entries : <b>". PWStats::countEntries($lang_code). "</b>, and <b>". PWStats::countPhrases($lang_code). "</b> of them are phrases</p>".
+    print "<p>Total number of $lang_name entries : <b>". PWStats::countEntries($lang_code). "</b>, and <b>". PWStats::countLangPOS($lang_code,$pos_name). "</b> of them are phrases</p>".
+//"<p><b>". PWStats::countLangPOS($lang_code,'noun'). "</b> of them are nouns</p>";
           "<p>Total number of $lang_name words with definitions: <b>". PWStats::countLangPOSWithDefinitions($lang_code). "</b></p>".
           "<p>Total number of $relation_type_name pairs: <b>". PWStats::countRelations($lang_code, $relation_type_name). "</b></p>";
 }

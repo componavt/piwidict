@@ -11,7 +11,7 @@ include(LIB_DIR."header.php");
 
 <h2>Semantic relations</h2>
 <ul>
-<li><a href="semantic_relations/list_hypo.sql.php">Generation of list of relations</a><br /></li>
+<li><a href="semantic_relations/list_hypo.sql.php">Generation of list of relations</a></li>
 <li><a href="semantic_relations/view_page.php">Word searching</a></li>
 </ul>
 
@@ -19,7 +19,7 @@ include(LIB_DIR."header.php");
 
 <h2>Complex or misc. examples</h2>
 <ul>
-<li><a href="complex/reverse_dict.php">Reverse dictionary</a><br /></li>
+<li><a href="complex/reverse_dict.php">Reverse dictionary</a></li>
 <li><a href="complex/list_def.php">List of definitions</a><br />
 TODO:</li>
     <ol>
@@ -30,4 +30,9 @@ TODO:</li>
 	    <li>clastering similar definitions (WSD)
 	</ol>
     </ol>	
+</ul>
+
+<h2>Statistics</h2>
+<ul>
+<li><a href="stats/dict_info.php">Dictionary info</a><br />
 </ul>
