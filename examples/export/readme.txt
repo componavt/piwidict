@@ -1,0 +1,1 @@
+Export from machine-readable Wiktionary to different formats.
