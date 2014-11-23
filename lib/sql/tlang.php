@@ -68,7 +68,7 @@ class TLang {
     	$tlang_arr = array();
 
     	$query = "SELECT id, code, name, n_foreign_POS, n_translations FROM lang";
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
@@ -103,7 +103,7 @@ class TLang {
     global $LINK_DB;
 
     	$query = "SELECT id, code, name, n_foreign_POS, n_translations FROM lang where id=".(int)$_id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
@@ -126,7 +126,7 @@ class TLang {
     global $LINK_DB;
     
     	$query = "SELECT name FROM lang where id=".(int)$_id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
@@ -143,7 +143,7 @@ class TLang {
     global $LINK_DB;
 
     	$query = "SELECT id FROM lang where code like '$_code'";
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
@@ -160,7 +160,7 @@ class TLang {
     global $LINK_DB;
     
     	$query = "SELECT code FROM lang where id=".(int)$_id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
@@ -177,7 +177,7 @@ class TLang {
 	if ($id == '' || (int)$id != $id) return false;
 
     	$query = "SELECT id FROM lang where id=".(int)$id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return false;

@@ -38,7 +38,7 @@ class TLabelMeaning {
     global $LINK_DB;
         
      	$query = "SELECT * FROM label_meaning WHERE `$property_name`='$property_value'";
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;

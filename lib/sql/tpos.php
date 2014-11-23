@@ -41,7 +41,7 @@ class TPOS {
 
     	// part_of_speech (id, name)
     	$query = "SELECT id, name FROM part_of_speech order by id";
-        $result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
     	while($row = $result -> fetch_object()){
           $pos_array[$row->id] = new TPOS(
@@ -59,7 +59,7 @@ class TPOS {
     global $LINK_DB;
 
     	$query = "SELECT id, name FROM part_of_speech where id=".(int)$_id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
@@ -78,7 +78,7 @@ class TPOS {
     global $LINK_DB;
 
     	$query = "SELECT id FROM part_of_speech where name like '$_name' order by id";
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
@@ -95,7 +95,7 @@ class TPOS {
 	if ($id == '' || (int)$id != $id) return false;
 
     	$query = "SELECT id FROM part_of_speech where id=".(int)$id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return false;

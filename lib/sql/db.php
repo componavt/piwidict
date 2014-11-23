@@ -25,14 +25,14 @@ class DB extends mysqli {
 
 	/* Query to DB */
 
-	public function query($q,$war_string) {
-	    if (!$war_string) 
-		$war_string = "SQL error: <b>$q</b>";
+	public function query_e($q,$err_string='') {
+	    if (!$err_string) 
+		$err_string = "SQL error: <b>$q</b>";
 
 	    $this->result = @parent::query($q);
 
 	    if (!$this->result)	{
-		die("<div style=\"font-size:10px; color:#666666;\">$war_string: ".$this->error." ($q)</div>");
+		die("<div style=\"font-size:10px; color:#666666;\">$err_string: ".$this->error." ($q)</div>");
 	    }
 	    return $this->result;
 	}

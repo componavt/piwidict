@@ -33,14 +33,14 @@ function create_reverse_table() {
 global $LINK_DB;
 
 	$query = "DROP TABLE IF EXISTS `pw_reverse_dict`";
-	$LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         $query = "CREATE TABLE `pw_reverse_dict`(`page_id` int(10) unsigned NOT NULL,`reverse_page_title` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,".
                      "PRIMARY KEY (`page_id`),KEY `idx_reverse_page_title` (`reverse_page_title`(7)))";
-	$LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	$query = "SELECT count(*) as count FROM page";
-        $res_page = $LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 	$row = $res_page->fetch_object();
 	$num_pages = $row->count;
 
@@ -49,12 +49,12 @@ global $LINK_DB;
 	for ($i = 0; $i < $num_pages; $i+=27000) {
 /*
 	$query = "SELECT max(page_id) as max FROM pw_reverse_dict";
-        $res_page = $LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 	$row = $res_page->fetch_object();
 	$max = $row->max;
 */
 	    $query = "SELECT id, page_title FROM page order by id LIMIT $i,27000";
-            $res_page = $LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+            $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	    $query = "INSERT INTO `pw_reverse_dict` VALUES ";
 	    $tmp = array();
@@ -62,7 +62,7 @@ global $LINK_DB;
 	    	$tmp[] = "(".$row->id.", '".str_replace("'","\'",PWString::reverseString($row->page_title))."')";
 	    }
 //print $query;
-	    $LINK_DB -> query($query.join(', ',$tmp),"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
+	    $LINK_DB -> query_e($query.join(', ',$tmp),"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
 	} 
 	print "<p>The table <b>pw_reverse_dict</b> is created</p>";
 

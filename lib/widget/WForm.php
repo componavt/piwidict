@@ -29,7 +29,7 @@ class WForm {
     	}
     
     	$query = "SELECT id, `$table_field` as name FROM `$table_name` order by `$order_by`";
-        $result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
     	while($row = $result -> fetch_object()) {
           $s .= "<OPTION value=\"". $row->id ."\"";

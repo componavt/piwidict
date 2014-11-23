@@ -20,7 +20,8 @@ class PWString {
     /** Escape quotes
       * @return string */
     static public function escapeQuotes($haystack) {
-   	return implode('\"', mb_split('"', $haystack));
+   	$haystack = implode('\"', mb_split('"', $haystack));
+   	return implode("\'", mb_split("'", $haystack));
     }
 }
 ?>

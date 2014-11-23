@@ -31,7 +31,7 @@ if (isset($view_list) && $view_list) {
     $query_lang_pos .= " order by page_title, id";
 // LIMIT $limit
 //print $query_lang_pos;
-    $result_lang_pos = $LINK_DB -> query($query_lang_pos,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    $result_lang_pos = $LINK_DB -> query_e($query_lang_pos,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 //print $LINK_DB -> query_count($result_lang_pos);
     print "<table border=1>\n";
     $counter = 0;

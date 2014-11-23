@@ -35,7 +35,7 @@ class TRelationType {
 
     	// relation_type (id, name)
     	$query = "SELECT id, name FROM relation_type order by id";
-        $result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
     	while($row = $result -> fetch_object()){
           $rr[$row->id] = new TRelationType(
@@ -52,7 +52,7 @@ class TRelationType {
     global $LINK_DB;
 
     	$query = "SELECT name FROM relation_type where id=".(int)$_id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
@@ -70,7 +70,7 @@ class TRelationType {
     global $LINK_DB;
 
     	$query = "SELECT id FROM relation_type where name like '$_name'";
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
@@ -87,7 +87,7 @@ class TRelationType {
     global $LINK_DB;
         
      	$query = "SELECT * FROM relation_type WHERE `$property_name`='$property_value' order by id";
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;

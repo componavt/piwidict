@@ -54,7 +54,7 @@ class TWikiText {
     global $LINK_DB;
 
     	$query = "SELECT * FROM wiki_text where id=".(int)$_id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
@@ -70,18 +70,6 @@ class TWikiText {
      * @return string
      */
     static public function selectText($string,$substring,$start='<b>',$finish='</b>') {
-/*
-	$out = '';
-	$pos = mb_strpos($string,$substring);
-
-	while ($pos !== false) {
-	  $out .= mb_substr($string,0,$pos). $start. $substring. $finish;
-	  $string = mb_substr($string, $pos+mb_strlen($substring));
-	  $pos = mb_strpos($string,$substring);
-	}
-
-	return $out.$string;
-*/
 	$substring = mb_ereg_replace("%",".*",$substring);
 	return mb_ereg_replace($substring, $start."\\0".$finish,$string, 'mi');
 

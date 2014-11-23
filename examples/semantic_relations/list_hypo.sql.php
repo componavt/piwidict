@@ -36,11 +36,11 @@ if (isset($view_list) && $view_list) {
         $query_lang_pos .= " and page_title like '%$page_title%'";
     $query_lang_pos .= " order by page_title, id";
 //print $query_lang_pos;
-    $result_lang_pos = $LINK_DB -> query($query_lang_pos,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    $result_lang_pos = $LINK_DB -> query_e($query_lang_pos,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
     $numAll = $LINK_DB -> query_count($result_lang_pos);
     print "$numAll semantic relations (with these parameters) are found"; 
 
-    $result_lang_pos = $LINK_DB -> query($query_lang_pos." LIMIT $start_rec,$limit","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    $result_lang_pos = $LINK_DB -> query_e($query_lang_pos." LIMIT $start_rec,$limit","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
     print "<table border=1>\n";
     $counter = $start_rec;
     while ($row = $result_lang_pos-> fetch_object()){

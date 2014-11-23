@@ -25,7 +25,7 @@ if (isset($view_list) && $view_list) {
     $query = "SELECT meaning.id as meaning_id, page_title, text FROM page, lang_pos, meaning, wiki_text WHERE lang_pos.page_id=page.id and meaning.lang_pos_id=lang_pos.id and meaning.wiki_text_id=wiki_text.id ".
 		" and text like '%$substring%' order by text";
 //  LIMIT $limit
-    $result = $LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    $result = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
     print "<p>".$LINK_DB->query_count($result)." definitions are found</p><table border=1>\n";
     $counter = 0;
@@ -39,7 +39,7 @@ if (isset($view_list) && $view_list) {
 	    $label_name_arr[] = "<span title=\"".$labelMeaningObj->getLabel()->getName()."\">".$labelMeaningObj->getLabel()->getShortName()."</span>";
 */
 	$query = "SELECT id, short_name, name FROM label, label_meaning WHERE label_meaning.label_id=label.id and label_meaning.meaning_id=".(int)$row->meaning_id;
-	$res_label = $LINK_DB -> query($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");	
+	$res_label = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");	
 
     	while($row_label = $res_label-> fetch_object()) 
 	    $label_name_arr[] = "<span title=\"".$row_label->name."\">".$row_label->short_name."</span>";

@@ -121,7 +121,7 @@ class TMeaning {
     global $LINK_DB;
         
      	$query = "SELECT * FROM meaning WHERE `$property_name`='$property_value' order by id";
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($LINK_DB -> query_count($result) == 0)
 	    return NULL;
@@ -155,24 +155,6 @@ class TMeaning {
     static public function getByID ($_id) {
 	$meaning_arr = TMeaning::getMeaning("id",$_id);
 	return $meaning_arr[0];
-/*
-    global $LINK_DB;
-        
-    	$query = "SELECT lang_pos_id,meaning_n,wiki_text_id FROM meaning WHERE id=".(int)$_id;
-	$result = $LINK_DB -> query($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-	if ($LINK_DB -> query_count($result) == 0)
-	    return NULL;
-
-        $row = $result -> fetch_object();
-
-        return new TMeaning (
-		$row->id, 
-		TLangPOS::getByID($row->lang_pos_id),
-		$row->meaning_n,
-		TWikiText::getByID($row->wiki_text_id) 
-	);
-*/
     }
 
     /** Gets TMeaning object by lang_pos
