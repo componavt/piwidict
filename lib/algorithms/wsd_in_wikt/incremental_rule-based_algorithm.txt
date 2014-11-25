@@ -1,0 +1,6 @@
+Rules how to map synonims to meanings:
+1. Context labels
+2. Semantic relations
+3. Wikified words from definitions
+4. Translations
+5. Lematized words of definition
