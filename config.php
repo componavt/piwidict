@@ -31,6 +31,8 @@ include_once(LIB_DIR."db/mysql_util.php");
 include_once(LIB_DIR."PWString.php");
 include_once(LIB_DIR."PWStats.php");
 
+include_once(LIB_DIR."algorithms/wsd_in_wikt/PWSemanticDistance.php");
+
 include_once(LIB_DIR."sql/DB.php");
 include_once(LIB_DIR."sql/TLabel.php");
 include_once(LIB_DIR."sql/TLabelCategory.php");
@@ -66,6 +68,7 @@ $config['admin_password']   = '';
 $LINK_DB = new DB($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
 
 ## DB connection 
+## mysql>GRANT SELECT ON %.* TO pw_user@'%' identified by '';
 ## mysql>GRANT SELECT, INSERT, UPDATE, CREATE, DROP, INDEX ON %.* TO pw_admin@'%' identified by '';
 ## mysql>FLUSH PRIVILEGES;
 ##

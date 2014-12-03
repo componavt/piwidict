@@ -119,5 +119,34 @@ class TRelation {
 	return TRelation::getRelation("meaning_id",$meaning_id,$meaning_obj);
     }
 
+    /** Gets list of semantically related words.
+     * If page title is not exist, then return empty array.
+     * @return array, where keys are related words, values are arrays of their relation type names
+     */
+
+    static public function getPageRelations($page_title) {
+	$relations = array();
+
+        // return array, if exact search then returns only one word
+	list($page_obj) = TPage::getByTitle($page_title); 
+
+	$lang_pos_arr = $page_obj -> getLangPOS();
+	if (is_array($lang_pos_arr)) foreach ($lang_pos_arr as $lang_pos_obj) {
+	    $meaning_arr = $lang_pos_obj -> getMeaning();
+
+	    if (is_array($meaning_arr)) foreach ($meaning_arr as $meaning_obj) {
+		$relation_arr = $meaning_obj -> getRelation();
+
+		if (is_array($relation_arr)) foreach ($relation_arr as $relation_obj) {
+		    $relations[$relation_obj->getWikiText()->getText()][] 
+                        = $relation_obj->getRelationType()->getName();
+                }
+            }	    
+	}
+	ksort($relations);
+
+	return $relations;
+    }
+
 }
 ?>
