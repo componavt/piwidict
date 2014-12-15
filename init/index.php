@@ -44,18 +44,20 @@ global $LINK_DB;
 	$query = "DROP TABLE IF EXISTS `pw_reverse_dict`";
 	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-        $query = "CREATE TABLE `pw_reverse_dict`(`page_id` int(10) unsigned NOT NULL,`reverse_page_title` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,".
-                     "PRIMARY KEY (`page_id`),KEY `idx_reverse_page_title` (`reverse_page_title`(7)))";
+    $query = "CREATE TABLE `pw_reverse_dict`(".
+             "`page_id` int(10) unsigned NOT NULL,".
+             "`reverse_page_title` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,".
+             "PRIMARY KEY (`page_id`),KEY `idx_reverse_page_title` (`reverse_page_title`(7)))";
 	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	$query = "SELECT count(*) as count FROM page";
-        $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 	$row = $res_page->fetch_object();
 	$num_pages = $row->count;
 
 	for ($i = 0; $i < $num_pages; $i+=27000) {
 	    $query = "SELECT id, page_title FROM page order by id LIMIT $i,27000";
-            $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	    $query = "INSERT INTO `pw_reverse_dict` VALUES ";
 	    $tmp = array();
@@ -80,15 +82,15 @@ global $LINK_DB;
 	$query = "DROP TABLE IF EXISTS `pw_vocab_ru`";
 	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-        $query = "CREATE TABLE `pw_vocab_ru`(".
-		    "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,".
-		    "`word` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,".
-                    "PRIMARY KEY (`id`), UNIQUE(`word`))";
+    $query = "CREATE TABLE `pw_vocab_ru`(".
+		     "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,".
+		     "`word` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,".
+             "PRIMARY KEY (`id`), UNIQUE(`word`))";
 	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	// writing words from page table
 	$query = "SELECT DISTINCT page.id, trim(page_title) as page_title FROM page, lang_pos WHERE lang_pos.page_id=page.id and lang_id=$lang_ru ORDER BY page_id";
-        $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	$tmp = array();
 	while ($row = $res_page->fetch_object()){
@@ -107,30 +109,30 @@ global $LINK_DB;
 	$query = "DROP TABLE IF EXISTS `pw_related_words_ru`";
 	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-        $query = "CREATE TABLE `pw_related_words_ru`(".
+    $query = "CREATE TABLE `pw_related_words_ru`(".
 		    "`vocab_id1` int(10) unsigned NOT NULL,".
 		    "`vocab_id2` int(10) unsigned NOT NULL,".
-		    "`weight` decimal(3,1) unsigned NOT NULL,".
-                    "PRIMARY KEY (`page_id`,`word_id`))";
+		    "`weight` decimal(8,6) unsigned NOT NULL,".
+                    "PRIMARY KEY (`vocab_id1`,`vocab_id2`))";
 	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	// writing related words 
 	$tmp = array();
 	$query = "SELECT DISTINCT page_id FROM lang_pos WHERE lang_id=$lang_ru ORDER BY page_id";
-        $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	while ($row_page = $res_page->fetch_object()){
 	    $related_words = PWSemanticDistance::getRelatedWords($row_page->page_id);
 
 	    foreach ($related_words as $word => $coef) {
-		$word_s = str_replace("'","\'",$word);
-		$res_page_exists = $LINK_DB -> query_e("SELECT id FROM pw_vocab_ru where word LIKE '$word_s'","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-		if ($LINK_DB -> query_count($res_page_exists) == 0) {
+            $word_s = str_replace("'","\'",$word);
+		    $res_page_exists = $LINK_DB -> query_e("SELECT id FROM pw_vocab_ru where word LIKE '$word_s'","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+		    if ($LINK_DB -> query_count($res_page_exists) == 0) {
 	    	    $LINK_DB -> query_e("INSERT INTO `pw_vocab_ru` (`word`) VALUES ('$word_s')", "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
-		    $word_id = $LINK_DB -> insert_id;
-		} else {
-		    $row_page_exists = $res_page_exists->fetch_object();
-		    $word_id = $row_page_exists->id;
+		        $word_id = $LINK_DB -> insert_id;
+		    } else {
+		        $row_page_exists = $res_page_exists->fetch_object();
+		        $word_id = $row_page_exists->id;
 	        }
 
 	        if (sizeof($tmp)<27000) {
@@ -145,6 +147,8 @@ global $LINK_DB;
 	if (sizeof($tmp)>1 && sizeof($tmp)<27000) {
 	    $LINK_DB -> query_e("INSERT INTO `pw_related_words_ru` VALUES ".join(', ',$tmp), "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
 	}
+
+//    PWRelatedWords::addReverseRelations();
 
 	print "<p>The table <b>pw_vocab_ru</b> and <b>pw_related_words_ru</b> are created</p>";
 

@@ -5,11 +5,21 @@ class TRelationType {
 /** Gets data from the database table 'relation_type'.
  * The table 'relation_type' contains a list of semantic relations: name and ID.
  */
-    /* Unique POS identifier. */
+    /** @var int Unique POS identifier. */
     private $id;
 
-    /* Name of semantic relations, e.g. synonymy. */
+    /** @var string Name of semantic relations, e.g. synonymy. */
     private $name;
+
+    /** @var array symmetry relations. */
+    private $sym_rel = array(
+                        'antonyms'=>'antonyms',
+                        'holonyms'=>'meronyms',
+                        'meronyms'=>'holonyms',
+                        'hypernyms'=>'hyponyms',
+                        'hyponyms'=>'hypernyms',
+                        'synonyms'=>'synonyms'
+                        );
 
     public function __construct($id, $name)
     {

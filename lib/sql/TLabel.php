@@ -2,8 +2,8 @@
 
 class TLabel {
     
-/** Gets data from the database table 'label'.
- */
+    /** Gets data from the database table 'label'.*/
+
     /** @var int Unique identifier in the table 'label' */
     private $id;
 

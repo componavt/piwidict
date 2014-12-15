@@ -33,6 +33,8 @@ include_once(LIB_DIR."PWStats.php");
 
 include_once(LIB_DIR."algorithms/wsd_in_wikt/PWSemanticDistance.php");
 
+include_once(LIB_DIR."export/PWGEXF.php");
+
 include_once(LIB_DIR."sql/DB.php");
 include_once(LIB_DIR."sql/TLabel.php");
 include_once(LIB_DIR."sql/TLabelCategory.php");
@@ -48,6 +50,10 @@ include_once(LIB_DIR."sql/TTranslation.php");
 include_once(LIB_DIR."sql/TTranslationEntry.php");
 include_once(LIB_DIR."sql/TWikiText.php");
 
+include_once(LIB_DIR."sql/semantic_relations/PWVocab.php");
+include_once(LIB_DIR."sql/semantic_relations/PWRelatedWords.php");
+include_once(LIB_DIR."sql/semantic_relations/PWShortPath.php");
+
 include_once(LIB_DIR."widget/WForm.php");
 
 foreach ($_REQUEST as $var=>$value) {
@@ -56,6 +62,11 @@ TODO!!! check vars
 */
    $$var = $value;
 }
+
+
+/*******************************
+ * Init constants and variables
+ *******************************/
 
 define ('NAME_DB','ruwikt20140904_parsed');
 $config['hostname']   = 'localhost';
@@ -66,6 +77,10 @@ $config['admin_login']      = 'pw_admin';
 $config['admin_password']   = '';
     
 $LINK_DB = new DB($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
+
+PWVocab::setLangCode("ru");
+PWRelatedWords::setLangCode("ru");
+PWShortPath::setLangCode("ru");
 
 ## DB connection 
 ## mysql>GRANT SELECT ON %.* TO pw_user@'%' identified by '';

@@ -42,8 +42,8 @@ class DB extends mysqli {
 	    $this->row_count = $result->num_rows;
 	    return $this->row_count;
 	}
-
-	/* Transform an entire query in a two-dimensional array */
+/*
+	// Transform an entire query in a two-dimensional array 
 	public function fetch_all($result) {
 	    $rows = array();	
 	    while ($fetch = $result->fetch_assoc()) {
@@ -52,7 +52,7 @@ class DB extends mysqli {
 	    return $rows;
 	}
 
-	/* Delete a record from $table by $id_field = $id */
+	// Delete a record from $table by $id_field = $id 
 	public function delete_record($table, $id_field, $id) {
 		$q="DELETE FROM $table WHERE $id_field='$id'";
 		$delete_record=$this->query($q);
@@ -66,7 +66,7 @@ class DB extends mysqli {
 		return $delete_record;
 	}
 
-	/* Insert set of data $set in table $table */
+	// Insert set of data $set in table $table 
 	public function insert_record($table, $set) {
 		$q="INSERT INTO $table SET $set";
 		$this->query($q);
@@ -82,5 +82,6 @@ class DB extends mysqli {
 		$last = $this->fetch_assoc($this->query($q));
 		return $last['last_id'];
 	}
+*/
 }
 ?>

@@ -1,8 +1,6 @@
 <?php
 include("../../config.php");
 
-//mb_internal_encoding("UTF-8");
-
 include(LIB_DIR."header.php");
 ?>
 <script type="text/javascript">

@@ -17,9 +17,9 @@ while ($row = $result -> fetch_object()) {
 
     if ($LINK_DB -> query_count($result_meaning)) {
         while ($is_empty && $row_meaning = $result_meaning -> fetch_object()) { 
-	    if ($row_meaning->wiki_text_id != NULL)
-		$is_empty = 0;
-	}
+	        if ($row_meaning->wiki_text_id != NULL)
+		    $is_empty = 0;
+	    }
     }
     if ($is_empty) 
       fwrite($fh,"#[[".$row->page_title."]]\n");
