@@ -4,7 +4,7 @@ class PWGEXF {
     
     static public function getRelatedWords() {
     global $LINK_DB;
-        $node_table = PWVocab::getTableName();
+        $node_table = PWLemma::getTableName();
         $edge_table = PWRelatedWords::getTableName();
 
         // Construct DOM elements
@@ -31,11 +31,11 @@ class PWGEXF {
         $edges = $graph->appendChild($xml->createElement('edges'));
 
         // Add Nodes!
-        $res_node = $LINK_DB -> query_e("SELECT * FROM $node_table WHERE id in (select vocab_id1 from $edge_table) or id in (select vocab_id2 from $edge_table) order by id","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_node = $LINK_DB -> query_e("SELECT * FROM $node_table WHERE id in (select lemma_id1 from $edge_table) or id in (select lemma_id2 from $edge_table) order by id","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 	    while ($row_node = $res_node->fetch_object()) {
             $node = $xml->createElement('node');
             $node->setAttribute('id', $row_node->id);
-            $node->setAttribute('label', $row_node->word);
+            $node->setAttribute('label', $row_node->lemma);
 /*
         // Set color for node
         $color = $xml->createElement('viz:color');
@@ -65,18 +65,14 @@ class PWGEXF {
         }
 
         // Add Edges
-        $res_relw = $LINK_DB -> query_e("SELECT * FROM ".PWRelatedWords::getTableName()." order by vocab_id1","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_relw = $LINK_DB -> query_e("SELECT * FROM ".PWRelatedWords::getTableName()." order by lemma_id1","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 	    while ($row_relw = $res_relw->fetch_object()) {
             $edge = $xml->createElement('edge');
-            $edge->setAttribute('source', $row_relw->vocab_id1);
-            $edge->setAttribute('target', $row_relw->vocab_id2);     
+            $edge->setAttribute('source', $row_relw->lemma_id1);
+            $edge->setAttribute('target', $row_relw->lemma_id2);     
             $edge->setAttribute('weight', $row_relw->weight);     
             $edges->appendChild($edge);
         }
-
-        // Serve file as XML (prompt for download, remove if unnecessary)
-        header('Content-type: "text/xml"; charset="utf8"');
-        header('Content-disposition: attachment; filename="'.NAME_DB.'.gexf"');
 
         return $xml->saveXML();
     }

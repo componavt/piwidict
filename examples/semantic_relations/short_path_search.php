@@ -18,8 +18,8 @@ include(LIB_DIR."header.php");
 //        list($word1,$word2) = preg_split("/\s+/",$word_arr[0]);
 //print "<P>$word1,$word2";
 //break;
-        $start = PWVocab::getIDByWord($word1); 
-        $finish = PWVocab::getIDByWord($word2);
+        $start = PWLemma::getIDByLemma($word1); 
+        $finish = PWLemma::getIDByLemma($word2);
 
         $word1_url = TPage::getURL($word1);
         $word2_url = TPage::getURL($word2);
@@ -32,9 +32,9 @@ include(LIB_DIR."header.php");
             else {
                 print "<p>".(int)(sizeof($path)-1)." step(s), the length of distance is $dist_len</p>";
 
-                print TPage::getURL(PWVocab::getWordByID($path[0]), PWVocab::getWordByID($path[0]));
+                print TPage::getURL(PWLemma::getLemmaByID($path[0]), PWLemma::getLemmaByID($path[0]));
                 for ($i=1; $i<sizeof($path); $i++)
-                    print " -> ".TPage::getURL(PWVocab::getWordByID($path[$i]), PWVocab::getWordByID($path[$i]));
+                    print " -> ".TPage::getURL(PWLemma::getLemmaByID($path[$i]), PWLemma::getLemmaByID($path[$i]));
             }
         } else{
             $dist_len = 0;

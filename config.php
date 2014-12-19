@@ -50,7 +50,7 @@ include_once(LIB_DIR."sql/TTranslation.php");
 include_once(LIB_DIR."sql/TTranslationEntry.php");
 include_once(LIB_DIR."sql/TWikiText.php");
 
-include_once(LIB_DIR."sql/semantic_relations/PWVocab.php");
+include_once(LIB_DIR."sql/semantic_relations/PWLemma.php");
 include_once(LIB_DIR."sql/semantic_relations/PWRelatedWords.php");
 include_once(LIB_DIR."sql/semantic_relations/PWShortPath.php");
 
@@ -78,7 +78,7 @@ $config['admin_password']   = '';
     
 $LINK_DB = new DB($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
 
-PWVocab::setLangCode("ru");
+PWLemma::setLangCode("ru");
 PWRelatedWords::setLangCode("ru");
 PWShortPath::setLangCode("ru");
 

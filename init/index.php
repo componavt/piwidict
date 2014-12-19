@@ -73,19 +73,20 @@ global $LINK_DB;
 
 /*
   Creating of the table with russian vocabulary from page_title and related words.
-  pw_vocab_ru.id=page.id if word is exist in wiktionary or next id 
+  pw_lemma_ru.id=page.id if word is exist in wiktionary or next id 
 */
 function create_vocabulary_related_tables() {
 global $LINK_DB;
 	$lang_ru = (int)TLang::getIDByLangCode('ru');
 
-	$query = "DROP TABLE IF EXISTS `pw_vocab_ru`";
+	$query = "DROP TABLE IF EXISTS `pw_lemma_ru`";
 	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-    $query = "CREATE TABLE `pw_vocab_ru`(".
+    $query = "CREATE TABLE `pw_lemma_ru`(".
 		     "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,".
-		     "`word` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,".
-             "PRIMARY KEY (`id`), UNIQUE(`word`))";
+		     "`lemma` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,".
+             "`origin` tinyint(1) default 0,".
+             "PRIMARY KEY (`id`), UNIQUE(`lemma`), KEY `origin` (`origin`))";
 	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	// writing words from page table
@@ -97,23 +98,23 @@ global $LINK_DB;
 	    if (sizeof($tmp)<27000) {
 	    	$tmp[] = "(".$row->id.", '".str_replace("'","\'",$row->page_title)."')";
 	    } else {
-	    	$LINK_DB -> query_e("INSERT INTO `pw_vocab_ru` VALUES ".join(', ',$tmp), "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
+	    	$LINK_DB -> query_e("INSERT INTO `pw_lemma_ru` VALUES ".join(', ',$tmp), "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
 	        $tmp = array();
 	    }
 	} 
 
 	if (sizeof($tmp)>1 && sizeof($tmp)<27000) {
-	    $LINK_DB -> query_e("INSERT INTO `pw_vocab_ru` VALUES ".join(', ',$tmp), "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
+	    $LINK_DB -> query_e("INSERT INTO `pw_lemma_ru` VALUES ".join(', ',$tmp), "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
 	}
 
 	$query = "DROP TABLE IF EXISTS `pw_related_words_ru`";
 	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
     $query = "CREATE TABLE `pw_related_words_ru`(".
-		    "`vocab_id1` int(10) unsigned NOT NULL,".
-		    "`vocab_id2` int(10) unsigned NOT NULL,".
+		    "`lemma_id1` int(10) unsigned NOT NULL,".
+		    "`lemma_id2` int(10) unsigned NOT NULL,".
 		    "`weight` decimal(8,6) unsigned NOT NULL,".
-                    "PRIMARY KEY (`vocab_id1`,`vocab_id2`))";
+                    "PRIMARY KEY (`lemma_id1`,`lemma_id2`))";
 	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	// writing related words 
@@ -126,9 +127,9 @@ global $LINK_DB;
 
 	    foreach ($related_words as $word => $coef) {
             $word_s = str_replace("'","\'",$word);
-		    $res_page_exists = $LINK_DB -> query_e("SELECT id FROM pw_vocab_ru where word LIKE '$word_s'","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+		    $res_page_exists = $LINK_DB -> query_e("SELECT id FROM pw_lemma_ru where lemma LIKE '$word_s'","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 		    if ($LINK_DB -> query_count($res_page_exists) == 0) {
-	    	    $LINK_DB -> query_e("INSERT INTO `pw_vocab_ru` (`word`) VALUES ('$word_s')", "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
+	    	    $LINK_DB -> query_e("INSERT INTO `pw_lemma_ru` (`lemma`,`origin`) VALUES ('$word_s',1)", "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
 		        $word_id = $LINK_DB -> insert_id;
 		    } else {
 		        $row_page_exists = $res_page_exists->fetch_object();
@@ -150,7 +151,7 @@ global $LINK_DB;
 
 //    PWRelatedWords::addReverseRelations();
 
-	print "<p>The table <b>pw_vocab_ru</b> and <b>pw_related_words_ru</b> are created</p>";
+	print "<p>The table <b>pw_lemma_ru</b> and <b>pw_related_words_ru</b> are created</p>";
 
 }
 ?>
