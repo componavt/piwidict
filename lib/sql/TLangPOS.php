@@ -108,6 +108,29 @@ class TLangPOS {
         return $this->meaning;
     }
     
+    /** Gets IDs by page_id and lang_code. 
+     * @return array 
+     */
+    static public function getIDByPageAndLang($page_id,$lang_code) {
+    global $LINK_DB;
+        $lang_id = TLang::getIDByLangCode($lang_code);
+//print "<P>$lang_id</p>";
+        $langPOS_arr = array();
+
+    	$query = "SELECT id FROM lang_pos where page_id=".(int)$page_id." and lang_id=".(int)$lang_id;
+//print $query;
+	    $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	    if ($LINK_DB -> query_count($result) == 0)
+	        return $langPOS_arr;
+    
+        while ($row = $result -> fetch_object()) {
+            $langPOS_arr[] = $row -> id;
+        }
+
+	    return $langPOS_arr;
+    }
+
     /** Gets TLangPOS object by property $property_name with value $property_value.
      * @return TLangPOS or NULL in case of error
      */
@@ -159,17 +182,13 @@ class TLangPOS {
     /** Gets TLangPOS object by page_id.
      * @return TLangPOS or NULL if data is absent. */
     static public function getByPage ($page_id,$page_obj=NULL) {
-/*
-	if ($page_obj == NULL)
-	     $page_obj = TPage::getByID($row->page_id);
-*/
-	return TLangPOS::getLangPOS("page_id",$page_id,$page_obj);
+	   return TLangPOS::getLangPOS("page_id",$page_id,$page_obj);
     }
 
     /** Gets TLangPOS object by lang_id.
      * @return TLangPOS or NULL if data is absent. */
     static public function getByLang ($lang_id,$lang_obj=NULL) {
-	return TLangPOS::getLangPOS("lang_id",$lang_id,$lang_obj);
+	   return TLangPOS::getLangPOS("lang_id",$lang_id,$lang_obj);
     }
 }
 ?>

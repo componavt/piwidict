@@ -86,6 +86,7 @@ global $LINK_DB;
 		     "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,".
 		     "`lemma` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,".
              "`origin` tinyint(1) default 0,".
+             "`frequency` int default 0,".
              "PRIMARY KEY (`id`), UNIQUE(`lemma`), KEY `origin` (`origin`))";
 	$LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
@@ -96,7 +97,7 @@ global $LINK_DB;
 	$tmp = array();
 	while ($row = $res_page->fetch_object()){
 	    if (sizeof($tmp)<27000) {
-	    	$tmp[] = "(".$row->id.", '".str_replace("'","\'",$row->page_title)."')";
+	    	$tmp[] = "(".$row->id.", '".str_replace("'","\'",$row->page_title)."',0,0)";
 	    } else {
 	    	$LINK_DB -> query_e("INSERT INTO `pw_lemma_ru` VALUES ".join(', ',$tmp), "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
 	        $tmp = array();
@@ -129,7 +130,7 @@ global $LINK_DB;
             $word_s = str_replace("'","\'",$word);
 		    $res_page_exists = $LINK_DB -> query_e("SELECT id FROM pw_lemma_ru where lemma LIKE '$word_s'","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 		    if ($LINK_DB -> query_count($res_page_exists) == 0) {
-	    	    $LINK_DB -> query_e("INSERT INTO `pw_lemma_ru` (`lemma`,`origin`) VALUES ('$word_s',1)", "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
+	    	    $LINK_DB -> query_e("INSERT INTO `pw_lemma_ru` (`lemma`,`origin`,`frequency`) VALUES ('$word_s',1,0)", "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
 		        $word_id = $LINK_DB -> insert_id;
 		    } else {
 		        $row_page_exists = $res_page_exists->fetch_object();

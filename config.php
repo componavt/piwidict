@@ -56,6 +56,9 @@ include_once(LIB_DIR."sql/semantic_relations/PWShortPath.php");
 
 include_once(LIB_DIR."widget/WForm.php");
 
+// PhpMorphy
+include_once(SITE_ROOT."phpmorphy/src/common.php");
+
 foreach ($_REQUEST as $var=>$value) {
 /*
 TODO!!! check vars

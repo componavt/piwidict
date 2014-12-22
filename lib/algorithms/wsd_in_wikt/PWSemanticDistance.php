@@ -255,293 +255,34 @@ print "<p>$count iterations";
             return array($path_len, $path);     
         } else return array(NULL,NULL); // any path from $first to $finish are not found
     }
-    
-/*
-    static public function DijkstraAlgorithm($first, $finish) {
-        global $LINK_DB;
 
-        if ($first == $finish) return array(0,array($first));
+    /**----------------------------------------------------------------------------------------------------------
+     * Searching of words included in meanings
+     * Meanings are splitted on a list of lemmas and frequency of occurrence of lemmas is counted
+     * @param int $first a first word in a shortest path
+     * @param int $finish a last word in a shortest path
+     */
+    static public function meaningsToLemmas($word) {
+        $word_obj_arr = PWLemma::getByLemma($word);
+        $words = array();
 
-        $unvisited = array_flip(PWRelatedWords::getAllRelatedWords());  // list of unvisited vertexes generated from list of vertexes having an edge
-        if (!isset($unvisited[$first]))
-            return array(NULL,NULL);  // search vertexes is not connected with any edge
-
-        $edge_table = PWRelatedWords::getTableName(); // table of related words (words and distance between them)
-        $path_table = PWShortPath::getTableName();  // table of shortest paths (first, last, next-to-last vertexes, length of path)
-
-//        $prev_arr =  array();  // list of next-to-last for path from first to last vertexes
-
-        $success = 0; // the condition of finding the shortest path in the given vertex ($finish)
-
-print "<PRE>";
-$count=1;
-print $first;
-return;
-        while (!$success && sizeof($unvisited)) {  // until all vertixes will not be visited
-// && $count<10
-print "<p>".$count++.": ".sizeof($unvisited);
-//.".-----------------------------</p>";
-//print_r($finish_arr);
-//print_r($len_arr);
-            $query = "SELECT lemma_id_n, path_len FROM $path_table WHERE lemma_id_1='$first' and lemma_id_n in (".join(',',$unvisited).") order by path_len LIMIT 1";   // choose path from first to any unvisited vertex with min distance
-            $res_min = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-            if ($LINK_DB -> query_count($res_min) == 0) { // paths from start does not yet exist
-                $prev = $first;
-                $path_len = 0;
-
-            } else { // path from first to any unvisited vertex with min distance is found
-                $row_min = $res_min->fetch_object();
-                $prev = $row_min->lemma_id_n;  // finish vertex in the found path, it will be next-to-last vertex for paths to nearest vertexes
-                $path_len = $row_min->path_len; // distance of the found path or minimal distance to nearest vertexes 
-            }
-
-            unset($unvisited[$prev]); // mark this vertes as visited, delete it from unvisited list
-
-            if ($prev == $finish) { // the shortest path in $finish are found!!
-                $success=1; 
-                continue; 
-            }
-
-            $query = "SELECT lemma_id2, weight FROM $edge_table WHERE lemma_id1='$prev'";  // search nearest vertexes to $prev (НЕТ необходимости сортировать, так как неважно в какой последовательности ставятся метки)
-            $res_neib = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-            while ($row_neib = $res_neib->fetch_object()) {
-                $last = $row_neib->lemma_id2; // nearest vertexes to $prev and last vertex for next paths
-                $new_path_len = $path_len + $row_neib->weight; // path length from $prev to $last (neighbour of $prev via semantic relations)
-
-                $query = "SELECT path_len FROM $path_table WHERE lemma_id_1='$first' and lemma_id_n='$last'"; // check if a path from $first to $finish exists
-                $res_exist = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-                if ($LINK_DB -> query_count($res_exist) == 0) {
-                // 1. this is new path from $first to $last which is absent in table pw_short_path_LANG_CODE
-
-                    $query = "INSERT INTO $path_table (`lemma_id_1`, `lemma_id_n`, `path_len`, `lemma_id_prev_n`) VALUES ($first, $last, $new_path_len, $prev)";
-                    $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-                } else {
-                // 2. already (one) path from $first to $last does exist, then update (length and previous word) only if length of new path is shorter
-                    $row_exist = $res_exist->fetch_object();
-                    if ($new_path_len < $row_exist->path_len) {
-                        $query = "UPDATE $path_table SET path_len=$new_path_len, lemma_id_prev_n=$prev WHERE lemma_id_1=$first and lemma_id_n=$last";
-                        $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-                    }
-                }
-            }
-        }
-
-        if ($success) { // 
-            $path = array($finish);
-            $prev = $finish;
-
-            while ($prev != $start) {
-                $query = "SELECT lemma_id_prev_n FROM $path_table WHERE lemma_id_1='$first' and lemma_id_n='$prev'"; // check if a path from $first to $finish exists
-                $res = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-                $row = $res->fetch_object();
-                $prev = $row->lemma_id_prev_n;
-                array_unshift($path,$prev);
-            }
-
-            return array($path_len, $path);     
-        } else return array(NULL,NULL); // any path from $first to $finish are not found
-    }
-
-    static public function DijkstraAlgorithm($first, $last, $limit=NULL) {
-    global $LINK_DB;
-        $edge_table = PWRelatedWords::getTableName();
-        $visited_words = $next_to_last = $dist = array();
-        $infinity = 1000000;
-
-        $dist = array_flip(PWRelatedWords::getAllRelatedWords());
-
-        if (!isset($dist[$first]) || !isset($dist[$last]))
-            return false;
-
-        foreach ($dist as $w => $tmp) {
-            $dist[$w] = $infinity;
-        }
-
-        $finish_arr[]=$first;
-        $dist[$first] = 0;
-
-//print "<PRE>";
-//$count=0;
-        while (sizeof($finish_arr)) {  //  && (!$limit || $limit>$path_len)
-// && $count<10
-//print "<p>".++$count;
-//.".-----------------------------</p>";
-//print_r($finish_arr);
-            $prev = array_shift($finish_arr);
-            $path_len = $dist[$prev];
-            $visited_words[$prev] = 1;
-
-            $query = "SELECT * FROM $edge_table WHERE lemma_id1='$prev' or lemma_id2='$prev' order by weight";
-            $res_relw = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-            //     all neighbours of $prev
-
-            while ($row_relw = $res_relw->fetch_object()) {
-                if (row_relw->lemma_id1 == $prev)
-                  $finish = $row_relw->lemma_id2;
-                else 
-                  $finish = $row_relw->lemma_id1;
-
-                if (!isset($visited_words[$finish])) {
-//                    if (in_array($finish,$finish_arr)
-                    $finish_arr[] = $finish;
-                    $new_path_len = $path_len + $row_relw->weight;
-                    // path length from $prev to $finish (neighbour of $prev via semantic relations)
-
-                    if ($new_path_len < $dist[$finish]) {
-                        $dist[$finish] =  $new_path_len;
-                        $next_to_last[$finish] = $prev;
-                    }
-                }
-            }
-        }
-//print_r($dist);
-
-        if ($dist[$last] < $infinity) 
-            $path = self::getShortPath($first, $last, $next_to_last);
-        else $path = NULL;
-        return array($dist[$last], $path); 
-    }
-
-    static public function getShortPath($start, $finish, $prev_arr) {
-    global $LINK_DB;
-        $path = array($finish);
-        $prev = $prev_arr[$finish];
-
-        while ($prev != $start) {
-            array_unshift($path,$prev);
-            $prev = $prev_arr[$prev];
-        }
-        array_unshift($path,$start);
-        return $path;
-    }
-
-    static public function getShortPathByWords($word1, $word2) {
-	   self::getShortPath(PWLemma::getIDByLemma($word1), PWLemma::getIDByLemma($word2));
-    }
-
-    static public function searchAllPath() {
-    global $LINK_DB;
-/*
-        $res = $LINK_DB -> query_e("SELECT sum(weight) as sum FROM pw_related_words_$lang_code","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-	    $row = $res->fetch_object();
-	    $max_length = $row->sum; // 133402
-
-        $res = $LINK_DB -> query_e("SELECT min(weight) as min FROM pw_related_words_$lang_code","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-	    $row = $res->fetch_object();
-	    $min_length = $row->min; // 0.5
-*/
-/*
-        $LINK_DB -> query_e("DELETE FROM ".PWShortPath::getTableName(),"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-        $res_relw = $LINK_DB -> query_e("SELECT * FROM ".PWRelatedWords::getTableName()." order by lemma_id1","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-	    while ($row_relw = $res_relw->fetch_object()) {
-            $query = "SELECT path_len FROM ".PWShortPath::getTableName()." WHERE lemma_id_1=".$row_relw->lemma_id1." and lemma_id_n=".$row_relw->lemma_id2;
-            $res_path = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-            if ($LINK_DB -> query_count($res_path) == 0) {
-                $query = "INSERT INTO ".PWShortPath::getTableName()." (`lemma_id_1`, `lemma_id_n`, `path_len`, `lemma_id_prev_n`) VALUES (".
-                        $row_relw->lemma_id1.", ".$row_relw->lemma_id2.", ".$row_relw->weight.", ".$row_relw->lemma_id1.")";
-                $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-            }
-        }
-    }
-
-    static public function searchShortPath($first,$last) {
-        global $LINK_DB;
-
-        self::DijkstraAlgorithm($first); // search all shortest path from $first
-
-        $query = "SELECT path_len, lemma_id_prev_n FROM ".PWShortPath::getTableName()." WHERE lemma_id_1=$first and lemma_id_n=".$last;
-        $res = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-        if ($LINK_DB -> query_count($res) == 0) {
-            $path = NULL;
-            $dist = NULL;
-        } else {
-            $row = $res->fetch_object();
-            $path = self::getShortPath($first, $last, $row->lemma_id_prev_n);
-            $dist = $row -> path_len;
-        }
-
-        return array($dist, $path); 
-    }
-
-
- 
-    static public function path_search($start, $path_len, $prev) { // with recursion
-        global $LINK_DB;
-        static $visited_words = array();
+        foreach ($word_obj_arr as $word_obj) {
+            if ($word_obj->getOrigin() >0)  // The page $word does not exist in LANG_CODE.wiktionary.org
+                continue;
         
-	$visited_words[$prev] = 1;
-	$finish_arr = array(); // all words which 1) are neighbours to $prev
-                               //             and 2) are not listed in $visited_words
-                               // $finish_arr (ID_N -> length from $start to ID_N word)
-                               // goal: find shortest path to all words in $finish_arr
+            $page_id = $word_obj->getID(); // if origin=0 then word is added from wiktionary, and lemma.id = page.id
 
-	$query = "SELECT lemma_id2, weight FROM ".PWRelatedWords::getTableName()." WHERE lemma_id1='$prev' order by weight,lemma_id2";
-        $res_relw = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-        //     all neighbours of $prev
-	while ($row_relw = $res_relw->fetch_object()) {
-            $finish = $row_relw->lemma_id2;
-            if (!isset($visited_words[$finish])) {
-                $new_path_len = $path_len + $row_relw->weight;
-                // path length from $prev to $finish (neighbour of $prev via semantic relations)
+            $meaning_arr = TMeaning::getByPageAndLang($page_id,PWLemma::getLangCode());
 
-                // table of shortest path (length and previous words in path)
-                $table = PWShortPath::getTableName();
-		$query = "SELECT path_len FROM $table WHERE lemma_id_1='$start' and lemma_id_n='$finish'";
-                $res_path = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-                if ($LINK_DB -> query_count($res_path) == 0) {
-                    // 1. this is new path from $start to $finish which is absent in table pw_short_path_LANG_CODE
-                    $query = "INSERT INTO $table (`lemma_id_1`, `lemma_id_n`, `path_len`, `lemma_id_prev_n`) VALUES ($start, $finish, $new_path_len, $prev)";
-                    $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-                    $finish_arr[$finish] = $new_path_len;
-                } else {
-                    // 2. already (one) path from $start to $finish does exist, then update (length and previous word) only if length of new path is shorter
-                    $row_path = $res_path->fetch_object();
-                    if ($new_path_len < $row_path->path_len) {
-                        $query = "UPDATE $table SET path_len=$new_path_len, lemma_id_prev_n=$prev WHERE lemma_id_1=$start and lemma_id_n=$finish";
-                        $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-                    }
-                }
+            foreach ($meaning_arr as $meaning_obj) { 
+                $meaning_wiki_text = $meaning_obj->getWikiText();
+                $meaning_text = $meaning_wiki_text->getText();
+//                $words = array_merge($words,preg_split('/\P{L}+/u', $meaning_text, -1, PREG_SPLIT_NO_EMPTY));
+                $words = array_merge($words,preg_split('/((^\p{P}+)|(\p{P}*\s+\p{P}*)|(\p{P}+$))/u', $meaning_text, -1, PREG_SPLIT_NO_EMPTY));
             }
         }
-        // all non marked neighbours of $prev
-        foreach ($finish_arr as $finish => $new_path_len)
-            self::path_search($start,$new_path_len,$finish);
+        return $words;
     }
-
-    static public function getPath($start, $finish) {
-    global $LINK_DB;
-        $query = "SELECT lemma_id_prev_n FROM ".PWShortPath::getTableName()." WHERE lemma_id_1='$start' and lemma_id_n='$finish'";
-        $res = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-        $row = $res->fetch_object();
-        if ($row->lemma_id_prev_n != $start) {
-            $path = self::getPath($start, $row->lemma_id_prev_n);
-            return array_merge($path,array($finish));
-	    } else return array($start,$finish);
-    }
-
-    static public function getPathByWords($word1, $word2) {
-	   self::getPath(PWLemma::getIDByLemma($word1), PWLemma::getIDByLemma($word2));
-    }
-
-    static public function restore_path($start, $finish) {
-    global $LINK_DB;
-        $query = "SELECT lemma_id_prev_n FROM ".PWShortPath::getTableName()." WHERE lemma_id_1='$start' and lemma_id_n='$finish'";
-        $res = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-        $row = $res->fetch_object();
-        if ($row->lemma_id_prev_n != $start) {
-            print TPage::getURL(PWLemma::getLemmaByID($finish), PWLemma::getLemmaByID($finish))." <- ";
-	        self::restore_path($start, $row->lemma_id_prev_n);
-	    } else print TPage::getURL(PWLemma::getLemmaByID($start), PWLemma::getLemmaByID($start));
-    }
-
-    static public function restore_path_by_words($word1, $word2) {
-	   self::restore_path(PWLemma::getIDByLemma($word1), PWLemma::getIDByLemma($word2));
-    }
- */
+    
 }
 ?>

@@ -17,6 +17,10 @@ class PWLemma {
     */
     private $origin;
 
+    /** @var int indicates frequency of occurrence lemma in meanings
+    */
+    private $frequency;
+
     /** @var String language code, postfix for table, f.e. pw_lemma_ru 
      * Language code defines the subset of Wiktionary thesaurus to be constructed in this class, 
      * for example, 'ru' means that thesaurus of Russian synonyms, hyperonym, etc. will be constructed. 
@@ -26,11 +30,12 @@ class PWLemma {
     /** @var String */
     private static $table_name = 'pw_lemma_ru';
 
-    public function __construct($id, $lemma, $origin)
+    public function __construct($id, $lemma, $origin, $frequency)
     {
         $this->id   = $id;
         $this->lemma = $lemma;
         $this->origin = $origin;
+        $this->frequency = $frequency;
     }
 
     /** Gets unique ID of the lemma 
@@ -47,6 +52,11 @@ class PWLemma {
     /** @return int */
     public function getOrigin() {
         return $this->origin;
+    }
+
+    /** @return int */
+    public function getfrequency() {
+        return $this->frequency;
     }
 
     static public function setLangCode($lang_code)
@@ -103,7 +113,7 @@ class PWLemma {
     /** Gets PWLemma object by property $property_name with value $property_value.
      * @return PWLemma or NULL in case of error
      */
-    static public function getLemma($property_name, $property_value) {
+    static public function getLemmaObj($property_name, $property_value) {
     global $LINK_DB;
         
      	$query = "SELECT * FROM ".self::$table_name." WHERE `$property_name`='$property_value' order by id";
@@ -118,7 +128,8 @@ class PWLemma {
             $lemma_arr[] = new PWLemma(
                                 $row->id, 
                                 $row->lemma,
-                                $row->origin 
+                                $row->origin,
+                                $row->frequency 
                             );
         }
         return $lemma_arr;
@@ -128,8 +139,16 @@ class PWLemma {
      * @return PWLemma or NULL in case of error
      */
     static public function getByID ($_id) {
-        $lemma_arr = self::getLemma("id",$_id);
+        $lemma_arr = self::getLemmaObj("id",$_id);
         return $lemma_arr[0];
+    }
+
+    /** Gets PWLemma object by lemma
+     * @return PWLemma or NULL in case of error
+     */
+    static public function getByLemma ($lemma) {
+        $lemma_arr = self::getLemmaObj("lemma",$lemma);
+        return $lemma_arr;
     }
 
     /** Gets the total amount of words in LANG_CODE vocabulary
@@ -146,5 +165,30 @@ class PWLemma {
         return $row->count;
     }
 
+    /** Gets lemma by word-form
+     * @return string or NULL
+     */
+    static public function getPhpMorphyLemma($word, $morphy) {
+        // All words in dictionary in UPPER CASE, so don`t forget set proper locale via setlocale(...) call
+        // $morphy->getEncoding() returns dictionary encoding
+        $word_up = mb_strtoupper($word, 'UTF-8');;
+
+        // by default, phpMorphy finds $word in dictionary and when nothig found, try to predict them
+        // you can change this behaviour, via second argument to getXXX or findWord methods
+        $base = $morphy->getBaseForm($word_up);
+
+        // $base = $morphy->getBaseForm($word, phpMorphy::NORMAL); // normal behaviour
+        // $base = $morphy->getBaseForm($word, phpMorphy::IGNORE_PREDICT); // don`t use prediction
+        // $base = $morphy->getBaseForm($word, phpMorphy::ONLY_PREDICT); // always predict word
+
+        // this used for deep analysis
+        $collection = $morphy->findWord($word_up);
+        // or var_dump($morphy->getAllFormsWithGramInfo($word_up)); for debug
+
+        if(false === $collection) 
+            return NULL; 
+
+        return $base[0]; // get only first base, because we can't define part of speach of word
+    }
 }
 ?>

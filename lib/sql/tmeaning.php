@@ -133,35 +133,51 @@ class TMeaning {
 	  	$lang_pos_obj = TLangPOS::getByID($row->lang_pos_id);
 */
             $meaning = new TMeaning(
-		$row->id, 
-		$lang_pos_obj,
-		$row->lang_pos_id, 
-		$row->meaning_n,
-		TWikiText::getByID($row->wiki_text_id),
-		$row->wiki_text_id 
-	    );
-	    $meaning->relation = TRelation::getByMeaning($row->id,$meaning);
-	    $meaning->translation = TTranslation::getByMeaning($row->id,$meaning);
-	    $meaning->label_meaning = TLabelMeaning::getByMeaning($row->id,$meaning);
-	    $meaning_arr[]=$meaning;
-	}
+                $row->id, 
+                $lang_pos_obj,
+                $row->lang_pos_id, 
+                $row->meaning_n,
+                TWikiText::getByID($row->wiki_text_id),
+                $row->wiki_text_id 
+            );
 
-	return $meaning_arr;
+            $meaning->relation = TRelation::getByMeaning($row->id,$meaning);
+            $meaning->translation = TTranslation::getByMeaning($row->id,$meaning);
+            $meaning->label_meaning = TLabelMeaning::getByMeaning($row->id,$meaning);
+            $meaning_arr[]=$meaning;
+	   }
+
+	   return $meaning_arr;
     }
 
     /** Gets TMeaning object by ID
      * @return TMeaning or NULL in case of error
      */
     static public function getByID ($_id) {
-	$meaning_arr = TMeaning::getMeaning("id",$_id);
-	return $meaning_arr[0];
+        $meaning_arr = TMeaning::getMeaning("id",$_id);
+        return $meaning_arr[0];
     }
 
     /** Gets TMeaning object by lang_pos
      * @return TMeaning or NULL in case of error
      */
     static public function getByLangPOS ($lang_pos_id,$lang_pos_obj=NULL) {
-	return TMeaning::getMeaning("lang_pos_id",$lang_pos_id,$lang_pos_obj);
+        return TMeaning::getMeaning("lang_pos_id",$lang_pos_id,$lang_pos_obj);
     }
+
+    /** Gets TMeaning object by page_id
+     * @return TMeaning or NULL in case of error
+     */
+
+    static public function getByPageAndLang ($page_id, $lang_code='') {
+        $meaning_arr = array();
+        $lang_pos_arr = TLangPOS::getIDByPageAndLang($page_id,$lang_code);
+
+        foreach ($lang_pos_arr as $lang_pos_id)
+            $meaning_arr = array_merge($meaning_arr, (array)self::getMeaning("lang_pos_id",$lang_pos_id));
+
+	    return $meaning_arr;
+    }
+
 }
 ?>
