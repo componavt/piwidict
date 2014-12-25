@@ -165,7 +165,7 @@ class PWLemma {
         return $row->count;
     }
 
-    /** Gets lemma by word-form
+    /** Gets only first lemma by word-form, other lemmas are discarded.
      * @return string or NULL
      */
     static public function getPhpMorphyLemma($word, $morphy) {
@@ -185,7 +185,7 @@ class PWLemma {
         $collection = $morphy->findWord($word_up);
         // or var_dump($morphy->getAllFormsWithGramInfo($word_up)); for debug
 
-        if(false === $collection) 
+        if(false === $collection) // phpmorphy lemmatising faild
             return NULL; 
 
         return $base[0]; // get only first base, because we can't define part of speach of word

@@ -257,10 +257,9 @@ print "<p>$count iterations";
     }
 
     /**----------------------------------------------------------------------------------------------------------
-     * Searching of words included in meanings
-     * Meanings are splitted on a list of lemmas and frequency of occurrence of lemmas is counted
-     * @param int $first a first word in a shortest path
-     * @param int $finish a last word in a shortest path
+     * Searching of words in meanings' text.
+     * Meanings are splitted to a list of lemmas and frequency of occurrence of lemmas is counted.
+     * @return array of words
      */
     static public function meaningsToLemmas($word) {
         $word_obj_arr = PWLemma::getByLemma($word);

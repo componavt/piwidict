@@ -2,7 +2,6 @@
 $count_exec_time = 1;
 include("../../config.php");
 include(LIB_DIR."header.php");
-include_once(SITE_ROOT."phpmorphy/src/common.php");
 
 if (isset($word)) 
     $word_h1 = " &quot;".TPage::getURL($word)."&quot;";

@@ -31,6 +31,8 @@ include_once(LIB_DIR."db/mysql_util.php");
 include_once(LIB_DIR."PWString.php");
 include_once(LIB_DIR."PWStats.php");
 
+include_once(LIB_DIR."PWInit.php");
+
 include_once(LIB_DIR."algorithms/wsd_in_wikt/PWSemanticDistance.php");
 
 include_once(LIB_DIR."export/PWGEXF.php");
