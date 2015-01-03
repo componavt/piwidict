@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wikitest framework for testing WSD solving in the parsed Russian Wiktionary. -->
+<!-- Latest version of this test is available at the project site (https://github.com/componavt/piwidict). -->
+<!-- 
+
+WSD Wiktionary testing idea: 
+
+*) Let's take only pairs of words, which are explicitly noted as semantically related 
+(i.e. one of words should be presented in the section Synonyms (or Antonyms, etc.) of other word.
+
+*) The source data for testing are meanings (definitions) from the symbol "#" (beginning of a meaning) 
+till the beginning of examples (the template "{{пример|" in Russian Wiktionary).
+
+*) Different types of semantic relations should be presented in this test XML-file. Only for Russian words in this file.
+
+-->
+<WikitestWSD>
+  <TwoWords>
+      <SourceWord>
+      <word>полотно</word>
+      <url>http://ru.wiktionary.org/wiki/полотно</url>
+      <meaning># {{текст.}} гладкая и плотная ткань из однородных нитей (чаще всего льняных) простейшего переплетения, выработанная из основы и [[уток|уткa]] одинаковой толщины и плотности; в широком смысле — текстильное изделие плоской формы, изготовленное тканым или нетканым способом, а также плоские изделия из других материалов</meaning>
+    </SourceWord>
+    <SemanticRelation>synonymy</SemanticRelation>
+    
+    <DestWord>
+      <word>ткань</word>
+      <url>http://ru.wiktionary.org/wiki/ткань</url>
+      <meaning># {{текст.|ru}} тканая [[материя]], [[материал]]</meaning>
+    </DestWord>
+  </TwoWords>
+  
+  
+  <!-- Attention: ткань, канва - synonyms and hyponyms (for different meanings) -->
+  <TwoWords>
+      <SourceWord>
+      <word>ткань</word>
+      <url>http://ru.wiktionary.org/wiki/ткань</url>
+      <meaning># {{п.}} [[структура]], [[природа]] художественного произведения, текста, и т. п.</meaning>
+    </SourceWord>
+    <SemanticRelation>synonymy</SemanticRelation>
+    
+    <DestWord>
+      <word>канва</word>
+      <url>http://ru.wiktionary.org/wiki/канва</url>
+      <meaning># {{п.}}, {{книжн.}} основа событий, происшествий, сюжета {{итп}} </meaning>
+    </DestWord>
+  </TwoWords>
+  
+  <!-- Attention: ткань, канва - synonyms and hyponyms (for different meanings) -->
+  <TwoWords>
+      <SourceWord>
+      <word>ткань</word>
+      <url>http://ru.wiktionary.org/wiki/ткань</url>
+      <meaning># {{текст.|ru}} тканая [[материя]], [[материал]]</meaning>
+    </SourceWord>
+    <SemanticRelation>hyponymy</SemanticRelation>
+    
+    <DestWord>
+      <word>канва</word>
+      <url>http://ru.wiktionary.org/wiki/канва</url>
+      <meaning># {{текст.}} сквозная бумажная, сильно проклеенная [[ткань]] для вышивания по ней [[узор]]ов цветной бумагой, [[шерсть]]ю или шелками</meaning>
+    </DestWord>
+  </TwoWords>
+  
+  
+  <TwoWords>
+      <SourceWord>
+      <word>материя</word>
+      <url>http://ru.wiktionary.org/wiki/материя</url>
+      <meaning># {{текст.}} [[материал]], состав ткани</meaning>
+    </SourceWord>
+    <SemanticRelation>synonymy</SemanticRelation>
+    
+    <DestWord>
+      <word>материал</word>
+      <url>http://ru.wiktionary.org/wiki/материал</url>
+      <meaning># {{текст.}} вид или сорт [[ткань|ткани]]</meaning>
+    </DestWord>
+  </TwoWords>
+  
+</WikitestWSD>
