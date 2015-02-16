@@ -107,6 +107,23 @@ class TPage {
 	return $this->lang_pos;
     }
 
+    /** Gets ID from the table page by the page title. 
+     * @return int or NULL if it is unknown code.
+     */
+    static public function getIDByPageTitle($page_title) {
+    global $LINK_DB;
+
+    	$query = "SELECT id FROM page where page_title like '$page_title'";
+        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+        if ($LINK_DB -> query_count($result) == 0)
+            return NULL;
+
+        $row = $result -> fetch_object();
+
+        return $row -> id;
+    }
+
     /** Gets TPage object by property $property_name with value $property_value.
      * @return TPage or NULL in case of error
      */
@@ -158,8 +175,8 @@ class TPage {
     * @return string
     */
     static public function getURL($page_title, $link_text='') {
-	if (!$link_text) $link_text = $page_title;
-	return "<a href=\"http://".WIKT_LANG.".wiktionary.org/wiki/$page_title\">$link_text</a>";
+        if (!$link_text) $link_text = $page_title;
+        return "<a href=\"http://".WIKT_LANG.".wiktionary.org/wiki/$page_title\">$link_text</a>";
     }
 }
 ?>

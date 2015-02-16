@@ -32,7 +32,7 @@ class DB extends mysqli {
 	    $this->result = @parent::query($q);
 
 	    if (!$this->result)	{
-		die("<div style=\"font-size:10px; color:#666666;\">$err_string: ".$this->error." ($q)</div>");
+		die("<div style=\"color:#666666;\">$err_string: ".$this->error." ($q)</div>");
 	    }
 	    return $this->result;
 	}

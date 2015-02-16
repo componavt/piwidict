@@ -4,22 +4,22 @@
 
 class TLang {
     
-    /* @var int identifier in the table 'lang' */
+    /** @var int identifier in the table 'lang' */
     private $id;
 
-    /* @var String two (or more) letter language code, e.g. 'en', 'ru' */
+    /** @var String two (or more) letter language code, e.g. 'en', 'ru' */
     private $code;
     
-    /* @var String language name, e.g. 'English', 'Русский' */
+    /** @var String language name, e.g. 'English', 'Русский' */
     private $name;
 
-    /* @var int number of foreign parts of speech (POS) in the table index_XX,
+    /** @var int number of foreign parts of speech (POS) in the table index_XX,
      * which have its own articles in Wiktionary,
      * where XX is a language code */
     private $n_foreign_POS;
     // SELECT COUNT(*) FROM index_en WHERE native_page_title is NULL;
 
-    /* @var int number of translation pairs in the table index_XX,
+    /** @var int number of translation pairs in the table index_XX,
      * where XX is a language code */
     private $n_translations;
     
@@ -143,14 +143,14 @@ class TLang {
     global $LINK_DB;
 
     	$query = "SELECT id FROM lang where code like '$_code'";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
-	    return NULL;
+        if ($LINK_DB -> query_count($result) == 0)
+            return NULL;
 
         $row = $result -> fetch_object();
 
-	return $row -> id;
+        return $row -> id;
     }
 
     /** Gets language code by ID. 

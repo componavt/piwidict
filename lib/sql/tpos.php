@@ -71,7 +71,7 @@ class TPOS {
                 $row->name);
     }
 
-   /* Gets ID from the table 'part_of_speech' by the part of speech name, e.g. "noun", "verb", "phrase".
+   /** Gets ID from the table 'part_of_speech' by the part of speech name, e.g. "noun", "verb", "phrase".
     * @return int ID or NULL if it is unknown name
     */
     static public function getIDByName($_name) {
@@ -86,6 +86,23 @@ class TPOS {
         $row = $result -> fetch_object();
 
 	return $row -> id;
+    }
+
+   /** Gets name from the table 'part_of_speech' by the ID.
+    * @return string name
+    */
+    static public function getNameByID($_id) {
+    global $LINK_DB;
+
+        $query = "SELECT name FROM part_of_speech where id=".(int)$_id;
+        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+	    if ($LINK_DB -> query_count($result) == 0)
+	       return NULL;
+
+        $row = $result -> fetch_object();
+
+	    return $row -> name;
     }
 
     /* Check if POS with this ID exists */
