@@ -75,50 +75,51 @@ class TTranslation {
     static public function getTranslation($property_name, $property_value,$meaning_obj=NULL) {
     global $LINK_DB;
         
-     	$query = "SELECT * FROM translation WHERE `$property_name`='$property_value' order by id";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $query = "SELECT * FROM translation WHERE `$property_name`='$property_value' order by id";
+        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
-	    return NULL;
-	
-	$translation_arr = array();
+        if ($LINK_DB -> query_count($result) == 0)
+            return NULL;
+    
+        $translation_arr = array();
 
         while ($row = $result -> fetch_object()) {
 /*
-	    if ($meaning_obj == NULL)
-	  	$meaning_obj = TMeaning::getByID($row->meaning_id);
-	   
-	    if ($meaning_obj != NULL)
-		$lang_pos_obj = $meaning_obj->getLangPOS();
-	    else $lang_pos_obj = NULL;
-*/	
+        if ($meaning_obj == NULL)
+        $meaning_obj = TMeaning::getByID($row->meaning_id);
+       
+        if ($meaning_obj != NULL)
+        $lang_pos_obj = $meaning_obj->getLangPOS();
+        else $lang_pos_obj = NULL;
+*/  
             $translation = new TTranslation(
-		$row->id, 
-	        $lang_pos_obj,
-		$row->meaning_summary, 
-		$meaning_obj
-	    );
-	    $translation -> entry = TTranslationEntry::getByTranslation($row->id, $translation);
-	    $translation_arr[] = $translation;
-	}
+                $row->id, 
+//            $lang_pos_obj,
+                NULL,
+                $row->meaning_summary, 
+                $meaning_obj
+            );
+            $translation -> entry = TTranslationEntry::getByTranslation($row->id, $translation);
+            $translation_arr[] = $translation;
+        }
 
-	return $translation_arr;
+        return $translation_arr;
     }
 
     /** Gets TTranslation object by ID
      * @return TTranslation or NULL in case of error
      */
     static public function getByID ($_id) {
-	$translation_arr = TTranslation::getTranslation("id",$_id);
-	return $translation_arr[0];
+        $translation_arr = TTranslation::getTranslation("id",$_id);
+        return $translation_arr[0];
     }
 
     /** Gets TTranslation object by meaning_id
      * @return TTranslation or NULL in case of error
      */
     static public function getByMeaning ($meaning_id,$meaning_obj=NULL) {
-	$translation_arr = TTranslation::getTranslation("meaning_id",$meaning_id,$meaning_obj);
-	return $translation_arr[0];
+        $translation_arr = TTranslation::getTranslation("meaning_id",$meaning_id,$meaning_obj);
+        return $translation_arr[0];
     }
 }
 ?>
