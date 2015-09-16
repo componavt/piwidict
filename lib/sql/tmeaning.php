@@ -55,9 +55,9 @@ class TMeaning {
         $this->wiki_text = $wiki_text;
         $this->wiki_text_id = $wiki_text_id;
 
-	$this->relation = NULL;
-	$this->translation = NULL;
-	$this->label_meaning = NULL;
+    $this->relation = NULL;
+    $this->translation = NULL;
+    $this->label_meaning = NULL;
     }
     
     /** Gets unique ID from database 
@@ -120,17 +120,17 @@ class TMeaning {
     static public function getMeaning($property_name, $property_value,$lang_pos_obj=NULL) {
     global $LINK_DB;
         
-     	$query = "SELECT * FROM meaning WHERE `$property_name`='$property_value' order by id";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $query = "SELECT * FROM meaning WHERE `$property_name`='$property_value' order by id";
+    $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
-	    return NULL;
-	$meaning_arr = array();
+    if ($LINK_DB -> query_count($result) == 0)
+        return NULL;
+    $meaning_arr = array();
 
         while ($row = $result -> fetch_object()) {
 /*
-	    if ($lang_pos_obj == NULL)
-	  	$lang_pos_obj = TLangPOS::getByID($row->lang_pos_id);
+        if ($lang_pos_obj == NULL)
+        $lang_pos_obj = TLangPOS::getByID($row->lang_pos_id);
 */
             $meaning = new TMeaning(
                 $row->id, 
@@ -145,9 +145,9 @@ class TMeaning {
             $meaning->translation = TTranslation::getByMeaning($row->id,$meaning);
             $meaning->label_meaning = TLabelMeaning::getByMeaning($row->id,$meaning);
             $meaning_arr[]=$meaning;
-	   }
+       }
 
-	   return $meaning_arr;
+       return $meaning_arr;
     }
 
     /** Gets TMeaning object by ID
@@ -176,7 +176,18 @@ class TMeaning {
         foreach ($lang_pos_arr as $lang_pos_id)
             $meaning_arr = array_merge($meaning_arr, (array)self::getMeaning("lang_pos_id",$lang_pos_id));
 
-	    return $meaning_arr;
+        return $meaning_arr;
+    }
+
+    /** Gets text of meaning by ID
+     * @return String or NULL in case of error
+     */
+    static public function getMeaningByID ($_id) {
+        list($meaning_obj) = TMeaning::getMeaning("id",$_id);
+        $wiki_text_obj = $meaning_obj->wiki_text;
+        if ($wiki_text_obj !== NULL) 
+            return $wiki_text_obj -> getText();
+        return NULL;
     }
 
 }
