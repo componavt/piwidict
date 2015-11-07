@@ -1,8 +1,12 @@
 <?php
 
 class PWString {
+
     /** Reverses a string 
-      * @return string */
+     * @return string 
+     *
+     * Does this function is the same is strrev()?
+     */
     static public function reverseString($str) {
 	   $rev_str = '';
 	   for ($i = mb_strlen($str)-1; $i>=0; $i-- ) {

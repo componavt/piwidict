@@ -5,7 +5,9 @@ class PWInit {
 Functions for creation of additional tables
 #########################################*/    
 
-    /** Creates the table with reverse dictionary by means reversed page.page_title
+    /** Creates the table with reverse dictionary by means reversed page.page_title.
+     * pw_reverse_dict . page_id            =         page.id; 
+     * pw_reverse_dict . reverse_page_title = strrev (page.page_title);
      */
     static public function createReverseTable() {
     global $LINK_DB;
@@ -38,10 +40,10 @@ Functions for creation of additional tables
 
     }
 
-    /** Creating of the table with russian vocabulary from page_title and related words.
-     * pw_lemma_ru.id=page.id if word is exist in wiktionary or next id 
+    /** Creates the table with Russian vocabulary from page_title and related words.
+     * pw_lemma_ru.id=page.id if word is exist in Wiktionary or next id 
      */
-    static public function create_vocabulary_related_tables() {
+    static public function createVocabularyRelatedTables() {
     global $LINK_DB;
         $lang_id = (int)TLang::getIDByLangCode(PWLemma::getLangCode());
         $l_table = PWLemma::getTableName();
