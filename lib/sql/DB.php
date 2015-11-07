@@ -7,10 +7,11 @@ class DB extends mysqli {
 
 	/* Connection to database */
 	public function __construct($dbhost, $dbuser, $dbpass, $dbname) {
+            // print "\n<BR> DB:new($dbhost, $dbuser, $dbpass, $dbname);";
             @parent::__construct(
-		$dbhost,
-		$dbuser, 
-		$dbpass,
+                $dbhost,
+                $dbuser, 
+                $dbpass,
                 $dbname
             );
             if ($this->connect_error) {

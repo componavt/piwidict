@@ -69,17 +69,10 @@ TODO!!! check vars
 }
 
 
-/*******************************
- * Init constants and variables
- *******************************/
+//include_once(LIB_DIR."multi/".LangCode."/WMeaning.php");
+include_once("config_password.php");
 
-define ('NAME_DB','ruwikt20140904_parsed');
-$config['hostname']   = 'localhost';
-$config['dbname']     = NAME_DB;
-$config['user_login']      = 'pw_user';
-$config['user_password']   = '';
-$config['admin_login']      = 'pw_admin';
-$config['admin_password']   = '';
+
 ## DB connection 
 ## mysql>GRANT SELECT ON %.* TO pw_user@'%' identified by '';
 ## mysql>GRANT SELECT, INSERT, UPDATE, CREATE, DROP, INDEX ON %.* TO pw_admin@'%' identified by '';

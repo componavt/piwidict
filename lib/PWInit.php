@@ -5,9 +5,9 @@ class PWInit {
 Functions for creation of additional tables
 #########################################*/    
 
-    /** Creating of the table with reverse dictionary by means reversed page.page_title
+    /** Creates the table with reverse dictionary by means reversed page.page_title
      */
-    static public function create_reverse_table() {
+    static public function createReverseTable() {
     global $LINK_DB;
 
         $query = "DROP TABLE IF EXISTS `pw_reverse_dict`";
