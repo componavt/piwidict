@@ -26,39 +26,55 @@ $count_exec_time = 1;
 include("../../../config.php");
 include(LIB_DIR."header.php");
 
-$pos_name = "noun";
+$pos_name = "adjective";
 $lang_id = TLang::getIDByLangCode("ru");
 $pos_id = TPOS::getIDByName($pos_name);
+$syn_id = TRelationType::getIDByName("synonyms");
 
 $fh1 = fopen('synset_synonyms_only_'.$pos_name.'.txt','w');
-$fh1 = fopen('synset_all_relations_'.$pos_name.'.txt','w');
+$fh2 = fopen('synset_all_relations_'.$pos_name.'.txt','w');
 
-$query = "SELECT wiki_text.text as inlink, relation_type.name as relation, page_title as outlink, meaning_id as outlink_meaning
-          FROM wiki_text, page, relation_type, relation, lang_pos, meaning
-          WHERE page.id = lang_pos.page_id AND lang_id = $lang_id AND meaning.lang_pos_id = lang_pos.id AND 
-                relation.meaning_id = meaning.id AND relation.wiki_text_id = wiki_text.id AND
-                relation.relation_type_id = relation_type.id order by inlink";
+$query = "SELECT page_title as first_word, meaning.id as meaning_id
+          FROM lang_pos, meaning, page 
+          WHERE lang_pos.id = meaning.lang_pos_id 
+            AND page.id = lang_pos.page_id
+            AND page_title NOT LIKE '% %'
+            AND lang_id = $lang_id
+            AND pos_id=$pos_id
+          ORDER BY page_title";
 
-$result = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+$result_meaning = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-while ($row = $result -> fetch_object()) {
-    $query = "SELECT wiki_text.text as inlink_meaning FROM meaning, page, lang_pos, wiki_text WHERE page.id = lang_pos.page_id AND meaning.lang_pos_id = lang_pos.id AND
-              meaning.wiki_text_id = wiki_text.id AND page_title like '".PWString::escapeQuotes($row->inlink)."' AND lang_id = $lang_id  AND pos_id=$pos_id";    
+while ($row = $result_meaning -> fetch_object()) {
 
-    $result_meaning = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    $query = "SELECT wiki_text.text as relation_word, relation_type_id
+              FROM wiki_text, relation 
+              WHERE relation.wiki_text_id=wiki_text.id 
+                AND wiki_text.text NOT LIKE '% %'
+                AND relation.meaning_id = ".$row->meaning_id.
+            " ORDER BY wiki_text.text";
 
-    $num = $LINK_DB -> query_count($result_meaning);
+    $result_relation = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-    if ($num > 1) {
-        $row_meaning = $result_meaning -> fetch_object();
-        fwrite($fh, $row->inlink. '%%'. $row_meaning->inlink_meaning .'%%'. $row->relation .'%%'. $row->outlink. '%%'. TMeaning::getMeaningByID ($row->outlink_meaning). "\n");
+    $num = $LINK_DB -> query_count($result_relation);
 
-        while ($row_meaning = $result_meaning -> fetch_object())
-            fwrite($fh, '%%'. $row_meaning->inlink_meaning. "\n");
+    if ($num > 1) { 
+        $synonyms = array();
+        fwrite($fh2, $row->first_word);
+
+        while ($row_relation = $result_relation -> fetch_object()) {
+            fwrite($fh2, ' '. $row_relation->relation_word);
+            if ($row_relation->relation_type_id == $syn_id)
+                $synonyms[] = $row_relation->relation_word;
+        }
+        fwrite($fh2, "\n");
+        if (sizeof($synonyms)>1)
+            fwrite($fh1, $row->first_word. ' '. join(' ', $synonyms)."\n");
     }
 }
 
-fclose($fh);
+fclose($fh1);
+fclose($fh2);
 include(LIB_DIR."footer.php");
 ?>
 <p>done.
