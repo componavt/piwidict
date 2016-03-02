@@ -57,8 +57,8 @@ for line in file_in:
             for l in range(j,len(gr)-1):
                 gr1 = gr[j:l+1]
                 gr2 = gr[0:j]+gr[l+1:len(gr)]
-                #print u"{} | gr1={} | gr2={}".format( test_word,  string_util.joinUtf8( ",", gr1 ), 
-                #                                                  string_util.joinUtf8( ",", gr2 ) )
+                print u"{} | gr1={} | gr2={}".format( test_word,  string_util.joinUtf8( ",", gr1 ), 
+                                                                  string_util.joinUtf8( ",", gr2 ) )
                 
                 gr1_and_test_word = gr1[:]
                 gr1_and_test_word.append( test_word )
@@ -69,23 +69,23 @@ for line in file_in:
                 sim0 = model.n_similarity(gr1, gr2)
                 sim1 = model.n_similarity(gr1_and_test_word, gr2)
                 sim2 = model.n_similarity(gr1,               gr2_and_test_word)
-                #print "sim0 = {}".format( sim0 )
-                #print "sim1 = {}".format( sim1 )
-                #print "sim2 = {}".format( sim2 )
+                print "sim0 = {:5.3f}".format( sim0 )
+                print "sim1 = {:5.3f}".format( sim1 )
+                print "sim2 = {:5.3f}".format( sim2 )
                 
                 a = 1 if sim1 > sim0 else -1
                 b = 1 if sim2 > sim0 else -1
                 test_word_counter_int += (a + b)/2
-                #print "test_word_counter = {}".format( test_word_counter )
-                
                 test_word_counter_float += (sim1 - sim0) + (sim2 - sim0)
+                print "test_word_counter_int = {}".format( test_word_counter_int )
+                print "test_word_counter_float = {}".format( test_word_counter_float )
                 
-                
-        #   print ("---")
+            print ("---")
         synset_rank      [test_word] = test_word_counter_int;
         synset_centrality[test_word] = test_word_counter_float;
         
-        #print ("+++++++")
+        print ("+++++++")
+        print
         i += 1
 
     
