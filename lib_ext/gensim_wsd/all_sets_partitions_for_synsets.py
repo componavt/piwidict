@@ -14,8 +14,8 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 from gensim.models import Word2Vec
 
 #model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/news.model.bin", binary=True)  # C binary format
-model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
-#model = Word2Vec.load_word2vec_format("/media/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # home
+#model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
+model = Word2Vec.load_word2vec_format("/media/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # home
 
 
 # read file with synsets
@@ -41,8 +41,9 @@ for line in file_in:
     synset_size = len(synset)
     #print "synset_size = {}".format( synset_size )
 
-    synset_rank = dict()        # integer 
+    synset_rank       = dict()  # integer 
     synset_centrality = dict()  # float
+    synset_internal   = dict()  # boolean (true for IntS, for synonyms, which always make subsets more nearer)
     
     # let's take all subsets for every 'out' element
     i=0
@@ -52,13 +53,14 @@ for line in file_in:
         test_word = gr.pop(i)
         test_word_counter_int   = 0
         test_word_counter_float = 0
-
+        
+        sim12_greater_sim0_always = True
         for j in range(0,len(gr)):
             for l in range(j,len(gr)-1):
                 gr1 = gr[j:l+1]
                 gr2 = gr[0:j]+gr[l+1:len(gr)]
-                print u"{} | gr1={} | gr2={}".format( test_word,  string_util.joinUtf8( ",", gr1 ), 
-                                                                  string_util.joinUtf8( ",", gr2 ) )
+                #print u"{} | gr1={} | gr2={}".format( test_word,  string_util.joinUtf8( ",", gr1 ), 
+                #                                                  string_util.joinUtf8( ",", gr2 ) )
                 
                 gr1_and_test_word = gr1[:]
                 gr1_and_test_word.append( test_word )
@@ -69,23 +71,27 @@ for line in file_in:
                 sim0 = model.n_similarity(gr1, gr2)
                 sim1 = model.n_similarity(gr1_and_test_word, gr2)
                 sim2 = model.n_similarity(gr1,               gr2_and_test_word)
-                print "sim0 = {:5.3f}".format( sim0 )
-                print "sim1 = {:5.3f}".format( sim1 )
-                print "sim2 = {:5.3f}".format( sim2 )
+                #print "sim0 = {:5.3f}".format( sim0 )
+                #print "sim1 = {:5.3f}".format( sim1 )
+                #print "sim2 = {:5.3f}".format( sim2 )
                 
+                if sim0 > sim1 or sim0 > sim2:
+                    sim12_greater_sim0_always = False
                 a = 1 if sim1 > sim0 else -1
                 b = 1 if sim2 > sim0 else -1
                 test_word_counter_int += (a + b)/2
                 test_word_counter_float += (sim1 - sim0) + (sim2 - sim0)
-                print "test_word_counter_int = {}".format( test_word_counter_int )
-                print "test_word_counter_float = {}".format( test_word_counter_float )
                 
-            print ("---")
+                #print "test_word_counter_int = {}".format( test_word_counter_int )
+                #print "test_word_counter_float = {}".format( test_word_counter_float )
+                
+            #print ("---")
         synset_rank      [test_word] = test_word_counter_int;
         synset_centrality[test_word] = test_word_counter_float;
+        synset_internal  [test_word] = sim12_greater_sim0_always;
         
-        print ("+++++++")
-        print
+        #print ("+++++++")
+        #print
         i += 1
 
     
@@ -95,8 +101,21 @@ for line in file_in:
     
     #sorted(synset_centrality.items(), key=operator.itemgetter(1))
     
+    # print synonyms in syset with characteristics (rank, degree of centrality, belong or not to IntS)
     for key, value in sorted_synset_centrality.iteritems():
-        print u"{:5.2f} {:3} {}".format( value, synset_rank [key], key)
+        
+        int_s = 'IntS' if synset_internal [key] else ''
+        print u"{:5.2f} {:3} {} {}".format( value, synset_rank [key], key, int_s)
+        
+    # print syset characteristics (number of synonyms, )
+    int_s_len = 0
+    for key, value in synset_internal.iteritems():
+        if value:
+            int_s_len += 1
+    
+    
+    print u"Synset len={}, |IntS|={}".format( synset_size, int_s_len)
+        
 sys.exit("File read. Done.")
 
 
