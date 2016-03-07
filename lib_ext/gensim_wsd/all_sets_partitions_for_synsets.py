@@ -8,47 +8,75 @@ import string_util
 import codecs
 import operator
 import collections
+import synset
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 from gensim.models import Word2Vec
 
-#model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/news.model.bin", binary=True)  # C binary format
-#model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
-model = Word2Vec.load_word2vec_format("/media/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # home
+#model_name = "ruscorpora"
+model_name = "news"
 
+#model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
+model = Word2Vec.load_word2vec_format("/media/data/all/soft_new/linguistics/rusvectores/" + model_name + ".model.bin", binary=True) # home
+
+arg_len = len(sys.argv)
+if arg_len is not 3:
+    sys.exit("Error in the number of parameters. You should pass input file name and output!")
+    
+
+print ("Read data from the file: %s" % str(sys.argv[1]))
+print ("Write data to the file: %s" % str(sys.argv[2]))
+
+# Input file peculiarities
+# *) let's first element in synset is a headword
+# *) every line is a set of synonym words (synset)
 
 # read file with synsets
 #file_in = open('./data/in_synset.txt', 'r')
 
-file_in = codecs.open('./data/in_synset.txt', encoding='utf-8')
+#file_in = codecs.open('./data/in_synset.txt', encoding='utf-8')
+#file_in = codecs.open('./data/synset_all_relations_verb100.txt', encoding='utf-8')
+file_in  = codecs.open( sys.argv[1], encoding='utf-8')
+file_out = codecs.open( sys.argv[2], 'w', encoding='utf-8')
+
+file_out.write( "Word2vec model: {}\n".format(model_name))
+
 #for line in file_in:
 #    print repr(line)
 
+synset_dict = dict()  
+
 # every line is a set of synonym words (synset)
 for line in file_in:
-    print
-    synset = []
+    file_out.write("\n")
+    arr_synset = []
     for word in line.split():
-        synset.append(word)
+        arr_synset.append(word)
     
-    filter_vocab_words.filterVocabWords( synset, model.vocab )
-    print string_util.joinUtf8( ",", synset )                   # after filter, now there are only words with vectors
-    
-    
+    arr_synset = filter_vocab_words.filterVocabWords( arr_synset, model.vocab )
+    #print string_util.joinUtf8( ",", arr_synset )                              # after filter, now there are only words with vectors
     
     # synset is ready
-    synset_size = len(synset)
+    synset_size = len(arr_synset)
     #print "synset_size = {}".format( synset_size )
+    
+    if synset_size < 3:
+        continue        # it is possible calculate sim0, sim1 and sim2 only if there are three or more synonyms
+    
+    current_synset  = synset.Synset()
+    current_synset.headword = arr_synset[0] # let's first element in synset is a headword
+    current_synset.line     = line
+    
 
-    synset_rank       = dict()  # integer 
-    synset_centrality = dict()  # float
-    synset_internal   = dict()  # boolean (true for IntS, for synonyms, which always make subsets more nearer)
+    syn_rank       = dict()  # integer
+    syn_centrality = dict()  # float
+    syn_internal   = dict()  # boolean (true for IntS, for synonyms, which always make subsets more nearer)
     
     # let's take all subsets for every 'out' element
     i=0
     while (i < synset_size):
-        gr = synset[:]
+        gr = arr_synset[:]
         # extract the element 'out' which is under consideration
         test_word = gr.pop(i)
         test_word_counter_int   = 0
@@ -86,9 +114,9 @@ for line in file_in:
                 #print "test_word_counter_float = {}".format( test_word_counter_float )
                 
             #print ("---")
-        synset_rank      [test_word] = test_word_counter_int;
-        synset_centrality[test_word] = test_word_counter_float;
-        synset_internal  [test_word] = sim12_greater_sim0_always;
+        syn_rank      [test_word] = test_word_counter_int;
+        syn_centrality[test_word] = test_word_counter_float;
+        syn_internal  [test_word] = sim12_greater_sim0_always;
         
         #print ("+++++++")
         #print
@@ -97,25 +125,63 @@ for line in file_in:
     
     
     #sorted_synset_rank       = collections.OrderedDict(sorted(synset_rank      .iteritems(), key=lambda x: x[1]))
-    sorted_synset_centrality = collections.OrderedDict(sorted(synset_centrality.iteritems(), key=lambda x: x[1]))
+    sorted_synset_centrality = collections.OrderedDict(sorted(syn_centrality.iteritems(), key=lambda x: x[1]))
     
     #sorted(synset_centrality.items(), key=operator.itemgetter(1))
     
-    # print synonyms in syset with characteristics (rank, degree of centrality, belong or not to IntS)
+    # print synonyms in synset with characteristics (rank, degree of centrality, belong or not to IntS)
+    ints_words = []
+    outs_words = []
     for key, value in sorted_synset_centrality.iteritems():
         
-        int_s = 'IntS' if synset_internal [key] else ''
-        print u"{:5.2f} {:3} {} {}".format( value, synset_rank [key], key, int_s)
+        int_s = 'IntS' if syn_internal [key] else ''
+        #print u"{:5.2f} {:3} {} {}".format( value, syn_rank [key], key, int_s)
+        file_out.write( u"{:5.2f} {:3} {} {}\n".format( value, syn_rank [key], key, int_s) )
         
-    # print syset characteristics (number of synonyms, )
-    int_s_len = 0
-    for key, value in synset_internal.iteritems():
+        # generates two sublists of this synset: internal words (IntS) and the edge of the synset (OutS)
+        if syn_internal [key]: 
+            ints_words.append(key)
+        else:
+            outs_words.append(key)
+        
+    # syset properties (number of synonyms |synset|, |IntS| )
+    # ints_len - number of internal synonyms in synset
+    ints_len = 0
+    for key, value in syn_internal.iteritems():
         if value:
-            int_s_len += 1
+            ints_len += 1
+            
+    current_synset.ints_len = ints_len
+    current_synset.len = synset_size
     
+    synset_dict [current_synset.line] = current_synset
+    current_synset.ints_words = ints_words
+    current_synset.outs_words = outs_words
     
-    print u"Synset len={}, |IntS|={}".format( synset_size, int_s_len)
+    #print u"Synset len={}, |IntS|={}".format( synset_size, ints_len)
+    file_out.write( u"Synset len={}, |IntS|={}\n".format( synset_size, ints_len) )
+    
+
+file_out.write("\n\n\n")
+
+for _synset in (sorted(synset_dict.values(), key=operator.attrgetter('ints_len'))):
+    
+    ints_words = _synset.ints_words
+    outs_words = _synset.outs_words
+    
+    str_ints = ""
+    str_outs = ""
+    if len(ints_words) > 0:
+        str_ints = " IntS(" + string_util.joinUtf8( " ", ints_words ) + ") "
         
+    if len(outs_words) > 0:
+        str_outs = " OutS(" + string_util.joinUtf8( " ", outs_words ) + ") "
+    
+    file_out.write( u"{}/{} = |IntS|/|S|, [[{}]], {}{}\n".format( _synset.ints_len, _synset.len, _synset.headword, str_ints, str_outs) )
+    #print u"{}/{} = |IntS|/|S|, [[{}]], {}{}".format( _synset.ints_len, _synset.len, _synset.headword, str_ints, str_outs)
+    #print u"{}/{} = |IntS|/|S|, [[{}]], {}".format( _synset.ints_len, _synset.len, _synset.headword, _synset.line)
+    
+
 sys.exit("File read. Done.")
 
 
