@@ -24,7 +24,11 @@ $count_exec_time = 1;
 include("../../config.php");
 include(LIB_DIR."header.php");
 
-$pos_name = "verb";
+//$pos_name = "verb";
+//$pos_name = "adverb";
+//$pos_name = "adjective";
+$pos_name = "noun";
+
 $lang_id = TLang::getIDByLangCode("ru");
 $pos_id = TPOS::getIDByName($pos_name);
 
@@ -39,19 +43,24 @@ $query = "SELECT wiki_text.text as inlink, relation_type.name as relation, page_
 $result = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 while ($row = $result -> fetch_object()) {
-    $query = "SELECT wiki_text.text as inlink_meaning FROM meaning, page, lang_pos, wiki_text WHERE page.id = lang_pos.page_id AND meaning.lang_pos_id = lang_pos.id AND
-              meaning.wiki_text_id = wiki_text.id AND page_title like '".PWString::escapeQuotes($row->inlink)."' AND lang_id = $lang_id  AND pos_id=$pos_id";    
+    if ($pos_name == 'noun') 
+        $lword = mb_strtolower($row->inlink);
 
-    $result_meaning = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    if ($pos_name != 'noun' || ($lword != 'имя' && $lword == $row->inlink)) {
+        $query = "SELECT wiki_text.text as inlink_meaning FROM meaning, page, lang_pos, wiki_text WHERE page.id = lang_pos.page_id AND meaning.lang_pos_id = lang_pos.id AND
+                 meaning.wiki_text_id = wiki_text.id AND page_title like '".PWString::escapeQuotes($row->inlink)."' AND lang_id = $lang_id  AND pos_id=$pos_id";    
 
-    $num = $LINK_DB -> query_count($result_meaning);
+        $result_meaning = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-    if ($num > 1) {
-        $row_meaning = $result_meaning -> fetch_object();
-        fwrite($fh, $row->inlink. '%%'. $row_meaning->inlink_meaning .'%%'. $row->relation .'%%'. $row->outlink. '%%'. TMeaning::getMeaningByID ($row->outlink_meaning). "\n");
+        $num = $LINK_DB -> query_count($result_meaning);
 
-        while ($row_meaning = $result_meaning -> fetch_object())
-            fwrite($fh, '%%'. $row_meaning->inlink_meaning. "\n");
+        if ($num > 1) {
+            $row_meaning = $result_meaning -> fetch_object();
+            fwrite($fh, $row->inlink. '%%'. $row_meaning->inlink_meaning .'%%'. $row->relation .'%%'. $row->outlink. '%%'. TMeaning::getMeaningByID ($row->outlink_meaning). "\n");
+
+            while ($row_meaning = $result_meaning -> fetch_object())
+                fwrite($fh, '%%'. $row_meaning->inlink_meaning. "\n");
+        }
     }
 }
 
