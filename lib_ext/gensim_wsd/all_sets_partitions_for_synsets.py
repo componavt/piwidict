@@ -14,6 +14,8 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 from gensim.models import Word2Vec
 
+# run:
+# 
 #model_name = "ruscorpora"
 model_name = "news"
 
