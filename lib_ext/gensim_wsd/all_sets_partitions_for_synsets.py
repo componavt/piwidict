@@ -19,8 +19,8 @@ from gensim.models import Word2Vec
 #model_name = "ruscorpora"
 model_name = "news"
 
-#model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
-model = Word2Vec.load_word2vec_format("/media/data/all/soft_new/linguistics/rusvectores/" + model_name + ".model.bin", binary=True) # home
+model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
+#model = Word2Vec.load_word2vec_format("/media/data/all/soft_new/linguistics/rusvectores/" + model_name + ".model.bin", binary=True) # home
 
 arg_len = len(sys.argv)
 if arg_len is not 3:
