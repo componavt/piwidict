@@ -19,13 +19,12 @@ from gensim.models import Word2Vec
 #model_name = "ruscorpora"
 model_name = "news"
 
-model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
-#model = Word2Vec.load_word2vec_format("/media/data/all/soft_new/linguistics/rusvectores/" + model_name + ".model.bin", binary=True) # home
+#model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
+model = Word2Vec.load_word2vec_format("/media/data/all/soft_new/linguistics/rusvectores/" + model_name + ".model.bin", binary=True) # home
 
 arg_len = len(sys.argv)
 if arg_len is not 3:
-    sys.exit("Error in the number of parameters. You should pass input file name and output!")
-    
+    sys.exit("Error in the number of parameters. You should pass input file name and output file name!")
 
 print ("Read data from the file: %s" % str(sys.argv[1]))
 print ("Write data to the file: %s" % str(sys.argv[2]))
@@ -51,7 +50,7 @@ synset_dict = dict()
 
 # every line is a set of synonym words (synset)
 for line in file_in:
-    file_out.write("\n")
+    #file_out.write("\n")
     arr_synset = []
     for word in line.split():
         arr_synset.append(word)
@@ -64,12 +63,11 @@ for line in file_in:
     #print "synset_size = {}".format( synset_size )
     
     if synset_size < 3:
-        continue        # it is possible calculate sim0, sim1 and sim2 only if there are three or more synonyms
+        continue        # it is possible calculate sim0, sim1 and sim2 only if there are >= 3 synonyms
     
     current_synset  = synset.Synset()
     current_synset.headword = arr_synset[0] # let's first element in synset is a headword
     current_synset.line     = line
-    
 
     syn_rank       = dict()  # integer
     syn_centrality = dict()  # float
@@ -161,7 +159,7 @@ for line in file_in:
     current_synset.outs_words = outs_words
     
     #print u"Synset len={}, |IntS|={}".format( synset_size, ints_len)
-    file_out.write( u"Synset len={}, |IntS|={}\n".format( synset_size, ints_len) )
+    file_out.write( u"Synset len={}, |IntS|={}\n\n".format( synset_size, ints_len) )
     
 
 file_out.write("\n\n\n")
