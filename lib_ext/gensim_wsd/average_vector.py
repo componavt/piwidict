@@ -19,13 +19,16 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 from gensim.models import Word2Vec
 import numpy as np
 
+#model_name = "ruscorpora"
+model_name = "news"
 
-model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
-#model = Word2Vec.load_word2vec_format("/media/data/all/soft_new/linguistics/rusvectores/" + model_name + ".model.bin", binary=True) # home
+#model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
+model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/" + model_name + ".model.bin", binary=True)
 
 
 # 2/6 = |IntS|/|S|, [[сосредоточиваться]],  IntS(сосредоточиваться сосредотачиваться)  OutS(собираться отвлекаться фокусироваться концентрироваться) 
-source_words = [u'сосредоточиваться', u'сосредотачиваться', u'собираться', u'отвлекаться', u'фокусироваться', u'концентрироваться']
+#source_words = [u'сосредоточиваться', u'сосредотачиваться', u'собираться', u'отвлекаться', u'фокусироваться', u'концентрироваться', u'броня', u'танк', u'гусеница', u'удар' ]
+source_words = [u'сосредоточиваться', u'сосредотачиваться', u'собираться', u'отвлекаться', u'фокусироваться', u'концентрироваться', u'вскачь', u'резво', u'водопой', u'луг', u'резво', u'водопой', u'луг' ]
 
 #word1 = [1,2,3,0]
 #word2 = [1,2,3,0]
