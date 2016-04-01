@@ -1,4 +1,5 @@
 <?php
+// test
 if (isset($count_exec_time) && $count_exec_time) {
     $mtime = explode(" ",microtime()); 
     $tstart = $mtime[1] + $mtime[0];  // Write start time of execution
