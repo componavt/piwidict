@@ -18,3 +18,5 @@ Via Composer
 ``` bash
 $ composer require componavt/piwidict
 ```
+
+See [componavt/piwidict](https://packagist.org/packages/componavt/piwidict) at packagist.org
