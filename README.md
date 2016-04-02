@@ -11,3 +11,10 @@ piwidict (c) 2014-2016, PHP framework to work with the Wiktionary parsed databas
 
 Download machine-readable Wiktionary 
 http://whinger.krc.karelia.ru/soft/wikokit/index.html
+
+## Install
+
+Via Composer
+``` bash
+$ composer require componavt/piwidict
+```
