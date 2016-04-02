@@ -3,6 +3,7 @@
     "description": "Machine-readable Wiktionary PHP API",
     "license": "BSD",
     "keywords": ["Wiktionary"],
+    "homepage": "https://github.com/componavt/piwidict",
     "authors": [
         {
             "name": "Andrew Krizhanovsky",
