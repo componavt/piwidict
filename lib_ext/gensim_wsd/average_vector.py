@@ -6,24 +6,22 @@
 # Out: average_vector ## raw numpy vector of a word ### model['computer'] =
 
 import logging
-import filter_vocab_words
 import sys
-import string_util
 import codecs
 import operator
 import collections
-import synset
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 from gensim.models import Word2Vec
 import numpy as np
 
-#model_name = "ruscorpora"
-model_name = "news"
+import lib.filter_vocab_words
+import lib.string_util
+import lib.synset
 
-#model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
-model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/" + model_name + ".model.bin", binary=True)
+import configus
+model = Word2Vec.load_word2vec_format(configus.MODEL_PATH, binary=True)
 
 
 # 2/6 = |IntS|/|S|, [[сосредоточиваться]],  IntS(сосредоточиваться сосредотачиваться)  OutS(собираться отвлекаться фокусироваться концентрироваться) 
@@ -43,8 +41,8 @@ source_words = [u'сосредоточиваться', u'сосредотачи�
 #print np.average( arr_vectors, axis=0)
 
 
-words = filter_vocab_words.filterVocabWords( source_words, model.vocab )
-print string_util.joinUtf8( ",", words )                                # after filter, now there are only words with vectors
+words = lib.filter_vocab_words.filterVocabWords( source_words, model.vocab )
+print lib.string_util.joinUtf8( ",", words )                                # after filter, now there are only words with vectors
 
 arr_vectors = []
 for w in words:
