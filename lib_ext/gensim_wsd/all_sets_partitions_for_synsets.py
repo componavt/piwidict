@@ -2,25 +2,21 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import filter_vocab_words
 import sys
-import string_util
 import codecs
 import operator
 import collections
-import synset
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 from gensim.models import Word2Vec
 
-# run:
-# 
-#model_name = "ruscorpora"
-model_name = "news"
+import lib.filter_vocab_words
+import lib.string_util
+import lib.synset
 
-#model = Word2Vec.load_word2vec_format("/data/all/soft_new/linguistics/rusvectores/ruscorpora.model.bin", binary=True) # hasee
-model = Word2Vec.load_word2vec_format("/media/data/all/soft_new/linguistics/rusvectores/" + model_name + ".model.bin", binary=True) # home
+import configus
+model = Word2Vec.load_word2vec_format(configus.MODEL_PATH, binary=True)
 
 arg_len = len(sys.argv)
 if arg_len is not 3:
@@ -41,7 +37,7 @@ print ("Write data to the file: %s" % str(sys.argv[2]))
 file_in  = codecs.open( sys.argv[1], encoding='utf-8')
 file_out = codecs.open( sys.argv[2], 'w', encoding='utf-8')
 
-file_out.write( "Word2vec model: {}\n".format(model_name))
+file_out.write( "Word2vec model: {}\n".format(configus.MODEL_NAME))
 
 #for line in file_in:
 #    print repr(line)
@@ -55,7 +51,7 @@ for line in file_in:
     for word in line.split():
         arr_synset.append(word)
     
-    arr_synset = filter_vocab_words.filterVocabWords( arr_synset, model.vocab )
+    arr_synset = lib.filter_vocab_words.filterVocabWords( arr_synset, model.vocab )
     #print string_util.joinUtf8( ",", arr_synset )                              # after filter, now there are only words with vectors
     
     # synset is ready
@@ -183,86 +179,3 @@ for _synset in (sorted(synset_dict.values(), key=operator.attrgetter('ints_len')
     
 
 sys.exit("File read. Done.")
-
-
-
-
-
-
-
-
-
-
-
-
-
-#sim1 = model.similarity(u'снискивать', u'стяжать')
-#print "distance('снискивать', 'стяжать') = {}".format(sim1)
-
-print
-#         absent in model                             presented
-words = ["запустить", "бросить", "бронь", "баюкать", "швырнуть", "возбуждать", "вызывать", "пробуждать", "укачивать"] # words which are absent in models :(
-#words = ["слово", "швырнуть", "бросить"] # words which are absent in models :(
-for w in words:
-    if w.decode('utf8') in model.vocab:
-        print "The word '{}' indexed by word2vec model.".format( w )
-    else:
-        print "My KeyError: The word '{}' does not indexed by word2vec model.".format( w )
-print
-
-
-print "'баюкать 1.' (+syn: убаюкивать; +hyper: укачивать, усыплять) similarity to 'бронь 1':  (+syn: пробуждать; +antonym: усыплять):"
-
-sim1 = model.n_similarity([u'убаюкивать', u'укачивать', u'усыплять'], [u'пробуждать', u'усыплять'])
-#sim1 = model.n_similarity([u'кормить', u'содержать', u'заботиться'], [u'кинуть', u'запустить', u'швырнуть'])
-print "Without word 'бронь' in both lists sim={}".format( sim1 )
-
-#sim2 = model.n_similarity([u'убаюкивать', u'укачивать', u'усыплять', u'бронь'], [u'пробуждать', u'усыплять', u'бронь'])
-#print "With    word 'бронь' in both lists sim={}".format( sim2 )
-
-sim3 = model.n_similarity([u'убаюкивать', u'укачивать', u'усыплять', u'бронь'], [u'пробуждать', u'усыплять'])
-print "With    word 'бронь' in the first list sim={}".format( sim3 )
-
-sim4 = model.n_similarity([u'убаюкивать', u'укачивать', u'усыплять'], [u'пробуждать', u'усыплять', u'бронь'])
-print "With    word 'бронь' in the second list sim={}".format( sim4 )
-print
-
-print
-print "'баюкать 1.' (+syn: убаюкивать; +hyper: укачивать, усыплять) similarity to 'бронь 2':  (+syn: возбуждать, вызывать, пробуждать):"
-
-sim1 = model.n_similarity([u'убаюкивать', u'укачивать', u'усыплять'], [u'возбуждать', u'вызывать', u'пробуждать'])
-#sim1 = model.n_similarity([u'кормить', u'содержать', u'заботиться'], [u'кинуть', u'запустить', u'швырнуть'])
-print "Without word 'бронь' in both lists sim={}".format( sim1 )
-
-#sim2 = model.n_similarity([u'убаюкивать', u'укачивать', u'усыплять', u'бронь'], [u'возбуждать', u'вызывать', u'пробуждать', u'бронь'])
-#print "With    word 'бронь' in both lists sim={}".format( sim2 )
-
-sim3 = model.n_similarity([u'убаюкивать', u'укачивать', u'усыплять', u'бронь'], [u'возбуждать', u'вызывать', u'пробуждать'])
-print "With    word 'бронь' in the first list sim={}".format( sim3 )
-
-sim4 = model.n_similarity([u'убаюкивать', u'укачивать', u'усыплять'], [u'возбуждать', u'вызывать', u'пробуждать', u'бронь'])
-print "With    word 'бронь' in the second list sim={}".format( sim4 )
-print
-
-#sim1 = model.n_similarity([u'потухать', u'тухнуть'], [u'ослабевать'])
-#print "Without antonyms sim={}".format( sim1 )
-
-#sim2 = model.n_similarity([u'потухать', u'тухнуть'], [u'ослабевать', u'усиливаться', u'крепнуть', u'возобновляться', u'появляться'])
-#print "With    antonyms sim={}".format( sim2 )
-#print
-
-# topn=10, 
-#similar_words = model.most_similar(positive=[u'женщина', u'король'], negative=[u'мужчина'], topn=30 )
-
-#for i in range(len(similar_words)):
-#    print "{}. dist={}, {}".format( i+1, similar_words[i][1], similar_words[i][0].encode('utf8'))
-
-
-#print "+ (спец, специалист, профи, профессионал, мастер, мастак, правитель, монарх) - (королева, нищий):"
-#similar_words = model.most_similar(positive=[u'спец', u'специалист', u'профи', u'профессионал', u'мастер', u'мастак', u'правитель', u'монарх'], negative=[u'королева', u'нищий'], topn=30 )
-#similar_words = model.most_similar(positive=[u'спец', u'специалист', u'профи', u'профессионал', u'мастер', u'мастак', u'правитель', u'монарх'], negative=[], topn=30 )
-#similar_words = model.most_similar(positive=[u'правитель', u'монарх'], negative=[u'королева', u'нищий'], topn=30 )
-
-#similar_words = model.most_similar_cosmul(positive=[u'правитель', u'монарх'], negative=[u'королева', u'нищий'], topn=30 )
-#similar_words = model.most_similar_cosmul(positive=[u'спец', u'специалист', u'профи', u'профессионал', u'мастер', u'мастак', u'правитель', u'монарх'], negative=[u'королева', u'нищий'], topn=30 )
-#similar_words = model.most_similar_cosmul(positive=[u'монарх', u'карта', u'фигура', u'лидер'], negative=[], topn=30 )
