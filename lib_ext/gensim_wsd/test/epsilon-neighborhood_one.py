@@ -11,9 +11,7 @@
 
 import logging
 import sys
-import codecs
-import operator
-import collections
+import os
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -22,6 +20,7 @@ import numpy as np
 
 from scipy import spatial # Cosine similarity calculation
 
+sys.path.append(os.path.abspath('../')) # add parent folder, access to 'lib'
 import lib.filter_vocab_words
 import lib.string_util
 import lib.synset
