@@ -20,9 +20,12 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 from gensim.models import Word2Vec
 import numpy as np
 
+from scipy import spatial # Cosine similarity calculation
+
 import lib.filter_vocab_words
 import lib.string_util
 import lib.synset
+import lib.average_vector
 
 import configus
 model = Word2Vec.load_word2vec_format(configus.MODEL_PATH, binary=True)
@@ -33,9 +36,6 @@ model = Word2Vec.load_word2vec_format(configus.MODEL_PATH, binary=True)
 #source_words = [u'лить', u'кутить', u'сосредоточиваться', u'сосредотачиваться', u'собираться', u'отвлекаться', u'фокусироваться', u'концентрироваться']
 
 # 0/6 = |IntS|/|S|, [[абсолют]],  OutS(абсолют логос первооснова творец совершенство идеал) 
-
-#words = lib.filter_vocab_words.filterVocabWords( source_words, model.vocab )
-#print string_util.joinUtf8( ",", words )                                # after filter, now there are only words with vectors
 
 #while word in model.vocab:
     #print string_util.joinUtf8( ",", words )
@@ -48,12 +48,21 @@ model = Word2Vec.load_word2vec_format(configus.MODEL_PATH, binary=True)
 #word = [u'собираться']
 word = [u'сосредоточиваться']
 
+# How to twice vector (multiply to scalar 2.0)
+# v_word = model[ word ]
+# mult2 = np.ones(300) + 1
+# v_word2 = v_word * mult2
+# most_similar_words = model.most_similar( v_word, [], topn)
+
 # 1. Find epsilon-neighborhood of word w (vector v)
 #       -> eps(w) = word_1, ... word_n1 (gets model.most_similar == top_n1 similar words, distance from w <= Epsilon)
 
 topn = 20;
 #most_similar_words = model.most_similar( ['woman'], [], topn)
-most_similar_words = model.most_similar( word, [ ], topn)
+most_similar_words_source = model.most_similar( word, [ ], topn)
+
+most_similar_words = lib.filter_vocab_words.filterVocabWordSimilarity( most_similar_words_source, model.vocab )
+#print string_util.joinUtf8( ",", words )                                # after filter, now there are only words with vectors
 
 print 
 print u"Nearest words to the word: '{}'".format( word[0] )
@@ -66,7 +75,7 @@ for sim_w in most_similar_words:
 # 3. Find epsilon-neighborhood of word -w (vector -v)
 #       -> eps(-w) = -word_1, ... -word_n2 (gets model.most_similar == top_n similar words, distance from -w <= Epsilon)
 print
-print u"word[0] = '{}'".format( word[0] )
+#print u"word[0] = '{}'".format( word[0] )
 
 vector = model [ word[0] ]
 negative_v = np.negative( vector )
@@ -81,11 +90,14 @@ negative_similar_words = model.most_similar( [ negative_v ], [], topn)
 for sim_w in negative_similar_words:
     print u"{}  '{}'".format( sim_w[1], sim_w[0] )
     
-# todo extract sim_w[0] -> to array -> to model.n_similarity (below)
-    
-    
-#sim2 = model.n_similarity([u'убаюкивать', u'укачивать', u'усыплять', u'бронь'], [u'пробуждать', u'усыплять', u'бронь'])
 
-# similarity_from_positive_to_negative_set
-sim12 = model.n_similarity(most_similar_words, negative_similar_words)
-print "from positive to negative set sim={}".format( sim12 )
+# 4. sim( eps(w), eps(-w) ) = 
+#       = model.n_similarity ( word_1, ... word_n1,  -word_1, ... -word_n2) = result
+    
+average_eps_positive = lib.average_vector.getAverageVectorForModelWords( most_similar_words,     model, np )
+average_eps_negative = lib.average_vector.getAverageVectorForModelWords( negative_similar_words, model, np )
+
+result = 1 - spatial.distance.cosine( average_eps_positive, average_eps_negative )
+
+print
+print "Similarity from positive to negative set sim( eps(w), eps(-w) ) = {}".format( result )
