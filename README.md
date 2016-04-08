@@ -3,7 +3,7 @@ piwidict
 
 Machine-readable Wiktionary PHP API.
 
-"piwidict" = PHP+wiki+wiktionary+dictionary
+"piwidict" = PHP+wiki+wiktionary+dictionary, https://github.com/componavt/piwidict
 
 wikokit (c) 2005-2016, Wiktionary parser, https://github.com/componavt/wikokit
 
