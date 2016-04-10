@@ -27,17 +27,27 @@ import lib.filter_vocab_words
 import lib.string_util
 import lib.synset
 import lib.average_vector
+import lib.epsilon_neighborhood
 
 import configus
 model = Word2Vec.load_word2vec_format(configus.MODEL_PATH, binary=True)
 
-while word in model.vocab:
-    print string_util.joinUtf8( ",", words )
-    out_word = model.doesnt_match(words)
-    print u"    - '{}'".format( out_word )
-    words.remove( out_word )
 
-sys.exit()
+getDistanceAverageEpsilonNeighborhoodAndNegative( source_word, eps, model, np ):
+
+#for word in model.vocab:
+    
+#    print u" word={}".format( word )
+    #print " word[1]={}".format( word[1] )
+    
+    
+    #print string_util.joinUtf8( ",", words )
+    #out_word = model.doesnt_match(words)
+    #print u"    - '{}'".format( out_word )
+    #words.remove( out_word )
+    
+#    sys.exit()
+
 
 #word = [u'сосредоточиваться', u'собираться']
 #word = [u'собираться']

@@ -8,8 +8,10 @@ def getDistanceAverageEpsilonNeighborhoodAndNegative( source_word, eps, model, n
     
     Parameters
     ----------
-    source_word : ?
+    source_word : String
         Source word to be the center of epsilon-neighborhood of similar words.
+    eps: float
+        filter to include into neighborhood set only word, where dist(source_word, word) < Eps
     model : object
         Word2Vec model.
     np : object
