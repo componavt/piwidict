@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import math
 import average_vector
 
 from scipy import spatial # Cosine similarity calculation
@@ -88,13 +89,12 @@ def getDistanceAverageEpsilonNeighborhoodAndNegative( source_word, eps, model, n
     print "average_eps_positive = {}".format( average_eps_positive )
     print 
     print "average_eps_negative = {}".format( average_eps_negative )
-    #print "join(average_eps_positive) = {}".format( join(average_eps_positive) )
     
     #if len( average_eps_positive ) > 0 and len( average_eps_negative ) > 0:
-    if np.isnan( average_eps_positive ) or np.isnan( average_eps_negative ):
-        result = 0.0
-    else:
-        result = 1 - spatial.distance.cosine( average_eps_positive, average_eps_negative )
+    #if np.isnan( average_eps_positive ) or np.isnan( average_eps_negative ):
+    #    result = 0.0
+    #else:
+    result = 1 - spatial.distance.cosine( average_eps_positive, average_eps_negative )
 
     print
     print "Similarity from positive to negative set sim( eps(w), eps(-w) ) = {}".format( result )
