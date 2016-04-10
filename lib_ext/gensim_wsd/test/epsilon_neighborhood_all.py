@@ -33,20 +33,15 @@ import configus
 model = Word2Vec.load_word2vec_format(configus.MODEL_PATH, binary=True)
 
 
-getDistanceAverageEpsilonNeighborhoodAndNegative( source_word, eps, model, np ):
-
-#for word in model.vocab:
+eps = 0.33
+i = 0
+for word in model.vocab:
+    i += 1
+    dist = lib.epsilon_neighborhood.getDistanceAverageEpsilonNeighborhoodAndNegative( word, eps, model, np )
+    print u" word={}, dist (v, -v)={}".format( word, dist )
     
-#    print u" word={}".format( word )
-    #print " word[1]={}".format( word[1] )
-    
-    
-    #print string_util.joinUtf8( ",", words )
-    #out_word = model.doesnt_match(words)
-    #print u"    - '{}'".format( out_word )
-    #words.remove( out_word )
-    
-#    sys.exit()
+    if i > 10:
+        sys.exit()
 
 
 #word = [u'сосредоточиваться', u'собираться']
