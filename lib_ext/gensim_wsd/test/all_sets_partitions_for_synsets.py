@@ -3,6 +3,7 @@
 
 import logging
 import sys
+import os
 import codecs
 import operator
 import collections
@@ -11,6 +12,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 from gensim.models import Word2Vec
 
+sys.path.append(os.path.abspath('../')) # add parent folder, access to 'lib'
 import lib.filter_vocab_words
 import lib.string_util
 import lib.synset
@@ -61,7 +63,7 @@ for line in file_in:
     if synset_size < 3:
         continue        # it is possible calculate sim0, sim1 and sim2 only if there are >= 3 synonyms
     
-    current_synset  = synset.Synset()
+    current_synset  = lib.synset.Synset()
     current_synset.headword = arr_synset[0] # let's first element in synset is a headword
     current_synset.line     = line
 
@@ -168,10 +170,10 @@ for _synset in (sorted(synset_dict.values(), key=operator.attrgetter('ints_len')
     str_ints = ""
     str_outs = ""
     if len(ints_words) > 0:
-        str_ints = " IntS(" + string_util.joinUtf8( " ", ints_words ) + ") "
+        str_ints = " IntS(" + lib.string_util.joinUtf8( " ", ints_words ) + ") "
         
     if len(outs_words) > 0:
-        str_outs = " OutS(" + string_util.joinUtf8( " ", outs_words ) + ") "
+        str_outs = " OutS(" + lib.string_util.joinUtf8( " ", outs_words ) + ") "
     
     file_out.write( u"{}/{} = |IntS|/|S|, [[{}]], {}{}\n".format( _synset.ints_len, _synset.len, _synset.headword, str_ints, str_outs) )
     #print u"{}/{} = |IntS|/|S|, [[{}]], {}{}".format( _synset.ints_len, _synset.len, _synset.headword, str_ints, str_outs)

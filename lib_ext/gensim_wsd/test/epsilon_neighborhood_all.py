@@ -61,11 +61,10 @@ for word in model.vocab:
     
     #sys.exit()
     
-    #if i > 700:
-    #    break
+    if i > 90:
+        break
 
 
-#for _synset in (sorted(synset_dict.values(), key=operator.attrgetter('ints_len'))):
 sorted_words_by_eps = sorted(word_epsilons.items(), key=operator.itemgetter(1))
 
 print 
