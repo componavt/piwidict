@@ -3,6 +3,9 @@
 # Joins words in Unicode Utf8 format.
 def joinUtf8( glue, word_list ):
     
+    if len(word_list) == 0:
+        return ""
+    
     result_str = ""
     my_glue = ""
     for w in word_list:
