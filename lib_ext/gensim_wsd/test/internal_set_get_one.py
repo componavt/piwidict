@@ -37,7 +37,7 @@ arr_words = line.split()
 int_s = lib.internal_set.getInternalSet (arr_words, model)
 
 print line
-print u"Result IntS = ({})".format( lib.string_util.joinUtf8( ",", int_s ) )
+print u"IntS = ({})".format( lib.string_util.joinUtf8( ",", int_s ) )
 print
 
 
@@ -51,4 +51,4 @@ arr_words = line.split()
 int_s = lib.internal_set.getInternalSet (arr_words, model)
 
 print line
-print u"Result IntS = ({})".format( lib.string_util.joinUtf8( ",", int_s ) )
+print u"IntS = ({})".format( lib.string_util.joinUtf8( ",", int_s ) )

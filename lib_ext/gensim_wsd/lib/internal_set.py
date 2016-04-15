@@ -114,16 +114,16 @@ def getInternalSetWithReducing( arr_words, target_word, model):
     """
     Get IntS (internal, kernel) words for words in the array arr_words. 
         If |IntS (arr_words)| == 0 then try reduce arr_words, 
-        (1) until |IntS (reduced arr_words)| > 0 and
-        (2)       set (reduced arr_words) contains target_word
+        (1) until |IntS (reduced arr_words)| > 0
+        (2)  and    set (reduced arr_words) contains target_word
     
     
     Parameters
     ----------
     arr_words : array of Strings
-        Array of source words, for example a ynonym set or a sentence' words.
+        Array of source words, for example a synonym set or a sentence' words.
     target_word : String
-        (1) arr_words contains target_word, 
+        (1) arr_words contain target_word, 
         (2) the result IntS should contain target_word too.
     model : object
         Word2Vec model.
@@ -138,46 +138,43 @@ def getInternalSetWithReducing( arr_words, target_word, model):
     result_int_s = []
 
     arr_words = filter_vocab_words.filterVocabWords( arr_words, model.vocab )
-    #print string_util.joinUtf8( ",", arr_words )                              # after filter, now there are only words with vectors
+    #print string_util.joinUtf8( ",", arr_words )                            # after filter, now there are only words with vectors
     
-    len_words = len(arr_words)
-    #print "len_words = {}".format( len_words )
+    #if len(arr_words) < 3:
+    #    return []       
     
-    if len_words < 3:
-        return []       # it is possible calculate IntS only when there are >= 3 words
+    while len(arr_words) >= 3:  # it is possible calculate IntS only when there are >= 3 words
     
-    int_s = getInternalSet (arr_words, model)
-    if len( int_s ) > 0:
-        return int_s
+        int_s = getInternalSet (arr_words, model)
+        if len( int_s ) > 0:
+            return int_s
+
+        # then now: len (int_s) == 0
+        # let's find word_remote (1) within arr_words, (2) the most distant word to the target word
+        target_vector = model [ target_word ]
+        word_remote = ""
+        #arr_new = []
+        sim_min = 1.0
+        for word in arr_words:
+            if word == target_word:
+                continue            # let's skip and do not delete target word itself
+
+            vector = model [ word ]
+            sim = 1 - spatial.distance.cosine( target_vector, vector )
+
+            #print u"sim({}, {}) = {}".format( target_word, word, sim )
+
+            if sim < sim_min:
+                #print u"UPDATE: new sim {} < sim_min {}, word_remote old = {}, new = {}".format( sim, sim_min, word_remote, word )
+                sim_min     = sim
+                word_remote = word
+            #print
+
+        if len( word_remote ) == 0: # it is very strange that we did not find any word!
+            return []
+
+        arr_words.remove( word_remote )
+        print string_util.joinUtf8( ",", arr_words )
     
-    # then now: len (int_s) == 0
-    # let's find word_remote (1) within arr_words, (2) the most distant word to the target word
-    target_vector = model [ target_word ]
-    word_remote = ""
-    #arr_new = []
-    sim_min = 1.0
-    for word in arr_words:
-        if word == target_word:
-            continue            # let's skip and do not delete target word itself
-        
-        vector = model [ word ]
-        sim = 1 - spatial.distance.cosine( target_vector, vector )
-        
-        print u"sim({}, {}) = {}".format( target_word, word, sim )
-        
-        if sim < sim_min:
-            print u"UPDATE: new sim {} < sim_min {}, word_remote old = {}, new = {}".format( sim, sim_max, word_remote, word )
-            sim_max     = sim
-            word_remote = word
-        print
-            
-    if len( word_remote ) == 0: # it is very strange that we did not find any word!
-        return []
-    
-    arr_words.remove( word_remote )
-    int_s = getInternalSet (arr_words, model)
-    return int_s
-    
-    
-    
-    return result_int_s
+    return []
+    #return result_int_s
