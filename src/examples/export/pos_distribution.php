@@ -25,7 +25,7 @@
 // input file structure:
 // word | RNC (Russian National Corpus) number of occurences| GBN (Google Books Ngram) the same
 $count_exec_time = 1;
-include("../../config.php");
+include("../../../config.php");
 include(LIB_DIR."header.php");
 
 $lang_id = TLang::getIDByLangCode("ru");

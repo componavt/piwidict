@@ -1,6 +1,6 @@
 <?
 $count_exec_time = 1;
-include("../../config.php");
+include("../../../config.php");
 
 $lang_id = TLang::getIDByLangCode("ru");
 $pos_ids = array(

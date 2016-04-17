@@ -1,7 +1,7 @@
 <?
 /* List of Belarusian words with empty definition */
 $count_exec_time = 1;
-include("../../config.php");
+include("../../../config.php");
 
 $lang_id = TLang::getIDByLangCode("be");
 

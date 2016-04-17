@@ -21,7 +21,7 @@ fir|Hyponyms|tree
 
 */
 $count_exec_time = 1;
-include("../../config.php");
+include("../../../config.php");
 include(LIB_DIR."header.php");
 
 //$pos_name = "verb";

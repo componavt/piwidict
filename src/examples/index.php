@@ -1,5 +1,5 @@
 <?php 
-require("../config.php");
+require("../../config.php");
 include(LIB_DIR."header.php");
 ?>
 <h1>Example index</h1>

@@ -1,6 +1,6 @@
 <?php
 $count_exec_time = 1;
-include("../../config.php");
+include("../../../config.php");
 include(LIB_DIR."header.php");
 
 if (!isset($lang_id)) $lang_id = TLang::getIDByLangCode("ru");

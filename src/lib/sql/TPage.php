@@ -44,7 +44,7 @@ class TPage {
         $this->is_in_wiktionary = $is_in_wiktionary;
         $this->is_redirect      = $is_redirect;
         $this->redirect_target  = $redirect_target;
-    $this->lang_pos = $lang_pos;
+        $this->lang_pos         = $lang_pos;
 //        $this->lang_pos = TLangPOS::getByPage($this->id,$this);
     }
     
@@ -146,7 +146,8 @@ class TPage {
                 $row->wiki_link_count,
                 $row->is_in_wiktionary,
                 $row->is_redirect,
-                $row->redirect_target);
+                $row->redirect_target,
+                '');
             $page->lang_pos = TLangPOS::getByPage($row->id,$page);
             $page_arr[]=$page;
         }

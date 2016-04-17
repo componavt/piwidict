@@ -1,6 +1,6 @@
 <?php
 $count_exec_time = 1;
-include("../../config.php");
+include("../../../config.php");
 
 //mb_internal_encoding("UTF-8");
 

@@ -1,6 +1,6 @@
 ﻿<?        
 $count_exec_time = 1;
-include("../../config.php");
+include("../../../config.php");
 include(LIB_DIR."header.php");
 
 $query = "SELECT * FROM ".PWLemma::getTableName()." WHERE frequency>0 ORDER BY frequency DESC";

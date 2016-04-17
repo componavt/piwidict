@@ -1,7 +1,7 @@
 <?
 /* Export related words in the GEXF format */
 $count_exec_time = 0;
-include("../../config.php");
+include("../../../config.php");
 
         // Serve file as XML (prompt for download, remove if unnecessary)
         header('Content-type: "text/xml"; charset="utf8"');

@@ -14,7 +14,7 @@ $PHP_SELF=$_SERVER["PHP_SELF"];
 
 if (substr($root,-1,1) != "/") $root.="/";
 define("SITE_ROOT",$root);
-define("LIB_DIR",SITE_ROOT."lib/");
+define("LIB_DIR",SITE_ROOT."src/lib/");
 
 define ('WIKT_LANG','ru');
 define ('INTERFACE_LANGUAGE', 'en'); 
@@ -60,7 +60,7 @@ include_once(LIB_DIR."sql/semantic_relations/PWShortPath.php");
 include_once(LIB_DIR."widget/WForm.php");
 
 // PhpMorphy
-include_once(SITE_ROOT."lib_ext/phpmorphy/src/common.php");
+//include_once(SITE_ROOT."../../phpmorphy/src/common.php");
 
 foreach ($_REQUEST as $var=>$value) {
 /*

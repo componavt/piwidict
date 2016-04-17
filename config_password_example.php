@@ -4,7 +4,13 @@
  * Init constants and variables (user names, passwords)
  *******************************************************/
 
-## DB connection, MySQL 
+## $ mysqladmin -p -uroot create ruwikt20160210_parsed
+## $ mysql -p -uroot ruwikt20160210_parsed
+## mysql> charset binary;
+## mysql> source ~/ruwikt20160210_parsed.sql
+
+
+## DB connection, MySQL
 ## mysql> 
 ## mysql> GRANT SELECT, INSERT, UPDATE, CREATE, DROP, INDEX ON %.* TO pw_admin@'%' identified by '';
 ## mysql> FLUSH PRIVILEGES;
@@ -22,7 +28,7 @@
 // use ruwikt20140904_parsed
 // show tables like 'pw%';
 
-define ('NAME_DB','ruwikt20140904_parsed');
+define ('NAME_DB','ruwikt20160210_parsed');
 $config['hostname']   = 'localhost';
 $config['dbname']     = NAME_DB;
 $config['user_login']      = 'pw_user';

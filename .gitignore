@@ -5,7 +5,7 @@ src/examples/semantic_relations/related_words_in1.txt
 config_password.php
 /vendor
 composer.lock
-
+.idea
 
 # Python 
 
