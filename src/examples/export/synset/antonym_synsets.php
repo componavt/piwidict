@@ -31,8 +31,9 @@ $out_file_name = SITE_ROOT.preg_replace("/^\/src(\/.+)\.php$/","data$1",$PHP_SEL
 //$pos_id = TPOS::getIDByName($pos_name);
 //$fh = fopen($out_file_name.'_'.$pos_name.'.txt','w');
 
-$fh = fopen($out_file_name.'.txt','w');
-fwrite($fh,'## Database version: '.NAME_DB."\n\n");
+//$fh = fopen($out_file_name.'.txt','w');
+$fh = gzopen($out_file_name.'.txt.gz','wb9');
+gzwrite($fh,'## Database version: '.NAME_DB."\n\n");
 
 $query = "SELECT page_title as first_word, meaning.id as meaning_id
           FROM lang_pos, meaning, page 
@@ -60,16 +61,16 @@ while ($row = $result_meaning -> fetch_object()) {
     $num = $LINK_DB -> query_count($result_relation);
 
     if ($num > 0) {
-        fwrite($fh, $row->first_word);
+        gzwrite($fh, $row->first_word);
 
         while ($row_relation = $result_relation -> fetch_object()) {
-            fwrite($fh, '|'. $row_relation->relation_word);
+            gzwrite($fh, '|'. $row_relation->relation_word);
         }
-        fwrite($fh, "\n");
+        gzwrite($fh, "\n");
     }
 }
 
-fclose($fh);
+gzclose($fh);
 
 include(LIB_DIR."footer.php");
 ?>
