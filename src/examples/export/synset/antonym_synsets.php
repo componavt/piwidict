@@ -19,20 +19,21 @@ $count_exec_time = 1;
 include("../../../../config.php");
 include(LIB_DIR."header.php");
 
-$lang_id = TLang::getIDByLangCode("ru");
+$lang_name = "ru";
+$lang_id = TLang::getIDByLangCode($lang_name);
 $ant_id = TRelationType::getIDByName("antonyms");
 
 $out_file_name = SITE_ROOT.preg_replace("/^\/src(\/.+)\.php$/","data$1",$PHP_SELF);
 
-//$pos_name = "noun";
+$pos_name = "noun";
 //$pos_name = "verb";
 //$pos_name = "adjective";
 //$pos_name = "adverb";
-//$pos_id = TPOS::getIDByName($pos_name);
-//$fh = fopen($out_file_name.'_'.$pos_name.'.txt','w');
+$pos_id = TPOS::getIDByName($pos_name);
 
-//$fh = fopen($out_file_name.'.txt','w');
-$fh = gzopen($out_file_name.'.txt.gz','wb9');
+//$fh = gzopen($out_file_name.'.txt.gz','wb9');
+$fh = gzopen($out_file_name.'_'.$lang_name.'_'.$pos_name.'.txt.gz','wb9');
+
 gzwrite($fh,'## Database version: '.NAME_DB."\n\n");
 
 $query = "SELECT page_title as first_word, meaning.id as meaning_id
@@ -41,7 +42,7 @@ $query = "SELECT page_title as first_word, meaning.id as meaning_id
             AND page.id = lang_pos.page_id
             AND page_title NOT LIKE '% %'
             AND lang_id = $lang_id ".
-//         "  AND pos_id=$pos_id ".
+         "  AND pos_id=$pos_id ".
          "ORDER BY page_title";
 
 $result_meaning = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
