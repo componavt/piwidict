@@ -44,8 +44,10 @@ print
 # Exampl 2. Non-empty IntS
 # #####################
 # 1/5 = |IntS|/|S|, [[шум]],  IntS(шум)  OutS(гам гвалт грохот гул) 
-
 line = u"шум гам гвалт грохот гул"
+
+# 2/4 = |IntS|/|S|, [[сражение]],  IntS(битва сражение)  OutS(баталия бой) 
+line = u"битва сражение баталия бой"
 
 arr_words = line.split()
 int_s = lib.internal_set.getInternalSet (arr_words, model)

@@ -3,8 +3,8 @@
 
 # Configurations parameters
 
-#MODEL_NAME = "ruscorpora"
-MODEL_NAME = "news"
+MODEL_NAME = "ruscorpora"
+#MODEL_NAME = "news"
 #model_name = "ruwikiruscorpora"
 
 MODEL_PATH =       "/data/all/soft_new/linguistics/rusvectores/" + MODEL_NAME + ".model.bin" # hasee

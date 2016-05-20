@@ -36,6 +36,7 @@ def getInternalSet( arr_words, model):
     """
         
     result_int_s = []
+    DEBUG_PRINT = False #True
 
     arr_words = filter_vocab_words.filterVocabWords( arr_words, model.vocab )
     #print string_util.joinUtf8( ",", arr_words )                              # after filter, now there are only words with vectors
@@ -68,8 +69,9 @@ def getInternalSet( arr_words, model):
             for l in range(j, len(gr)-1):
                 gr1 = gr[j:l+1]
                 gr2 = gr[0:j]+gr[l+1:len(gr)]
-                #print u"{} | gr1={} | gr2={}".format( test_word,  string_util.joinUtf8( ",", gr1 ), 
-                #                                                  string_util.joinUtf8( ",", gr2 ) )
+                if DEBUG_PRINT:
+                    print u"{} | gr1={} | gr2={}".format( test_word,  string_util.joinUtf8( ",", gr1 ), 
+                                                                      string_util.joinUtf8( ",", gr2 ) )
 
                 gr1_and_test_word = gr1[:]
                 gr1_and_test_word.append( test_word )
@@ -80,21 +82,24 @@ def getInternalSet( arr_words, model):
                 sim0 = model.n_similarity(gr1, gr2)
                 sim1 = model.n_similarity(gr1_and_test_word, gr2)
                 sim2 = model.n_similarity(gr1,               gr2_and_test_word)
-                #print "sim0 = {:5.3f}".format( sim0 )
-                #print "sim1 = {:5.3f}".format( sim1 )
-                #print "sim2 = {:5.3f}".format( sim2 )
+                if DEBUG_PRINT:
+                    print "sim0 = {:5.3f}".format( sim0 )
+                    print "sim1 = {:5.3f}".format( sim1 )
+                    print "sim2 = {:5.3f}".format( sim2 )
 
                 if sim0 > sim1 or sim0 > sim2:
                     sim12_greater_sim0_always = False
-                #a = 1 if sim1 > sim0 else -1
-                #b = 1 if sim2 > sim0 else -1
-                #test_word_counter_int += (a + b)/2
-                #test_word_counter_float += (sim1 - sim0) + (sim2 - sim0)
+                
+                if DEBUG_PRINT:
+                    a = 1 if sim1 > sim0 else -1
+                    b = 1 if sim2 > sim0 else -1
+                    #test_word_counter_int += (a + b)/2
+                    #test_word_counter_float += (sim1 - sim0) + (sim2 - sim0)
+                    #print "test_word_counter_int = {}".format( test_word_counter_int )
+                    #print "test_word_counter_float = {}".format( test_word_counter_float )
 
-                #print "test_word_counter_int = {}".format( test_word_counter_int )
-                #print "test_word_counter_float = {}".format( test_word_counter_float )
-
-            #print ("---")
+            if DEBUG_PRINT:
+                print ("---")
         #syn_rank      [test_word] = test_word_counter_int;
         #syn_centrality[test_word] = test_word_counter_float;
         #syn_internal  [test_word] = sim12_greater_sim0_always;
@@ -102,8 +107,9 @@ def getInternalSet( arr_words, model):
         if sim12_greater_sim0_always:
             result_int_s.append( test_word )
 
-        #print ("+++++++")
-        #print
+        if DEBUG_PRINT:
+            print ("+++++++")
+            print
         i += 1
 
     return result_int_s
@@ -135,7 +141,7 @@ def getInternalSetWithReducing( arr_words, target_word, model):
         Empty array if there are no such words.
     """
         
-    result_int_s = []
+    #result_int_s = []
 
     arr_words = filter_vocab_words.filterVocabWords( arr_words, model.vocab )
     #print string_util.joinUtf8( ",", arr_words )                            # after filter, now there are only words with vectors
