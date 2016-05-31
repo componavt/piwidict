@@ -7,6 +7,7 @@
 
 import logging
 import sys
+import os
 import codecs
 import operator
 import collections
@@ -16,6 +17,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 from gensim.models import Word2Vec
 import numpy as np
 
+sys.path.append(os.path.abspath('../')) # add parent folder, access to 'lib'
 import lib.filter_vocab_words
 import lib.string_util
 import lib.synset
@@ -65,3 +67,7 @@ print "Distance and words itself of {} words which are nearest to the average ve
 
 for sim_w in most_similar_words:
     print u"{}  '{}'".format( sim_w[1], sim_w[0] )
+
+
+#w = u'баталия'
+#print u"    - '{}'".format( model[ u"баталия" ] )
