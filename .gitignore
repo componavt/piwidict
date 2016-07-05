@@ -13,3 +13,4 @@ composer.lock
 *.py[cod]
 
 lib_ext/gensim_wsd/data
+/nbproject/private/
