@@ -6,7 +6,7 @@ class PWLesk {
      * it will be counted only for meaninful POS [without stop-words].
      * @return int number of common words in two definitions
      */
-    static public function countIntersectionTwoMeanings(meaning_id1, meaning_id2) {
+    static public function countIntersectionTwoMeanings($meaning_id1, $meaning_id2) {
     global $LINK_DB;
         $rk = array();
         
