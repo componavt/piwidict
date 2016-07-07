@@ -1,4 +1,7 @@
-<?php
+<?php 
+
+namespace piwidict\src\lib\sql;
+
 class DB extends mysqli {
 	public $result;
 	public $row;

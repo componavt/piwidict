@@ -1,4 +1,4 @@
-<?php
+<?php namespace piwidict\src\lib;
 
 class PWInit {
 /*#########################################

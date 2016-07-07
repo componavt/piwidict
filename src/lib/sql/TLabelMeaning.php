@@ -1,4 +1,4 @@
-<?php
+<?php namespace piwidict\src\lib\sql;
 
 /** An operations with the table 'label_meaning' in MySQL Wiktionary_parsed database.
  * label_meaning - binds together context labels and meaning number.

@@ -1,4 +1,4 @@
-<?php
+<?php namespace piwidict\src\lib\sql;
 
 //global $LINK_DB;
 

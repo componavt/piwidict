@@ -1,4 +1,4 @@
-<?php
+<?php namespace piwidict\src\lib\sql;
 
 /** Operations with the table 'lang_pos' in MySQL Wiktionary parsed database.
  * Different objects TLangPOS correspond to subsections of the Wiktionary entry with different etymologies or different POS, 

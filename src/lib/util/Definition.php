@@ -1,14 +1,15 @@
-﻿<?
+<?php namespace piwidict\src\lib\util;
+
 /* Functions for definition parsing.
  */
-public class Definition {
+class Definition {
     private static $DEBUG = false;
     
     /** Gets position after /^\s+#\s+/ */
 //    private static $ptrn_definition_number_sign = "\\A\\s*#\\s*";           // vim: ^\s*#\s*
 
     /* Strips number sign '#' and spaces (trim). */
-    public static String stripNumberSign ($page_title, $text) {
+    public static function stripNumberSign ($page_title, $text) {
         
         // gets position in text after "# "
         if (preg_match("/\A\s*#\s*(.*\z)/", $line, $regs)) 
@@ -21,3 +22,4 @@ public class Definition {
         }
     }
 }
+?>

@@ -1,4 +1,4 @@
-<?php
+<?php namespace piwidict\src\lib\sql;
 
 /** Operations with the table 'meaning' in MySQL Wiktionary parsed database.
  * @see wikt.word.WMeaning

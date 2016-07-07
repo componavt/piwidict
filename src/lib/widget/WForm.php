@@ -1,4 +1,5 @@
-<?php
+<?php namespace piwidict\src\lib\widget;
+
     // ===============================
     // Visual forms
     // ===============================
@@ -12,11 +13,11 @@ class WForm {
      * 
      * Example:
      * 
-     * Язык <select name="lang_id">
+     * РЇР·С‹Рє <select name="lang_id">
                 <option></option>   // empty field for empty translation of text
-                <option value="1"  selected>вепсский</option>
-                <option value="2" >русский</option>
-                <option value="3" >английский</option>
+                <option value="1"  selected>РІРµРїСЃСЃРєРёР№</option>
+                <option value="2" >СЂСѓСЃСЃРєРёР№</option>
+                <option value="3" >Р°РЅРіР»РёР№СЃРєРёР№</option>
             </select>
      */
     static public function getDropDownList($selected_id, $select_name, $first_option='', $table_name, $table_field='name', $order_by='id') {

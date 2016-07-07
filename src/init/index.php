@@ -1,4 +1,7 @@
 <?php
+
+namespace piwidict\src\init;
+
 $count_exec_time = 1;
 require("../../config.php");
 include(LIB_DIR."header.php");

@@ -1,4 +1,7 @@
 <?php
+
+namespace sql;
+
 class DB {
 	protected $dbname = NAME_DB;
 	protected $dbuser = 'javawiki';

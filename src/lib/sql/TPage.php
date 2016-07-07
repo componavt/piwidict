@@ -1,4 +1,4 @@
-<?php
+<?php namespace piwidict\src\lib\sql;
 
 /** An operations with the table 'page' in MySQL wiktionary_parsed database. */
 class TPage {
