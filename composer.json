@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "componavt\\piwidict\\": ["src/", "src/lib/"]
+            "componavt\\piwidict\\": ["src/"]
         }
     }
 }
