@@ -1,6 +1,4 @@
 <?php namespace piwidict;
-
-class PWInit {
 /*#########################################
 Functions for creation of additional tables
 #########################################*/    
@@ -9,6 +7,8 @@ Functions for creation of additional tables
      * pw_reverse_dict . page_id            =         page.id; 
      * pw_reverse_dict . reverse_page_title = strrev (page.page_title);
      */
+
+class PWInit {
     static public function createReverseTable() {
     global $LINK_DB;
 

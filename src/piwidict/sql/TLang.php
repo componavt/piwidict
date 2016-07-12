@@ -1,5 +1,6 @@
 <?php namespace piwidict\sql;
 
+use piwidict\widget\WForm;
 //global $LINK_DB;
 
 class TLang {

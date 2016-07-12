@@ -1,6 +1,7 @@
 <?php
 
-namespace piwidict\src\init;
+//namespace piwidict\src\init;
+use piwidict\PWInit;
 
 $count_exec_time = 1;
 require("../../config.php");

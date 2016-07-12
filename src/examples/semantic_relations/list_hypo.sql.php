@@ -3,6 +3,8 @@ $count_exec_time = 1;
 include("../../../config.php");
 include(LIB_DIR."header.php");
 
+use piwidict\sql\{TLang, TPOS, TRelationType};
+
 if (!isset($lang_id)) $lang_id = TLang::getIDByLangCode("ru");
 if (!isset($pos_id)) $pos_id = TPOS::getIDByName("noun");
 if (!isset($relation_type_id)) $relation_type_id = TRelationType::getIDByName("hyponyms");

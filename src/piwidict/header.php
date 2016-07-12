@@ -15,5 +15,5 @@ Attention: beta-testing mode</div>
   
 ?>
 <h1>piwidict - PHP framework to work with <a href="https://github.com/componavt/piwidict/">Wiktionary parsed database</a></h1>
-<p><a href="/examples/index.php">Example index</a></p>
+<p><a href="/src/examples/index.php">Example index</a></p>
 <?php //include_once("../lib/top_level_menu.php"); ?>

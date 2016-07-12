@@ -14,7 +14,7 @@ $PHP_SELF=$_SERVER["PHP_SELF"];
 
 if (substr($root,-1,1) != "/") $root.="/";
 define("SITE_ROOT",$root);
-define("LIB_DIR",SITE_ROOT."src/lib/");
+define("LIB_DIR",SITE_ROOT."src/piwidict/");
 
 define ('WIKT_LANG','ru');
 define ('INTERFACE_LANGUAGE', 'en'); 
@@ -74,18 +74,21 @@ TODO!!! check vars
 include_once("config_password.php");
 
 
+use piwidict\sql;
+use piwidict\sql\semantic_relations;
+
 ## DB connection 
 ## mysql>GRANT SELECT ON %.* TO pw_user@'%' identified by '';
 ## mysql>GRANT SELECT, INSERT, UPDATE, CREATE, DROP, INDEX ON %.* TO pw_admin@'%' identified by '';
 ## mysql>FLUSH PRIVILEGES;
 ##
     
-$LINK_DB = new DB($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
+$LINK_DB = new sql\DB($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
 
 define ('LangCode','ru');
-PWLemma::setLangCode(LangCode);
-PWRelatedWords::setLangCode(LangCode);
-PWShortPath::setLangCode(LangCode);
+semantic_relations\PWLemma::setLangCode(LangCode);
+semantic_relations\PWRelatedWords::setLangCode(LangCode);
+semantic_relations\PWShortPath::setLangCode(LangCode);
 
 include_once(LIB_DIR."multi/".LangCode."/WMeaning.php");
 ?>

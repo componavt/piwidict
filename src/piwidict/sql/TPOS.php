@@ -1,6 +1,8 @@
 <?php namespace piwidict\sql;
 
+use piwidict\widget\WForm;
 global $LINK_DB;
+
 
 /** An operations with the table 'part_of_speech' in Wiktionary parsed database.
  *  The table 'part_of_speech' contains a list of POS: name and ID.

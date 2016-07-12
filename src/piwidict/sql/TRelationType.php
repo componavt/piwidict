@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql;
 
+use piwidict\widget\WForm;
+
 class TRelationType {
     
 /** Gets data from the database table 'relation_type'.
