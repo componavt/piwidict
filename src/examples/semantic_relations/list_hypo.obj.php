@@ -1,25 +1,45 @@
 <?php
-$count_exec_time = 1;
-include("../../../config.php");
+require '../../../vendor/autoload.php';
+
+use piwidict\Piwidict;
+//use piwidict\sql\{TLang, TPage, TPOS, TRelationType};
+//use piwidict\widget\WForm;
+
+require '../config_examples.php';
+require '../config_password.php';
+
 include(LIB_DIR."header.php");
 
-if (!isset($lang_id)) $lang_id = TLang::getIDByLangCode("ru");
-if (!isset($pos_id)) $pos_id = TPOS::getIDByName("noun");
-if (!isset($relation_type_id)) $relation_type_id = TRelationType::getIDByName("hyponyms");
-if (!isset($page_title)) $page_title = '';
+// $pw = new Piwidict();
+Piwidict::setDatabaseConnection($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
+$link_db = Piwidict::getDatabaseConnection();
+
+$wikt_lang = "ru"; // Russian language is the main language in ruwikt (Russian Wiktionary)
+Piwidict::setWiktLang ($wikt_lang);
+
+$php_self = "list_hypo.obj.php";
+
+if (!isset($lang_id)) 
+    $lang_id = TLang::getIDByLangCode("ru");
+if (!isset($pos_id)) 
+    $pos_id = TPOS::getIDByName("noun");
+if (!isset($relation_type_id)) 
+    $relation_type_id = TRelationType::getIDByName("hyponyms");
+if (!isset($page_title)) 
+    $page_title = '';
 $limit = 100;
 ?>
 <h2>Generation of list of relations (LIMIT <?=$limit?>)</h2>
 Database version: <?=NAME_DB;?>
 
-<form action="<?=$PHP_SELF?>" method="GET">
+<form action="<?=$php_self?>" method="GET">
     <p>Language: <?=TLang::getDropDownList($lang_id, "lang_id", '');?></p>
     <p>Part of speech: <?=TPOS::getDropDownList($pos_id, "pos_id", '');?></p>
     <p>Relation type: <?=TRelationType::getDropDownList($relation_type_id, "relation_type_id", '');?></p>
     <p>Word: <input type="text" name="page_title" value="<?=$page_title?>"></p>
     <p><input type="submit" name="view_list" value="search"></p>
 </form>
-<?
+<?php
 if (isset($view_list) && $view_list) {
     $query_lang_pos = "SELECT lang_pos.id as id, page_title FROM lang_pos, page WHERE lang_pos.page_id=page.id";
     if ($lang_id) 
@@ -31,8 +51,8 @@ if (isset($view_list) && $view_list) {
     $query_lang_pos .= " order by page_title, id";
 // LIMIT $limit
 //print $query_lang_pos;
-    $result_lang_pos = $LINK_DB -> query_e($query_lang_pos,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-//print $LINK_DB -> query_count($result_lang_pos);
+    $result_lang_pos = $link_db -> query_e($query_lang_pos,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+//print $link_db -> query_count($result_lang_pos);
     print "<table border=1>\n";
     $counter = 0;
     while ($counter<$limit && $row = $result_lang_pos-> fetch_object()){

@@ -1,7 +1,9 @@
-<?        
+<?php        
 $count_exec_time = 1;
 include("../../../config.php");
 include(LIB_DIR."header.php");
+
+$php_self = "meaning_to_lemmas.php";
 
 if (isset($word)) 
     $word_h1 = " &quot;".TPage::getURL($word)."&quot;";
@@ -10,7 +12,7 @@ else
 ?>
 <h1>Example for lemmatising of words from meanings of given word<?=$word_h1?></h1>
 
-<form action="<?=$PHP_SELF?>" method="GET">
+<form action="<?=$php_self?>" method="GET">
     <input type="text" size="30" name="word" value="<? if (isset($word)) print $word;?>">
     <input type="submit" value="search">
 </form>

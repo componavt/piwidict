@@ -1,11 +1,21 @@
 <?php
 
-//namespace piwidict\src\init;
+require '../../../vendor/autoload.php';
+
+use piwidict\Piwidict;
 use piwidict\PWInit;
 
-$count_exec_time = 1;
-require("../../config.php");
+require '../config_examples.php';
+require '../config_password.php';
+
 include(LIB_DIR."header.php");
+
+// $pw = new Piwidict();
+Piwidict::setDatabaseConnection($config['hostname'], $config['admin_login'], $config['admin_password'], $config['dbname']);
+$link_db = Piwidict::getDatabaseConnection();
+
+$wikt_lang = "ru"; // Russian language is the main language in ruwikt (Russian Wiktionary)
+Piwidict::setWiktLang ($wikt_lang);
 ?>
 <h1>Creation of additional tables</h1>
 <form>
@@ -19,9 +29,9 @@ include(LIB_DIR."header.php");
 </form>
 <?php
 if (isset($execute) && $execute) {
-    $LINK_DB -> close();
+//    $link_db -> close();
 //print_r($config);
-    $LINK_DB = new DB($config['hostname'], $config['admin_login'], $config['admin_password'], $config['dbname']);
+//    $link_db = new DB($config['hostname'], $config['admin_login'], $config['admin_password'], $config['dbname']);
  
     if (isset($pw_reverse_dict) && $pw_reverse_dict) 
     	PWInit::createReverseTable();

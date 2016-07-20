@@ -2,10 +2,12 @@
 include("../../../config.php");
 
 include(LIB_DIR."header.php");
+
+$php_self = "view_related_words.php";
 ?>
 <h1>Example for searching of a list of related words</h1>
 
-<form action="<?=$PHP_SELF?>" method="GET">
+<form action="<?=$php_self?>" method="GET">
     <input type="text" size="30" name="page_title" value="<? if (isset($page_title)) print $page_title;?>">
     <input type="submit" value="search">
 </form>

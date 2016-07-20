@@ -1,4 +1,4 @@
-﻿<?
+<?php
 /*
 Всё то же самое, но вывод по частям речи - от самых редких, до самых частых, вывод разделён заголовками второго уровня.
 Т.е. сначала идёт
@@ -24,9 +24,24 @@
 
 // input file structure:
 // word | RNC (Russian National Corpus) number of occurences| GBN (Google Books Ngram) the same
-$count_exec_time = 1;
-include("../../../config.php");
+
+require '../../../vendor/autoload.php';
+
+use piwidict\Piwidict;
+//use piwidict\sql\{TLang, TPage, TPOS, TRelationType};
+//use piwidict\widget\WForm;
+
+require '../config_examples.php';
+require '../config_password.php';
+
 include(LIB_DIR."header.php");
+
+// $pw = new Piwidict();
+Piwidict::setDatabaseConnection($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
+$link_db = Piwidict::getDatabaseConnection();
+
+$wikt_lang = "ru"; // Russian language is the main language in ruwikt (Russian Wiktionary)
+Piwidict::setWiktLang ($wikt_lang);
 
 $lang_id = TLang::getIDByLangCode("ru");
 
@@ -55,7 +70,7 @@ $proper_noun_word = array();
 //$counter = 0; 
     
 $query = "SELECT page_title,id as page_id FROM page WHERE id in (SELECT page_id FROM lang_pos where lang_id=$lang_id) order by page_title";
-$result = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+$result = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 while ($row = $result -> fetch_object()) {
     $w_word = $row->page_title;
@@ -66,7 +81,7 @@ while ($row = $result -> fetch_object()) {
         $wikt_words[$w_word] = $db_word;
 //        $counter ++;
         $query = "SELECT DISTINCT pos_id from lang_pos WHERE lang_id=$lang_id and page_id=".$row->page_id;  
-        $res_lp = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_lp = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
         while ($row_lp = $res_lp -> fetch_object()) {
             $pos = $row_lp->pos_id;
             $found_words[$db_word][] = $pos;

@@ -1,4 +1,4 @@
-﻿<?
+<?php
 /*
 This script generates
 the list of semantic relations which links to this article.
@@ -20,9 +20,24 @@ inlink_word|inlink_meaning1|relation_type|outlink_word|outlink_meaning
 fir|Hyponyms|tree
 
 */
-$count_exec_time = 1;
-include("../../../config.php");
+
+require '../../../vendor/autoload.php';
+
+use piwidict\Piwidict;
+//use piwidict\sql\{TLang, TPage, TPOS, TRelationType};
+//use piwidict\widget\WForm;
+
+require '../config_examples.php';
+require '../config_password.php';
+
 include(LIB_DIR."header.php");
+
+// $pw = new Piwidict();
+Piwidict::setDatabaseConnection($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
+$link_db = Piwidict::getDatabaseConnection();
+
+$wikt_lang = "ru"; // Russian language is the main language in ruwikt (Russian Wiktionary)
+Piwidict::setWiktLang ($wikt_lang);
 
 //$pos_name = "verb";
 //$pos_name = "adverb";
@@ -40,7 +55,7 @@ $query = "SELECT wiki_text.text as inlink, relation_type.name as relation, page_
                 relation.meaning_id = meaning.id AND relation.wiki_text_id = wiki_text.id AND
                 relation.relation_type_id = relation_type.id order by inlink";
 
-$result = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+$result = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 while ($row = $result -> fetch_object()) {
     if ($pos_name == 'noun') 
@@ -50,9 +65,9 @@ while ($row = $result -> fetch_object()) {
         $query = "SELECT wiki_text.text as inlink_meaning FROM meaning, page, lang_pos, wiki_text WHERE page.id = lang_pos.page_id AND meaning.lang_pos_id = lang_pos.id AND
                  meaning.wiki_text_id = wiki_text.id AND page_title like '".PWString::escapeQuotes($row->inlink)."' AND lang_id = $lang_id  AND pos_id=$pos_id";    
 
-        $result_meaning = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result_meaning = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-        $num = $LINK_DB -> query_count($result_meaning);
+        $num = $link_db -> query_count($result_meaning);
 
         if ($num > 1) {
             $row_meaning = $result_meaning -> fetch_object();

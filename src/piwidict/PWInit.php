@@ -98,7 +98,7 @@ class PWInit {
         // writing related words 
         $tmp = array();
         $query = "SELECT DISTINCT page_id FROM lang_pos WHERE lang_id=$lang_id ORDER BY page_id";
-        $res_page = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_page = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         while ($row_page = $res_page->fetch_object()) {
             $related_words = PWSemanticDistance::getRelatedWords($row_page->page_id);

@@ -3,16 +3,18 @@ $count_exec_time = 1;
 include("../../../config.php");
 include(LIB_DIR."header.php");
 
+$php_self = "dict_info.php";
+
 if (!isset($lang_id)) $lang_id = TLang::getIDByLangCode("ru");
 ?>
 <h2>Dictionary info</h2>
 Database version: <?=NAME_DB;?>
 
-<form action="<?=$PHP_SELF?>" method="GET">
+<form action="<?=$php_self?>" method="GET">
     <p>Language: <?=TLang::getDropDownList($lang_id, "lang_id", 1);?></p>
     <p><input type="submit" name="view_list" value="search"></p>
 </form>
-<?
+<?php
 if (isset($view_list) && $view_list && $lang_id) {
     $lang_name = TLang::getNameByID($lang_id);
     $lang_code = TLang::getCodeByID($lang_id);

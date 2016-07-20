@@ -1,7 +1,21 @@
-﻿<?
-$count_exec_time = 1;
-include("../../../config.php");
+<?php
+require '../../../vendor/autoload.php';
+
+use piwidict\Piwidict;
+//use piwidict\sql\{TLang, TPage, TPOS, TRelationType};
+//use piwidict\widget\WForm;
+
+require '../config_examples.php';
+require '../config_password.php';
+
 include(LIB_DIR."header.php");
+
+// $pw = new Piwidict();
+Piwidict::setDatabaseConnection($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
+$link_db = Piwidict::getDatabaseConnection();
+
+$wikt_lang = "ru"; // Russian language is the main language in ruwikt (Russian Wiktionary)
+Piwidict::setWiktLang ($wikt_lang);
 
 $lang_id = TLang::getIDByLangCode("ru");
 
@@ -16,9 +30,9 @@ while ($count<10 && !feof($fh)) {
     
     $query = "SELECT page_title, pos_id FROM page, lang_pos WHERE lang_id=$lang_id and page.id=lang_pos.page_id and page_title like convert('$word' using latin1) COLLATE latin1_general_ci";
 //    $query = "SELECT convert(page_title using utf8), pos_id FROM page, lang_pos WHERE lang_id=$lang_id and page.id=lang_pos.page_id and convert(page_title using utf8) like '$word' COLLATE utf8_general_ci";
-    $result = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    $result = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-    if ($LINK_DB -> query_count($result)>0) {
+    if ($link_db -> query_count($result)>0) {
 //print "<p>$query";
 
         while ($row = $result -> fetch_object()) {

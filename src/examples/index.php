@@ -16,9 +16,6 @@ include(LIB_DIR."header.php");
 ## mysql>FLUSH PRIVILEGES;
 ##
 
-//$LINK_DB = new \piwidict\sql\DB($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
-//$pw = new Piwidict($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
-
 //$lang_code = "ru"; // Russian language is the main language in ruwikt (Russian Wiktionary)
 //$pw->setLangCode ($lang_code);
 

@@ -54,14 +54,12 @@ class WForm {
      * format: 1 ... 5 6 7 8 9 ... 20
      * k - the count of the preceding and following digits (7-5, 9-7)
      */
-    static public function goNextStep($numRows,$portion,$url="",$k=2,$text='') {
-        global $PHP_SELF,$step_s;
+    static public function goNextStep($numRows,$portion,$url="",$k=2,$text='', $step_s=1) {
         
         $out = '';
         $remainder = $numRows % $portion;
         $steps = ceil($numRows/$portion);
-        $new_url="$PHP_SELF?";
-        if ($url!="") $new_url.="$url&";
+        $new_url = "$url&";
 
         if ($steps > 1) {
             $out .= "<div class='pages'>$text\n";

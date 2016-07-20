@@ -1,14 +1,27 @@
 <?php
-$count_exec_time = 1;
-include("../../../config.php");
+require '../../../vendor/autoload.php';
+
+use piwidict\Piwidict;
+//use piwidict\sql\{TLang, TPage, TPOS, TRelationType};
+//use piwidict\widget\WForm;
+
+require '../config_examples.php';
+require '../config_password.php';
 
 include(LIB_DIR."header.php");
+
+// $pw = new Piwidict();
+Piwidict::setDatabaseConnection($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
+$link_db = Piwidict::getDatabaseConnection();
+
+$wikt_lang = "ru"; // Russian language is the main language in ruwikt (Russian Wiktionary)
+Piwidict::setWiktLang ($wikt_lang);
 ?>
 <h1>Example for searching of the shortest path between 2 words</h1>
 
-<?
-    $LINK_DB -> close();
-    $LINK_DB = new DB($config['hostname'], $config['admin_login'], $config['admin_password'], $config['dbname']);
+<?php
+    //$LINK_DB -> close();
+    //$LINK_DB = new DB($config['hostname'], $config['admin_login'], $config['admin_password'], $config['dbname']);
 
     $word_arr = file("related_words_in.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     $fh = fopen("related_words_out.txt",'w');
