@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql\semantic_relations;
 
+use piwidict\Piwidict;
+
 class PWRelatedWords {
     
     /** Gets data from the database table 'pw_related_words'.*/
@@ -17,7 +19,7 @@ class PWRelatedWords {
      * Language code defines the subset of Wiktionary thesaurus to be constructed in this class, 
      * for example, 'ru' means that thesaurus of Russian synonyms, hyperonym, etc. will be constructed. 
      */
-    private static $lang_code = 'ru';
+    // private static $lang_code = 'ru';
 
     /** @var String */
     private static $table_name = 'pw_related_words_ru';
@@ -30,7 +32,7 @@ class PWRelatedWords {
         $this->weight = $weight;
     }
 
-    static public function setLangCode($lang_code)
+    /*static public function setLangCode($lang_code)
     {
         self::$lang_code  = $lang_code;
         self::$table_name = 'pw_related_words_'.$lang_code; //.'_small'
@@ -39,7 +41,7 @@ class PWRelatedWords {
     static public function getLangCode()
     {
         return self::$lang_code;
-    }
+    }*/
 
     static public function getTableName()
     {
@@ -50,32 +52,32 @@ class PWRelatedWords {
      */
     static public function addReverseRelations()
     {
-        global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
         $table_name = self::getTableName();
 	    $query = "SELECT * FROM $table_name ORDER BY lemma_id1,lemma_id2";
-        $res_relw = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_relw = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	    while ($row_relw = $res_relw->fetch_object()) {
             $old_weight = $row_relw -> weight;
             $query = "SELECT weight FROM $table_name WHERE lemma_id1='".$row_relw->lemma_id2."' and lemma_id2='".$row_relw->lemma_id1."'";
-            $res_weight = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+            $res_weight = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-		    if ($LINK_DB -> query_count($res_weight) == 0) {
+		    if ($link_db -> query_count($res_weight) == 0) {
                 $query = "INSERT INTO $table_name VALUES ('".$row_relw->lemma_id2."', '".$row_relw->lemma_id1."', '$old_weight')";
 //print "<p>$query";
-                $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+                $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
             } else {
                 $row_weight = $res_weight->fetch_object();
                 $new_weight = $row_weight->weight;
                 if ($old_weight > $new_weight) {
                     $query = "UPDATE $table_name SET weight='$new_weight' WHERE lemma_id1='".$row_relw->lemma_id1."' and lemma_id2='".$row_relw->lemma_id2."'";
 //print "<p>$query";
-                    $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+                    $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
                 } elseif ($old_weight < $new_weight) {
                     $query = "UPDATE $table_name SET weight='$old_weight' WHERE lemma_id1='".$row_relw->lemma_id2."' and lemma_id2='".$row_relw->lemma_id1."'";
 //print "<p>$query";
-                    $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+                    $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
                 }
             }
         
@@ -86,25 +88,26 @@ class PWRelatedWords {
      */
     static public function deleteDublicateRelations()
     {
-        global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
+        
         $table_name = self::getTableName();
 	    $query = "SELECT * FROM $table_name ORDER BY lemma_id1,lemma_id2";
-        $res_relw = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_relw = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	    while ($row_relw = $res_relw->fetch_object()) {
             $old_weight = $row_relw -> weight;
             $query = "SELECT weight FROM $table_name WHERE lemma_id1='".$row_relw->lemma_id2."' and lemma_id2='".$row_relw->lemma_id1."'";
-            $res_weight = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+            $res_weight = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-		    if ($LINK_DB -> query_count($res_weight) > 0) {
+		    if ($link_db -> query_count($res_weight) > 0) {
                 $row_weight = $res_weight->fetch_object();
                 $new_weight = $row_weight->weight;
                 if ($old_weight > $new_weight) {
                     $query = "DELETE FROM $table_name WHERE lemma_id1='".$row_relw->lemma_id1."' and lemma_id2='".$row_relw->lemma_id2."'";
-                    $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+                    $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
                 } elseif ($old_weight < $new_weight) {
                     $query = "DELETE FROM $table_name WHERE lemma_id1='".$row_relw->lemma_id2."' and lemma_id2='".$row_relw->lemma_id1."'";
-                    $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+                    $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
                 }
             }
         
@@ -113,19 +116,19 @@ class PWRelatedWords {
 
     static public function getAllRelatedWords()
     {
-        global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
         $table_name = self::getTableName();
         $words = array();
 	    $query = "SELECT DISTINCT lemma_id1 FROM $table_name ORDER BY lemma_id1";
-        $res_relw = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_relw = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	    while ($row_relw = $res_relw->fetch_object()) {
             $words[] = $row_relw->lemma_id1;
         }
 
 	    $query = "SELECT DISTINCT lemma_id2 FROM $table_name WHERE lemma_id2 not in (SELECT lemma_id1 FROM $table_name) ORDER BY lemma_id2";
-        $res_relw = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_relw = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	    while ($row_relw = $res_relw->fetch_object()) {
             $words[] = $row_relw->lemma_id2;

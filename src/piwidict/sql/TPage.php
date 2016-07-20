@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql;
 
+use piwidict\Piwidict;
+
 /** An operations with the table 'page' in MySQL wiktionary_parsed database. */
 class TPage {
     
@@ -111,12 +113,12 @@ class TPage {
      * @return int or NULL if it is unknown code.
      */
     static public function getIDByPageTitle($page_title) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
         $query = "SELECT id FROM page where page_title like '$page_title'";
-        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-        if ($LINK_DB -> query_count($result) == 0)
+        if ($link_db -> query_count($result) == 0)
             return NULL;
 
         $row = $result -> fetch_object();
@@ -128,12 +130,12 @@ class TPage {
      * @return TPage or NULL in case of error
      */
     static public function getPage($property_name, $property_value) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
         
         $query = "SELECT * FROM page WHERE `$property_name` like '$property_value' order by page_title";
-        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-        if ($LINK_DB -> query_count($result) == 0)
+        if ($link_db -> query_count($result) == 0)
             return NULL;
 
         $page_arr = array();
@@ -176,9 +178,10 @@ class TPage {
     * @return string
     */
     static public function getURL($page_title, $link_text='') {
+        $wikt_lang = Piwidict::getWiktLang();
         if (!$link_text) 
             $link_text = $page_title;
-        return "<a href=\"http://".WIKT_LANG.".wiktionary.org/wiki/$page_title\">$link_text</a>";
+        return "<a href=\"http://".$wikt_lang.".wiktionary.org/wiki/$page_title\">$link_text</a>";
     }
 }
 ?>

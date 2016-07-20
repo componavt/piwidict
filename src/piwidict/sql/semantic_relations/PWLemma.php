@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql\semantic_relations;
 
+use piwidict\Piwidict;
+
 class PWLemma {
     
 /** Gets data from the database table 'pw_lemma'.
@@ -25,7 +27,7 @@ class PWLemma {
      * Language code defines the subset of Wiktionary thesaurus to be constructed in this class, 
      * for example, 'ru' means that thesaurus of Russian synonyms, hyperonym, etc. will be constructed. 
      */
-    private static $lang_code = 'ru';
+    // private static $lang_code = 'ru';
 
     /** @var String */
     private static $table_name = 'pw_lemma_ru';
@@ -59,16 +61,18 @@ class PWLemma {
         return $this->frequency;
     }
 
-    static public function setLangCode($lang_code)
-    {
-        self::$lang_code  = $lang_code;
-        self::$table_name = 'pw_lemma_'.$lang_code;
-    }
+    /** @see Piwidict->setLangCode().
+     */
+    //static public function setLangCode($lang_code)
+    //{
+    //    self::$lang_code  = $lang_code;
+    //    self::$table_name = 'pw_lemma_'.$lang_code;
+    //}
 
-    static public function getLangCode()
-    {
-        return self::$lang_code;
-    }
+    //static public function getLangCode()
+    //{
+    //    return self::$lang_code;
+    //}
 
     static public function getTableName()
     {
@@ -80,12 +84,12 @@ class PWLemma {
      * @return string or NULL if it is unknown code.
      */
     static public function getLemmaByID($_id) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
     
     	$query = "SELECT lemma FROM ".self::$table_name." where id=".(int)$_id;
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 
         $row = $result -> fetch_object();
@@ -97,12 +101,12 @@ class PWLemma {
      * @return int or NULL if it is unknown code.
      */
     static public function getIDByLemma($lemma) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
     
     	$query = "SELECT id FROM ".self::$table_name." where lemma like '$lemma'";
-	    $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	    $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	    if ($LINK_DB -> query_count($result) == 0)
+	    if ($link_db -> query_count($result) == 0)
 	        return NULL;
 
         $row = $result -> fetch_object();
@@ -114,12 +118,12 @@ class PWLemma {
      * @return PWLemma or NULL in case of error
      */
     static public function getLemmaObj($property_name, $property_value) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM ".self::$table_name." WHERE `$property_name`='$property_value' order by id";
-	    $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	    $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-        if ($LINK_DB -> query_count($result) == 0)
+        if ($link_db -> query_count($result) == 0)
 	        return NULL;
 	
 	    $lemma_arr = array();
@@ -155,10 +159,10 @@ class PWLemma {
      * @return int
      */
     static public function getTotalNum() {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT count(*) as count FROM ".self::$table_name;
-	    $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	    $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         $row = $result -> fetch_object();
         

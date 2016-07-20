@@ -1,7 +1,22 @@
 <?php
-include("../../../config.php");
+require '../../../vendor/autoload.php';
+
+use piwidict\Piwidict;
+//use piwidict\sql\{TLang, TPage, TPOS, TRelationType};
+use piwidict\sql\{TPage};
+use piwidict\widget\WForm;
+
+require '../config_examples.php';
+require '../config_password.php';
 
 include(LIB_DIR."header.php");
+
+// $pw = new Piwidict();
+           Piwidict::setDatabaseConnection($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
+$link_db = Piwidict::getDatabaseConnection();
+
+$wikt_lang = "ru"; // Russian language is the main language in ruwikt (Russian Wiktionary)
+Piwidict::setWiktLang ($wikt_lang);
 ?>
 <script type="text/javascript">
 function toggle(id) {
@@ -20,15 +35,15 @@ function toggle(id) {
 
 <h1>Example of word searching</h1>
 
-<form action="<?=$PHP_SELF?>" method="GET">
-    <input type="text" size="30" name="page_title" value="<? if (isset($page_title)) print $page_title;?>">
+<form action="view_page.php" method="GET">
+    <input type="text" size="30" name="page_title" value="<?=(isset($page_title) ? $page_title : '');?>">
     <select name="search_type">
-	<option value='exact'<? if (isset($search_type) && $search_type=='exact') print " selected"; ?>>exact search</option>
-	<option value='sub'<? if (isset($search_type) && $search_type=='sub') print " selected"; ?>>substring search</option>
+	<option value='exact'<?=(isset($search_type) && $search_type=='exact') ? " selected" : '';?>>exact search</option>
+	<option value='sub'<?=(isset($search_type) && $search_type=='sub') ? " selected" : '';?>>substring search</option>
     </select>
     <input type="submit" value="view page">
 </form>
-<?
+<?php
 if (isset($page_title)) {
 	if (isset($search_type) && $search_type=='sub') $page_title = "%$page_title%";
 
@@ -41,7 +56,7 @@ if (isset($page_title)) {
 
 	    if (is_array($pageObj_arr)) foreach ($pageObj_arr as $pageObj) {
 	        print "<h2 title=\"TPage->page_title\" style=\"color: #006a4e\">".$pageObj->getPageTitle()."</h2>\n".
-                "<p>Source page at ".TPage::getURL($pageObj->getPageTitle(), WIKT_LANG.".wiktionary.org")."</p>";
+                "<p>Source page at ".TPage::getURL($pageObj->getPageTitle(), $wikt_lang.".wiktionary.org")."</p>";
             $lang_pos_arr = $pageObj -> getLangPOS();
 
             if (is_array($lang_pos_arr)) foreach ($lang_pos_arr as $langPOSObj) {

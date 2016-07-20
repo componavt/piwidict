@@ -1,5 +1,8 @@
 <?php
 
+// rename config_password_example.php to config_password.php 
+// and update login, password in this file
+
 /*******************************************************
  * Init constants and variables (user names, passwords)
  *******************************************************/

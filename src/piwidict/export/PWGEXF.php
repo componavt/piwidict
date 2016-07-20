@@ -1,9 +1,12 @@
 <?php
 
+use piwidict\Piwidict;
+
 class PWGEXF {
     
     static public function getRelatedWords() {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
+        
         $node_table = PWLemma::getTableName();
         $edge_table = PWRelatedWords::getTableName();
 
@@ -31,7 +34,7 @@ class PWGEXF {
         $edges = $graph->appendChild($xml->createElement('edges'));
 
         // Add Nodes!
-        $res_node = $LINK_DB -> query_e("SELECT * FROM $node_table WHERE id in (select lemma_id1 from $edge_table) or id in (select lemma_id2 from $edge_table) order by id","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_node = $link_db -> query_e("SELECT * FROM $node_table WHERE id in (select lemma_id1 from $edge_table) or id in (select lemma_id2 from $edge_table) order by id","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 	    while ($row_node = $res_node->fetch_object()) {
             $node = $xml->createElement('node');
             $node->setAttribute('id', $row_node->id);
@@ -65,7 +68,7 @@ class PWGEXF {
         }
 
         // Add Edges
-        $res_relw = $LINK_DB -> query_e("SELECT * FROM ".PWRelatedWords::getTableName()." order by lemma_id1","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res_relw = $link_db -> query_e("SELECT * FROM ".PWRelatedWords::getTableName()." order by lemma_id1","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 	    while ($row_relw = $res_relw->fetch_object()) {
             $edge = $xml->createElement('edge');
             $edge->setAttribute('source', $row_relw->lemma_id1);

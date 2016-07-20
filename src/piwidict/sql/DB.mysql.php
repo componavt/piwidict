@@ -1,4 +1,4 @@
-<?php namespace piwidict\sql;
+<?php namespace componavt\piwidict\sql;
 
 class DB {
 	protected $dbname = NAME_DB;

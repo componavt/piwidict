@@ -1,23 +1,14 @@
 <?php
-// test
-if (isset($count_exec_time) && $count_exec_time) {
-    $mtime = explode(" ",microtime()); 
-    $tstart = $mtime[1] + $mtime[0];  // Write start time of execution
-}
 
 $root=$_SERVER["DOCUMENT_ROOT"];
 $site_url="/";
 //$root="D:/all/projects/git/piwidict";
 // $site_url="/~lalala/";
 
-$PHP_SELF=$_SERVER["PHP_SELF"];
-
 if (substr($root,-1,1) != "/") $root.="/";
 define("SITE_ROOT",$root);
 define("LIB_DIR",SITE_ROOT."src/piwidict/");
 
-define ('WIKT_LANG','ru');
-define ('INTERFACE_LANGUAGE', 'en'); 
 
 mb_internal_encoding("UTF-8");
 
@@ -28,6 +19,7 @@ include_once(LIB_DIR."string_util.php");
 include_once(LIB_DIR."db/mysql_util.php");
 */
 
+/*
 // dictionary classes
 include_once(LIB_DIR."PWString.php");
 include_once(LIB_DIR."PWStats.php");
@@ -58,7 +50,7 @@ include_once(LIB_DIR."sql/semantic_relations/PWRelatedWords.php");
 include_once(LIB_DIR."sql/semantic_relations/PWShortPath.php");
 
 include_once(LIB_DIR."widget/WForm.php");
-
+*/
 // PhpMorphy
 //include_once(SITE_ROOT."../../phpmorphy/src/common.php");
 
@@ -71,24 +63,7 @@ TODO!!! check vars
 
 
 //include_once(LIB_DIR."multi/".LangCode."/WMeaning.php");
-include_once("config_password.php");
 
 
-use piwidict\sql;
-use piwidict\sql\semantic_relations;
 
-## DB connection 
-## mysql>GRANT SELECT ON %.* TO pw_user@'%' identified by '';
-## mysql>GRANT SELECT, INSERT, UPDATE, CREATE, DROP, INDEX ON %.* TO pw_admin@'%' identified by '';
-## mysql>FLUSH PRIVILEGES;
-##
-    
-$LINK_DB = new sql\DB($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
-
-define ('LangCode','ru');
-semantic_relations\PWLemma::setLangCode(LangCode);
-semantic_relations\PWRelatedWords::setLangCode(LangCode);
-semantic_relations\PWShortPath::setLangCode(LangCode);
-
-include_once(LIB_DIR."multi/".LangCode."/WMeaning.php");
 ?>

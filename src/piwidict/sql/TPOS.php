@@ -1,7 +1,7 @@
 <?php namespace piwidict\sql;
 
+use piwidict\Piwidict;
 use piwidict\widget\WForm;
-global $LINK_DB;
 
 
 /** An operations with the table 'part_of_speech' in Wiktionary parsed database.
@@ -37,13 +37,13 @@ class TPOS {
      * @return array TPOS[]
      */
     static public function getAllPOS() {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
   
     	$pos_array = array(); // all partS of Speech
 
     	// part_of_speech (id, name)
     	$query = "SELECT id, name FROM part_of_speech order by id";
-        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
     	while($row = $result -> fetch_object()){
           $pos_array[$row->id] = new TPOS(
@@ -58,12 +58,12 @@ class TPOS {
      * @return TPOS object or NULL if it is unknown ID
      */
     static public function getByID($_id) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
     	$query = "SELECT id, name FROM part_of_speech where id=".(int)$_id;
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 
         $row = $result -> fetch_object();
@@ -77,12 +77,12 @@ class TPOS {
     * @return int ID or NULL if it is unknown name
     */
     static public function getIDByName($_name) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
     	$query = "SELECT id FROM part_of_speech where name like '$_name' order by id";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 
         $row = $result -> fetch_object();
@@ -94,12 +94,12 @@ class TPOS {
     * @return string name
     */
     static public function getNameByID($_id) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
         $query = "SELECT name FROM part_of_speech where id=".(int)$_id;
-        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	    if ($LINK_DB -> query_count($result) == 0)
+	    if ($link_db -> query_count($result) == 0)
 	       return NULL;
 
         $row = $result -> fetch_object();
@@ -109,14 +109,14 @@ class TPOS {
 
     /* Check if POS with this ID exists */
     static public function isExist($id) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 	
 	if ($id == '' || (int)$id != $id) return false;
 
     	$query = "SELECT id FROM part_of_speech where id=".(int)$id;
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return false;
 	return true;
     }

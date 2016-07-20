@@ -1,9 +1,21 @@
 <?php
-$count_exec_time = 1;
-include("../../../config.php");
+require '../../../vendor/autoload.php';
+
+use piwidict\Piwidict;
+use piwidict\sql\{TLang, TPage, TPOS, TRelationType};
+use piwidict\widget\WForm;
+
+require '../config_examples.php';
+require '../config_password.php';
+
 include(LIB_DIR."header.php");
 
-use piwidict\sql\{TLang, TPOS, TRelationType};
+// $pw = new Piwidict();
+           Piwidict::setDatabaseConnection($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
+$link_db = Piwidict::getDatabaseConnection();
+
+$wikt_lang = "ru"; // Russian language is the main language in ruwikt (Russian Wiktionary)
+Piwidict::setWiktLang ($wikt_lang);
 
 if (!isset($lang_id)) $lang_id = TLang::getIDByLangCode("ru");
 if (!isset($pos_id)) $pos_id = TPOS::getIDByName("noun");
@@ -24,7 +36,7 @@ Database version: <?=NAME_DB;?>
     <p>Word: <input type="text" name="page_title" value="<?=$page_title?>"></p>
     <p><input type="submit" name="view_list" value="search"></p>
 </form>
-<?
+<?php
 if (isset($view_list) && $view_list) {
     $query_lang_pos = "SELECT lang_pos.id as id, page_title, relation_type_id, wiki_text.text as wiki_text FROM lang_pos, page, relation, meaning, wiki_text ".
 	"WHERE lang_pos.page_id=page.id AND relation.meaning_id=meaning.id AND meaning.lang_pos_id=lang_pos.id AND relation.wiki_text_id=wiki_text.id AND wiki_text.text is not null";
@@ -38,11 +50,11 @@ if (isset($view_list) && $view_list) {
         $query_lang_pos .= " and page_title like '%$page_title%'";
     $query_lang_pos .= " order by page_title, id";
 //print $query_lang_pos;
-    $result_lang_pos = $LINK_DB -> query_e($query_lang_pos,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-    $numAll = $LINK_DB -> query_count($result_lang_pos);
+    $result_lang_pos = $link_db -> query_e($query_lang_pos,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    $numAll = $link_db -> query_count($result_lang_pos);
     print "$numAll semantic relations (with these parameters) are found"; 
 
-    $result_lang_pos = $LINK_DB -> query_e($query_lang_pos." LIMIT $start_rec,$limit","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    $result_lang_pos = $link_db -> query_e($query_lang_pos." LIMIT $start_rec,$limit","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
     print "<table border=1>\n";
     $counter = $start_rec;
     while ($row = $result_lang_pos-> fetch_object()){

@@ -1,6 +1,30 @@
 <?php 
-require("../../config.php");
+require '../../vendor/autoload.php';
+
+use piwidict\Piwidict;      //require("../piwidict/Piwidict.php");
+//use piwidict\sql;
+//use piwidict\sql\semantic_relations;
+
+require 'config_examples.php';
+require 'config_password.php'; // rename config_password_example.php to config_password.php and update login, password in the file
+
 include(LIB_DIR."header.php");
+
+## DB connection 
+## mysql>GRANT SELECT ON %.* TO pw_user@'%' identified by '';
+## mysql>GRANT SELECT, INSERT, UPDATE, CREATE, DROP, INDEX ON %.* TO pw_admin@'%' identified by '';
+## mysql>FLUSH PRIVILEGES;
+##
+
+//$LINK_DB = new \piwidict\sql\DB($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
+//$pw = new Piwidict($config['hostname'], $config['user_login'], $config['user_password'], $config['dbname']);
+
+//$lang_code = "ru"; // Russian language is the main language in ruwikt (Russian Wiktionary)
+//$pw->setLangCode ($lang_code);
+
+/// ???
+//include_once(LIB_DIR."multi/".$lang_code."/WMeaning.php");
+
 ?>
 <h1>Example index</h1>
 <p>This page contains the list of examples of using Piwidict PHP-library.</p>

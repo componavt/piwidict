@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql;
 
+use piwidict\Piwidict;
+
 class TLabel {
     
     /** Gets data from the database table 'label'.*/
@@ -59,12 +61,12 @@ class TLabel {
      * @return TLabel or NULL in case of error
      */
     static public function getLabel($property_name, $property_value) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM label WHERE `$property_name`='$property_value' order by id";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 	
 	$label_arr = array();

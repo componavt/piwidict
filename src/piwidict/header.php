@@ -6,7 +6,7 @@
 <title>piwidict - PHP library to work with Wiktionary parsed database</title>
 
 </head>
-<body><div style="vertical-align:top; margin-left:auto; margin-right:auto; text-align:center; color:white">NB! 
+<body><div style="vertical-align:top; margin-left:auto; margin-right:auto; text-align:center; color:orange">NB! 
 Attention: beta-testing mode</div>
 
 <?php

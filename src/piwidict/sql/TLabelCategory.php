@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql;
 
+use piwidict\Piwidict;
+
 class TLabelCategory {
     
 /** An operations with the table 'label_category' in MySQL Wiktionary_parsed database.
@@ -41,12 +43,12 @@ class TLabelCategory {
      * @return TLabelCategory or NULL in case of error
      */
     static public function getLabelCategory($property_name, $property_value, $parent_obj=NULL) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM label_category WHERE `$property_name`='$property_value' order by id";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 
 	$category_arr = array();

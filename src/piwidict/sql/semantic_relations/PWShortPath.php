@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql\semantic_relations;
 
+use piwidict\Piwidict;
+
 class PWShortPath {
     
 /** Gets data from the database table 'pw_short_path'.
@@ -20,7 +22,7 @@ class PWShortPath {
      * Language code defines the subset of Wiktionary thesaurus to be constructed in this class, 
      * for example, 'ru' means that thesaurus of Russian synonyms, hyperonym, etc. will be constructed. 
      */
-    private static $lang_code = 'ru';
+    // private static $lang_code = 'ru';
 
     /** @var String */
     private static $table_name = 'pw_short_path_ru';
@@ -33,7 +35,7 @@ class PWShortPath {
         $this->path_len = $path_len;
     }
 
-    static public function setLangCode($lang_code)
+    /*static public function setLangCode($lang_code)
     {
         self::$lang_code  = $lang_code;
         self::$table_name = 'pw_short_path_'.$lang_code;
@@ -42,7 +44,7 @@ class PWShortPath {
     static public function getLangCode()
     {
         return self::$lang_code;
-    }
+    }*
 
     static public function getTableName()
     {
@@ -51,12 +53,12 @@ class PWShortPath {
 
     static public function getPathLenBetweenPoints($start,$finish) 
     {
-        global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
     	$query = "SELECT path_len FROM ".self::$table_name." where lemma_id_1='$start' and lemma_id_n='$finish'";
-	    $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	    $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	    if ($LINK_DB -> query_count($result) == 0)
+	    if ($link_db -> query_count($result) == 0)
 	        return NULL;
 
         $row = $result -> fetch_object();

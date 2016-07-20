@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql;
 
+use piwidict\Piwidict;
+
 /** Operations with the table 'meaning' in MySQL Wiktionary parsed database.
  * @see wikt.word.WMeaning
  */
@@ -118,14 +120,14 @@ class TMeaning {
      * @return TMeaning or NULL in case of error
      */
     static public function getMeaning($property_name, $property_value,$lang_pos_obj=NULL) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
         
         $query = "SELECT * FROM meaning WHERE `$property_name`='$property_value' order by id";
-    $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-    if ($LINK_DB -> query_count($result) == 0)
-        return NULL;
-    $meaning_arr = array();
+        if ($link_db -> query_count($result) == 0)
+            return NULL;
+        $meaning_arr = array();
 
         while ($row = $result -> fetch_object()) {
 /*

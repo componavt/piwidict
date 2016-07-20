@@ -1,5 +1,4 @@
-<?php 
-namespace piwidict\sql;
+<?php namespace piwidict\sql;
 
 use mysqli;
 

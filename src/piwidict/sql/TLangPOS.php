@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql;
 
+use piwidict\Piwidict;
+
 /** Operations with the table 'lang_pos' in MySQL Wiktionary parsed database.
  * Different objects TLangPOS correspond to subsections of the Wiktionary entry with different etymologies or different POS, 
  * e.g., http://en.wiktionary.org/wiki/bread  has different TLangPOS "Etymology 1#Noun", "Etymology 1#Verb", "Etymology 2#Noun"... 
@@ -62,19 +64,6 @@ class TLangPOS {
     /* Gets object of page 
     /* @return int */
     public function getPage() {
-/*
-    global $LINK_DB;
-	if ($this->page == NULL) {
-     	    $query = "SELECT page_id FROM lang_pos";
-	    $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-	    if ($LINK_DB -> query_count($result) == 0)
-	    	return NULL;
-            $row = $result -> fetch_object();
-
-	    $this->page = TPage::getByID($row->page_id);
-	}
-*/
         return $this->page;
     }
     
@@ -112,16 +101,17 @@ class TLangPOS {
      * @return array 
      */
     static public function getIDByPageAndLang($page_id,$lang_code) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
+        
         $lang_id = TLang::getIDByLangCode($lang_code);
 //print "<P>$lang_id</p>";
         $langPOS_arr = array();
 
     	$query = "SELECT id FROM lang_pos where page_id=".(int)$page_id." and lang_id=".(int)$lang_id;
 //print $query;
-	    $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	    $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	    if ($LINK_DB -> query_count($result) == 0)
+	    if ($link_db -> query_count($result) == 0)
 	        return $langPOS_arr;
     
         while ($row = $result -> fetch_object()) {
@@ -135,12 +125,12 @@ class TLangPOS {
      * @return TLangPOS or NULL in case of error
      */
     static public function getLangPOS($property_name, $property_value,$page_obj=NULL) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM lang_pos WHERE lang_id is not NULL and pos_id is not NULL and `$property_name`='$property_value' order by id";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 	
 	$lang_pos_arr = array();

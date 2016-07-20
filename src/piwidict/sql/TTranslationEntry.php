@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql;
 
+use piwidict\Piwidict;
+
 /** Operations with the table 'translationEntry' in MySQL Wiktionary parsed database.
  * @see wikt.word.WtranslationEntry
  */
@@ -56,12 +58,12 @@ class TTranslationEntry {
      * @return TTranslationEntry or NULL in case of error
      */
     static public function getTranslationEntry($property_name, $property_value,$translation_obj=NULL) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM translation_entry WHERE `$property_name`='$property_value' order by id";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 	$translationEntry_arr = array();
 

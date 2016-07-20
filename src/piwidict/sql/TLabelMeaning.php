@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql;
 
+use piwidict\Piwidict;
+
 /** An operations with the table 'label_meaning' in MySQL Wiktionary_parsed database.
  * label_meaning - binds together context labels and meaning number.
  */
@@ -35,12 +37,12 @@ class TLabelMeaning {
      * @return TLabelMeaning or NULL in case of error
      */
     static public function getLabelMeaning($property_name, $property_value,$meaning_obj=NULL) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM label_meaning WHERE `$property_name`='$property_value'";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 	
 	$labelMeaning_arr = array();

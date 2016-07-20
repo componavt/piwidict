@@ -1,15 +1,18 @@
 <?php
 
+use piwidict\Piwidict;
+
 class PWSemanticDistance {
 
     /** Set coefficients on relation types.
      * @return array where key is relation type id, value is its coefficient
      */
     static public function setRelationCoef() {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
+        
         $rk = array();
         $query = "SELECT id, name FROM relation_type";
-        $res = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         while ($row = $res->fetch_object()){
 //          if ($row->name == 'synonyms') 
@@ -26,13 +29,14 @@ class PWSemanticDistance {
      * @return array where key is related word, value is semantic distance (coefficient)
      */
     static public function getRelatedWords($page_id) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
+        
         $relations = array();
         $rk = self::setRelationCoef();
 
         $query = "SELECT trim(wiki_text.text) as word, relation_type_id FROM wiki_text, relation, lang_pos, meaning WHERE relation.wiki_text_id=wiki_text.id and lang_pos.page_id='$page_id' ".
                  "and meaning.lang_pos_id=lang_pos.id and relation.meaning_id=meaning.id";
-        $res = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $res = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         while ($row = $res->fetch_object()){
             if (isset($relations[$row->word]))
@@ -54,7 +58,7 @@ class PWSemanticDistance {
      * @param int $finish a last word in a shortest path
      */
     static public function DijkstraAlgorithmByArray($first, $finish) {
-        global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
         if ($first == $finish) return array(0,array($first));
 
@@ -90,7 +94,7 @@ print "<p>".$count.": ".sizeof($unvisited);
 //print_r($finish_arr);
 //print_r($len_arr);
             $query = "SELECT * FROM $edge_table WHERE lemma_id1='$prev' or lemma_id2='$prev'"; // search nearest vertexes to $prev (НЕТ необходимости сортировать, так как неважно в какой последовательности ставятся метки)
-            $res_neib = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+            $res_neib = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
             while ($row_neib = $res_neib->fetch_object()) {
                 if ($row_neib->lemma_id1 == $prev)
@@ -149,7 +153,7 @@ print "<p>$count iterations";
      * @param int $finish a last word in a shortest path
      */
     static public function DijkstraAlgorithmByDB($first, $finish) {
-        global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
         if ($first == $finish) return array(0,array($first));
 
@@ -157,13 +161,13 @@ print "<p>$count iterations";
         $path_table = PWShortPath::getTableName();  // table of shortest paths (first, last, next-to-last vertexes, length of path)
 //print "$first, $finish";
         $query = "SELECT lemma_id1 FROM $edge_table WHERE lemma_id1='$first' or lemma_id2='$first' LIMIT 1"; // check if any edge with $first exists
-        $res_exist = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-        if ($LINK_DB -> query_count($res_exist) == 0) 
+        $res_exist = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        if ($link_db -> query_count($res_exist) == 0) 
             return array(0,NULL);
 
         $query = "SELECT lemma_id1 FROM $edge_table WHERE lemma_id1='$finish' or lemma_id2='$finish' LIMIT 1"; // check if any edge with $finish exists
-        $res_exist = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-        if ($LINK_DB -> query_count($res_exist) == 0) 
+        $res_exist = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        if ($link_db -> query_count($res_exist) == 0) 
             return array(0,NULL);
 
         $success = 0; // the condition of finding the shortest path in the given vertex ($finish)
@@ -171,7 +175,7 @@ print "<p>$count iterations";
 
         $query = "UPDATE $path_table SET mark=0 where lemma_id_1=".$first; // mark all vertexes as unvisited (if already any paths in DB exists)
 //        $query = "DELETE FROM $path_table where lemma_id_1=".$first; // mark all vertexes as unvisited (if already any paths in DB exists)
-        $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         $prev = $first;
         $path_len = 0;
@@ -186,7 +190,7 @@ print "<p>".$count.": ".$count_row.".-----------------------------</p>";
 //print_r($finish_arr);
 //print_r($len_arr);
             $query = "SELECT * FROM $edge_table WHERE lemma_id1='$prev' or lemma_id2='$prev'"; // search nearest vertexes to $prev (НЕТ необходимости сортировать, так как неважно в какой последовательности ставятся метки)
-            $res_neib = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+            $res_neib = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
             while ($row_neib = $res_neib->fetch_object()) {
                 if ($row_neib->lemma_id1 == $prev)
@@ -197,28 +201,28 @@ print "<p>".$count.": ".$count_row.".-----------------------------</p>";
 
                 $query = "SELECT path_len,mark FROM $path_table WHERE lemma_id_1='$first' and lemma_id_n='$last'";  // recounted only unvisited vertexes
 //print "<P>$query";
-                $res_path = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+                $res_path = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-                if ($LINK_DB -> query_count($res_path) == 0) {
+                if ($link_db -> query_count($res_path) == 0) {
                     // 1. this is new path from $start to $finish which is absent in table pw_short_path_LANG_CODE
                     $query = "INSERT INTO $path_table (`lemma_id_1`, `lemma_id_n`, `path_len`, `lemma_id_prev_n`, mark) VALUES ($first, $last, $new_path_len, $prev, 0)";
 //print "<P>$query";
-                    $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+                    $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
                 } else {
                     // 2. already (one) path from $start to $finish does exist, then update (length and previous word) only if length of new path is shorter
                     $row_path = $res_path->fetch_object();
                     if ($row_path->mark==0 && $new_path_len < $row_path->path_len) {
                         $query = "UPDATE $path_table SET path_len=$new_path_len, lemma_id_prev_n=$prev WHERE lemma_id_1=$first and lemma_id_n=$last";
 //print "<P>$query";
-                        $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+                        $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
                     }
                 }
             }
 
             $query = "SELECT path_len, lemma_id_n FROM $path_table WHERE lemma_id_1='$first' and mark=0 order by path_len"; // choose minimal distance of path from first to any unvisited vertex 
-            $res_min = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+            $res_min = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-            $count_row = $LINK_DB -> query_count($res_min);
+            $count_row = $link_db -> query_count($res_min);
             if (!$count_row) // all paths from start are marked as visited
                 $path_len = 0;
 
@@ -231,7 +235,7 @@ print "<p>".$count.": ".$count_row.".-----------------------------</p>";
                 
             $query = "UPDATE $path_table SET mark=1 where lemma_id_1=$first and lemma_id_n=$prev"; // mark vertex $prev as unvisited
 //print "<P>$query";
-            $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+            $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
             if ($prev == $finish)  // the shortest path in $finish are found!!
                 $success=1; 
@@ -244,7 +248,7 @@ print "<p>$count iterations";
 
             while ($prev != start) {
                 $query = "SELECT lemma_id_prev_n FROM $path_table WHERE lemma_id_1='$first' and lemma_id_n='$prev' order by path_len LIMIT 1"; // choose minimal distance of path from first to any unvisited vertex 
-                $res = $LINK_DB -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+                $res = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
                 $row = $res->fetch_object();
                 $prev = $row -> lemma_id_prev_n;

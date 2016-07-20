@@ -1,7 +1,8 @@
 <?php namespace piwidict\sql;
 
+use piwidict\Piwidict;
 use piwidict\widget\WForm;
-//global $LINK_DB;
+
 
 class TLang {
     
@@ -64,14 +65,14 @@ class TLang {
     }
 
     static public function getAllLang() {
-      	global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
     	$tlang_arr = array();
 
     	$query = "SELECT id, code, name, n_foreign_POS, n_translations FROM lang";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 
     	while($row = $result->fetch_object()){
@@ -101,12 +102,12 @@ class TLang {
      * Returns NULL if it is unknown ID.
      */
     static public function getByID($_id) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
     	$query = "SELECT id, code, name, n_foreign_POS, n_translations FROM lang where id=".(int)$_id;
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 
         $row = $result -> fetch_object();
@@ -124,12 +125,12 @@ class TLang {
      * @return string or NULL if it is unknown code.
      */
     static public function getNameByID($_id) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
     
     	$query = "SELECT name FROM lang where id=".(int)$_id;
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 
         $row = $result -> fetch_object();
@@ -141,12 +142,12 @@ class TLang {
      * @return int or NULL if it is unknown code.
      */
     static public function getIDByLangCode($_code) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
-    	$query = "SELECT id FROM lang where code like '$_code'";
-        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    	$query = "SELECT id FROM lang WHERE code LIKE '$_code'";
+        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-        if ($LINK_DB -> query_count($result) == 0)
+        if ($link_db -> query_count($result) == 0)
             return NULL;
 
         $row = $result -> fetch_object();
@@ -158,12 +159,12 @@ class TLang {
      * @return string or NULL if it is unknown code.
      */
     static public function getCodeByID($_id) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
     
     	$query = "SELECT code FROM lang where id=".(int)$_id;
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 
         $row = $result -> fetch_object();
@@ -173,14 +174,14 @@ class TLang {
 
     /* Check if language with this ID exists */
     static public function isExist($id) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 	
 	if ($id == '' || (int)$id != $id) return false;
 
     	$query = "SELECT id FROM lang where id=".(int)$id;
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return false;
 	return true;
     }

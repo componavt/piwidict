@@ -1,5 +1,7 @@
 <?php namespace piwidict\sql;
 
+use piwidict\Piwidict;
+
 /** An operations with the table 'wiki_text' in MySQL wiktionary_parsed database.
  *
  * The question: Are the value '.text' UNIQUE in the table wiki_text?
@@ -51,12 +53,12 @@ class TWikiText {
      * @return object or NULL if it is unknown ID.
      */
     static public function getByID($_id) {
-    global $LINK_DB;
+        $link_db = Piwidict::getDatabaseConnection();
 
     	$query = "SELECT * FROM wiki_text where id=".(int)$_id;
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 
         $row = $result -> fetch_object();

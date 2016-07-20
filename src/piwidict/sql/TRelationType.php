@@ -1,5 +1,6 @@
 <?php namespace piwidict\sql;
 
+use piwidict\Piwidict;
 use piwidict\widget\WForm;
 
 class TRelationType {
@@ -41,13 +42,14 @@ class TRelationType {
     }
 
     static public function getAllRelations() {
-    global $LINK_DB;
+        
+        $link_db = Piwidict::getDatabaseConnection();
   
     	$rr = array(); // rrrelations
 
     	// relation_type (id, name)
     	$query = "SELECT id, name FROM relation_type order by id";
-        $result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
     	while($row = $result -> fetch_object()){
           $rr[$row->id] = new TRelationType(
@@ -61,12 +63,13 @@ class TRelationType {
      * Returns NULL if ID is absent in the table.
      */
     static public function getNameByID($_id) {
-    global $LINK_DB;
+        
+        $link_db = Piwidict::getDatabaseConnection();
 
     	$query = "SELECT name FROM relation_type where id=".(int)$_id;
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 
         $row = $result -> fetch_object();
@@ -79,12 +82,13 @@ class TRelationType {
      * Returns NULL if it is unknown name.
      */
     static public function getIDByName($_name) {
-    global $LINK_DB;
+        
+        $link_db = Piwidict::getDatabaseConnection();
 
     	$query = "SELECT id FROM relation_type where name like '$_name'";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 
         $row = $result -> fetch_object();
@@ -96,12 +100,13 @@ class TRelationType {
      * @return TRelationType or NULL in case of error
      */
     static public function getRelationType($property_name, $property_value) {
-    global $LINK_DB;
+        
+        $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM relation_type WHERE `$property_name`='$property_value' order by id";
-	$result = $LINK_DB -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($LINK_DB -> query_count($result) == 0)
+	if ($link_db -> query_count($result) == 0)
 	    return NULL;
 	
 	$relation_type_arr = array();
