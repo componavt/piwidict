@@ -19,6 +19,7 @@ Install composer: "[How To Install and Use Composer on Ubuntu 14.04](https://www
 Via Composer
 ``` bash
 $ composer require componavt/piwidict
+$ composer update componavt/piwidict
 ```
 
 See [componavt/piwidict](https://packagist.org/packages/componavt/piwidict) at packagist.org
