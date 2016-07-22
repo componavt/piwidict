@@ -3,7 +3,9 @@
 use piwidict\Piwidict;
 use piwidict\widget\WForm;
 
-
+/**
+ * Table lang contains list of languages: name and ID.
+ */
 class TLang {
     
     /** @var int identifier in the table 'lang' */

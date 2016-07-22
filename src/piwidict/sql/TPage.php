@@ -1,4 +1,4 @@
-<?php namespace piwidict\sql;
+<?php namespace piwidict\sql; 
 
 use piwidict\Piwidict;
 
@@ -174,14 +174,28 @@ class TPage {
         return Tpage::getPage("page_title",$page_title);
     }
 
-   /** Gets URL to Wikipedia page
-    * @return string
+   /** Gets URL to Wiktionary page, where link text is explicitly given.
+    * 
+    * @param String $page_title Title of the Wiktionary entry
+    * @param String $link_text Link text (visible text)
+    * @return String HTML hyperlink
     */
-    static public function getURL($page_title, $link_text='') {
+    static public function getURLWithLinkText($page_title, $link_text='') : String {
         $wikt_lang = Piwidict::getWiktLang();
         if (!$link_text) 
-            $link_text = $page_title;
+            $link_text = $wikt_lang.".wiktionary.org";
+            // $link_text = $page_title;
+                
         return "<a href=\"http://".$wikt_lang.".wiktionary.org/wiki/$page_title\">$link_text</a>";
+    }
+    
+    /** Gets URL to Wiktionary page, where link text is a page title.
+    * 
+    * @param String $page_title Title of the Wiktionary entry
+    * @return String HTML hyperlink
+    */
+    static public function getURL($page_title) : String {
+        return self::getURLWithLinkText($page_title, $page_title);
     }
 }
 ?>

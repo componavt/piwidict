@@ -16,7 +16,7 @@ else
     <input type="text" size="30" name="word" value="<? if (isset($word)) print $word;?>">
     <input type="submit" value="search">
 </form>
-<?
+<?php
 if (isset($word)) {
     // set some options
     $opts = array(

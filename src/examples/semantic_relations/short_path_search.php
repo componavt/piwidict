@@ -45,9 +45,9 @@ Piwidict::setWiktLang ($wikt_lang);
             else {
                 print "<p>".(int)(sizeof($path)-1)." step(s), the length of distance is $dist_len</p>";
 
-                print TPage::getURL(PWLemma::getLemmaByID($path[0]), PWLemma::getLemmaByID($path[0]));
+                print TPage::getURL(PWLemma::getLemmaByID($path[0]));
                 for ($i=1; $i<sizeof($path); $i++)
-                    print " -> ".TPage::getURL(PWLemma::getLemmaByID($path[$i]), PWLemma::getLemmaByID($path[$i]));
+                    print " -> ".TPage::getURL(PWLemma::getLemmaByID($path[$i]));
             }
         } else{
             $dist_len = 0;
