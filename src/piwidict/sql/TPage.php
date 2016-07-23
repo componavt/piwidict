@@ -195,7 +195,7 @@ class TPage {
     /** Gets a count of record for request with $condition .
      * @return Int
      */
-    public function countPage(String $condition) : int {
+    public static function countPage(String $condition) : int {
         $link_db = Piwidict::getDatabaseConnection();
         
         $query = "SELECT id FROM page WHERE $condition";

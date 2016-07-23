@@ -36,7 +36,7 @@ class TLabelMeaning {
     /** Gets TLabelMeaning object by property $property_name with value $property_value.
      * @return TLabelMeaning or NULL in case of error
      */
-    public function getLabelMeaning($property_name, $property_value,$meaning_obj=NULL) {
+    public static function getLabelMeaning($property_name, $property_value,$meaning_obj=NULL) {
         $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM label_meaning WHERE `$property_name`='$property_value'";

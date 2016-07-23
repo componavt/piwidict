@@ -23,3 +23,11 @@ $ composer update componavt/piwidict
 ```
 
 See [componavt/piwidict](https://packagist.org/packages/componavt/piwidict) at packagist.org
+
+
+Cool Composer commands:
+``` bash
+$ composer clearcache
+$ composer dumpautoload -o
+$ composer update
+```

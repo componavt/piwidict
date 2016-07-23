@@ -10,7 +10,7 @@
             "email": "andrew.krizhanovsky@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "php": ">=7.0.4",
         "cijic/phpmorphy": "^0.3.0"
