@@ -120,11 +120,11 @@ class TPage {
     /** Gets ID from the table page by the page title. 
      * @return int or NULL if it is unknown code.
      */
-    static public function getIDByPageTitle($page_title) {
+    public function getIDByPageTitle($page_title) {
         $link_db = Piwidict::getDatabaseConnection();
 
         $query = "SELECT id FROM page where page_title like '$page_title'";
-        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $result = $link_db -> query_err($query, __FILE__, __LINE__, __METHOD__);
 
         if ($link_db -> query_count($result) == 0)
             return NULL;
@@ -137,11 +137,14 @@ class TPage {
     /** Gets array of TPage objects with SQL "WHERE" $condition .
      * @return array[TPage] or empty array in case of error
      */
-    public function getPage(String $condition) : array {
+    public function getPage(string $condition) : array {
         $link_db = Piwidict::getDatabaseConnection();
+        $limit = Piwidict::getLimitRequest();
         
         $query = "SELECT * FROM page WHERE $condition order by page_title";
-        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        if ($limit>0) 
+            $query .= " LIMIT 0, $limit";
+        $result = $link_db -> query_err($query, __FILE__, __LINE__, __METHOD__);
 
         if ($link_db -> query_count($result) == 0)
             return array();
@@ -189,6 +192,32 @@ class TPage {
         return $this->getPage("page_title like '$page_title' and is_in_wiktionary=1");
     }
 
+    /** Gets a count of record for request with $condition .
+     * @return Int
+     */
+    public function countPage(String $condition) : int {
+        $link_db = Piwidict::getDatabaseConnection();
+        
+        $query = "SELECT id FROM page WHERE $condition";
+        $result = $link_db -> query_err($query, __FILE__, __LINE__, __METHOD__);
+
+        return $link_db -> query_count($result);
+    }
+
+    /** Gets a count of record for request for search by page title.
+     * @return Int
+     */
+    public function countPageByTitle(String $page_title) : int {
+        return $this->countPage("page_title like '$page_title'");
+    }
+
+    /** Gets a count of record for request for search by page title.
+     * @return Int
+     */
+    public function countPageByTitleIfExists(String $page_title) : int {
+        return $this->countPage("page_title like '$page_title' and is_in_wiktionary=1");
+    }
+
    /** Gets URL to Wiktionary page, where link text is explicitly given.
     * 
     * @param String $page_title Title of the Wiktionary entry
@@ -209,8 +238,8 @@ class TPage {
     * @param String $page_title Title of the Wiktionary entry
     * @return String HTML hyperlink
     */
-    public function getURL(String $page_title) : String {
-        return $this->getURLWithLinkText($page_title, $page_title);
+    public static function getURL(String $page_title) : String {
+        return self::getURLWithLinkText($page_title, $page_title);
     }
 }
 ?>

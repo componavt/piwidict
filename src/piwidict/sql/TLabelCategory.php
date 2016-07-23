@@ -42,11 +42,11 @@ class TLabelCategory {
     /** Gets TRelation object by property $property_name with value $property_value.
      * @return TLabelCategory or NULL in case of error
      */
-    static public function getLabelCategory($property_name, $property_value, $parent_obj=NULL) {
+    public function getLabelCategory($property_name, $property_value, $parent_obj=NULL) {
         $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM label_category WHERE `$property_name`='$property_value' order by id";
-	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_err($query, __FILE__, __LINE__, __METHOD__);
 
 	if ($link_db -> query_count($result) == 0)
 	    return NULL;
@@ -71,16 +71,16 @@ class TLabelCategory {
     /** Gets TLabelCategory object by ID
      * @return TLabelCategory or NULL in case of error
      */
-    static public function getByID ($_id) {
-	$relation_arr = TLabelCategory::getLabelCategory("id",$_id);
+    public static function getByID ($_id) {
+	$relation_arr = self::getLabelCategory("id",$_id);
 	return $relation_arr[0];
     }
 
     /** Gets TLabelCategory object by parent_id
      * @return TLabelCategory or NULL in case of error
      */
-    static public function getByParent ($parent_id,$parent_obj=NULL) {
-	return TLabelCategory::getLabelCategory("parent_id",$parent_id,$parent_obj);
+    public function getByParent ($parent_id,$parent_obj=NULL) {
+	return $this->getLabelCategory("parent_id",$parent_id,$parent_obj);
     }
 }
 ?>

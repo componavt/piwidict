@@ -91,6 +91,15 @@ class TMeaning {
     public function getWikiText() {
         return $this->wiki_text;
     }
+    
+    /** Gets text of WikiText.
+    /* @return string */
+    public function getText() : string {
+        if (is_null( $this->wiki_text ))
+            return '';
+        
+        return $this->wiki_text->getText();
+    }
 
     /** Gets id of wiki_text
     /* @return int */

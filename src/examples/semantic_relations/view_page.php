@@ -47,14 +47,22 @@ function toggle(id) {
 if (isset($page_title)) {
 	if (isset($search_type) && $search_type=='sub') $page_title = "%$page_title%";
         
+        $limit_request = 100;
+        Piwidict::setLimitRequest($limit_request);
+        
         $tpage = new TPage();
+        $total_num = $tpage->countPageByTitle($page_title);
 	$pageObj_arr = $tpage->getByTitle($page_title);
 	if ($pageObj_arr == NULL) {
 	    print "<p>The word has not founded.</p>\n";
 	} else {
-	    if (sizeof($pageObj_arr) > 1) 
-		print "<p>There are founded ". sizeof($pageObj_arr) ." words.</p>\n";
-
+	    if ($total_num > 1) {
+		print "<p>There are founded $total_num words.</p>\n";
+                if ($limit_request >0 && $limit_request < $total_num)
+                    print "Restriction on the search for a maximum of $limit_request records";
+            //ограничение на поиск не более 100 записей
+            }
+            
 	    if (is_array($pageObj_arr)) foreach ($pageObj_arr as $pageObj) {
 	        print "<h2 title=\"TPage->page_title\" style=\"color: #006a4e\">".$pageObj->getPageTitle()."</h2>\n".
                 "<p>Source page at ".TPage::getURLWithLinkText($pageObj->getPageTitle())."</p>";
@@ -66,59 +74,64 @@ if (isset($page_title)) {
                 $meaning_arr = $langPOSObj -> getMeaning();
 
                 $count_meaning = 1;
-                if (is_array($meaning_arr)) foreach ($meaning_arr as $meaningObj) {
-                    $meaning_id = $meaningObj->getID();
+                if (is_array($meaning_arr)) {
+                    foreach ($meaning_arr as $meaningObj) {
+                        if (is_null( $meaningObj ))
+                            continue;
+                        $meaning_id = $meaningObj->getID();
 
-                    // LABELS OF MEANING
-                    $labelMeaning_arr = $meaningObj->getLabelMeaning();
-                    $label_name_arr = array();
-			
-                    if (is_array($labelMeaning_arr)) foreach ($labelMeaning_arr as $labelMeaningObj) {
-                        $label_name_arr[] = "<i><span title=\"".$labelMeaningObj->getLabel()->getName()."\">".$labelMeaningObj->getLabel()->getShortName()."</span></i>";
-                    }
+                        // LABELS OF MEANING
+                        $labelMeaning_arr = $meaningObj->getLabelMeaning();
+                        $label_name_arr = array();
 
-                    // MEANING
-                    print "<p title=\"TPage::TLangPOS::TMeaning::TWikiText->text\">".$count_meaning++.". ". join(', ',$label_name_arr). " ". $meaningObj->getWikiText()->getText() ."</p>\n".
-                        "<ul>\n";
-
-                    // RELATIONS
-                    $relation_arr = $meaningObj -> getRelation();
-
-                    $relation_RelationType_arr = array(); // array of relations groupped by types
-                    $relation_name_arr = array(); // array of relation names groupped by types
-
-                    if (is_array($relation_arr)) foreach ($relation_arr as $relationObj) {
-                        $relationTypeName = $relationObj->getRelationType()->getName();
-                        $relation_RelationType_arr[$relationTypeName][] = $relationObj;
-                        $relation_name_arr[$relationTypeName][] = "<span title=\"TPage::TLangPOS::TMeaning::TRelation::WikiText->text\">".$relationObj->getWikiText()->getText()."</span>";
-                    }
-
-                    foreach ($relation_RelationType_arr as $relationTypeName => $relationObj_arr) {
-                        print "<p title=\"TPage::TLangPOS::TMeaning::TRelation::TrelationType->name\"><b>". $relationTypeName ."</b>: ". join(', ', $relation_name_arr[$relationTypeName]) ."</p>";
-                    }
-
-			
-                    // TRANSLATIONS
-                    $translationObj = $meaningObj -> getTranslation();
-                    if ($translationObj != NULL) {
-                        $entry_arr = array();
-                        foreach ($translationObj->getTranslationEntry()  as $entryObj) {
-                            $entry_arr[$entryObj->getLang()->getName()][] = $entryObj->getWikiText()->getText();
+                        if (is_array($labelMeaning_arr)) foreach ($labelMeaning_arr as $labelMeaningObj) {
+                            $label_name_arr[] = "<i><span title=\"".$labelMeaningObj->getLabel()->getName()."\">".$labelMeaningObj->getLabel()->getShortName()."</span></i>";
                         }
-			    
-                        $translation_summary = $translationObj -> getMeaningSummary();
-                        print "<p title=\"TPage::TLangPOS::TMeaning::TTranslation\"><b>translation</b>";
-                        if ($translation_summary) print " ($translation_summary)";
-                        print ": languages: ".sizeof($entry_arr).", translations: ".sizeof($translationObj->getTranslationEntry()).",\n".
-                            "<a id=\"displayText$meaning_id\" href=\"javascript:toggle($meaning_id);\">show</a></p>\n".
-                            "<div id=\"toggleText$meaning_id\" style=\"margin-left: 20px; display: none;\">\n";
-			    
-                        foreach ($entry_arr as $lang => $entry)
-                            print "<i>$lang</i>: ".join(', ',$entry)."<br />\n";
-                        print "</div>\n";
-                    }
-                    print "</ul>\n";
-                }
+
+                        // MEANING
+                        print "<p title=\"TPage::TLangPOS::TMeaning::TWikiText->text\">".$count_meaning++.". ". 
+                              join(', ',$label_name_arr). " ". $meaningObj->getText() ."</p>\n".
+                            "<ul>\n";
+
+                        // RELATIONS
+                        $relation_arr = $meaningObj -> getRelation();
+
+                        $relation_RelationType_arr = array(); // array of relations groupped by types
+                        $relation_name_arr = array(); // array of relation names groupped by types
+
+                        if (is_array($relation_arr)) foreach ($relation_arr as $relationObj) {
+                            $relationTypeName = $relationObj->getRelationType()->getName();
+                            $relation_RelationType_arr[$relationTypeName][] = $relationObj;
+                            $relation_name_arr[$relationTypeName][] = "<span title=\"TPage::TLangPOS::TMeaning::TRelation::WikiText->text\">".$relationObj->getWikiText()->getText()."</span>";
+                        }
+
+                        foreach ($relation_RelationType_arr as $relationTypeName => $relationObj_arr) {
+                            print "<p title=\"TPage::TLangPOS::TMeaning::TRelation::TrelationType->name\"><b>". $relationTypeName ."</b>: ". join(', ', $relation_name_arr[$relationTypeName]) ."</p>";
+                        }
+
+
+                        // TRANSLATIONS
+                        $translationObj = $meaningObj -> getTranslation();
+                        if ($translationObj != NULL) {
+                            $entry_arr = array();
+                            foreach ($translationObj->getTranslationEntry()  as $entryObj) {
+                                $entry_arr[$entryObj->getLang()->getName()][] = $entryObj->getWikiText()->getText();
+                            }
+
+                            $translation_summary = $translationObj -> getMeaningSummary();
+                            print "<p title=\"TPage::TLangPOS::TMeaning::TTranslation\"><b>translation</b>";
+                            if ($translation_summary) print " ($translation_summary)";
+                            print ": languages: ".sizeof($entry_arr).", translations: ".sizeof($translationObj->getTranslationEntry()).",\n".
+                                "<a id=\"displayText$meaning_id\" href=\"javascript:toggle($meaning_id);\">show</a></p>\n".
+                                "<div id=\"toggleText$meaning_id\" style=\"margin-left: 20px; display: none;\">\n";
+
+                            foreach ($entry_arr as $lang => $entry)
+                                print "<i>$lang</i>: ".join(', ',$entry)."<br />\n";
+                            print "</div>\n";
+                        }
+                        print "</ul>\n";
+                    } // eo foreach $meaning_arr
+                } // eo if (is_array($meaning_arr))
             }
 	
 //print "<PRE>";

@@ -18,6 +18,8 @@ class Piwidict {
     /* @var float start time, object Piwidict created */
     private static $start_time;
     
+    /* @var Int the maximum of records for request, 0 means unlimited request */
+    private static $limit_request_record = 0;
     
     //define ('INTERFACE_LANGUAGE', 'en');
     /* @var String main language code in the Wiktionary database ("en" in enwikt, "ru" in ruwikt, etc.). */
@@ -77,6 +79,17 @@ class Piwidict {
     public static function getExecutionTime(): float {
         list($usec, $sec) = explode(" ", microtime());
         return (float)$usec + (float)$sec - self::$start_time;
+    }
+     /** Sets the maximum of records for request.
+     */
+    public static function setLimitRequest($new_limit) {
+        self::$limit_request_record = (int)$new_limit; // set start time of execution
+    }
+    
+     /** Gets the maximum of records for request.
+     */
+    public static function getLimitRequest(): int {
+        return self::$limit_request_record;
     }
 }
 

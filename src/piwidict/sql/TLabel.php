@@ -60,11 +60,11 @@ class TLabel {
     /** Gets TLabel object by property $property_name with value $property_value.
      * @return TLabel or NULL in case of error
      */
-    static public function getLabel($property_name, $property_value) {
+    private static function getLabel($property_name, $property_value) {
         $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM label WHERE `$property_name`='$property_value' order by id";
-	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_err($query, __FILE__, __LINE__, __METHOD__);
 
 	if ($link_db -> query_count($result) == 0)
 	    return NULL;
@@ -86,10 +86,9 @@ class TLabel {
     /** Gets TLabel object by ID
      * @return TLabel or NULL in case of error
      */
-    static public function getByID ($_id) {
-	$label_arr = TLabel::getLabel("id",$_id);
+    public static function getByID ($_id) {
+	$label_arr = self::getLabel("id",$_id);
 	return $label_arr[0];
     }
-
 }
 ?>

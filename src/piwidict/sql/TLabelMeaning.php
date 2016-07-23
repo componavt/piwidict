@@ -36,11 +36,11 @@ class TLabelMeaning {
     /** Gets TLabelMeaning object by property $property_name with value $property_value.
      * @return TLabelMeaning or NULL in case of error
      */
-    static public function getLabelMeaning($property_name, $property_value,$meaning_obj=NULL) {
+    public function getLabelMeaning($property_name, $property_value,$meaning_obj=NULL) {
         $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM label_meaning WHERE `$property_name`='$property_value'";
-	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+	$result = $link_db -> query_err($query, __FILE__, __LINE__, __METHOD__);
 
 	if ($link_db -> query_count($result) == 0)
 	    return NULL;
@@ -64,16 +64,16 @@ class TLabelMeaning {
     /** Gets TLabelMeaning object by ID
      * @return TLabelMeaning or NULL in case of error
      */
-    static public function getByID ($_id) {
-	$LabelMeaning_arr = TLabelMeaning::getLabelMeaning("id",$_id);
+    public static function getByID ($_id) {
+	$LabelMeaning_arr = self::getLabelMeaning("id",$_id);
 	return $LabelMeaning_arr[0];
     }
 
     /** Gets TLabelMeaning object by meaning_id
      * @return TLabelMeaning or NULL in case of error
      */
-    static public function getByMeaning ($meaning_id,$meaning_obj=NULL) {
-	return TLabelMeaning::getLabelMeaning("meaning_id",$meaning_id,$meaning_obj);
+    public static function getByMeaning ($meaning_id,$meaning_obj=NULL) {
+	return self::getLabelMeaning("meaning_id",$meaning_id,$meaning_obj);
     }
 
 }

@@ -3,9 +3,9 @@
 use mysqli;
 
 class DB extends mysqli {
-	public $result;
-	public $row;
-	public $row_count;
+	private $result;
+	private $row;
+	private $row_count;
 	public $error;
 
 	/* Connection to database */
@@ -27,18 +27,57 @@ class DB extends mysqli {
 	    } 
 	}
 
-	/* Query to DB */
-
-	public function query_e($q,$err_string='') {
-	    if (!$err_string) 
-		$err_string = "SQL error: <b>$q</b>";
-
+	/** Outdated (use query_err): Executes database query.
+         * query_err($query, __FILE__, __LINE__, __METHOD__);
+         * @param string $q SQL request
+         * @param string $err_string output if request failed
+         * @return link on result table of request to DB
+         */
+	public function query_e(string $q, string $err_string='')  {
 	    $this->result = @parent::query($q);
 
 	    if (!$this->result)	{
-		die("<div style=\"color:#666666;\">$err_string: ".$this->error." ($q)</div>");
+                if (!$err_string) 
+                    $err_string = "SQL error: <b>$q</b>";
+
+		die("<div style=\"color:#666666;\">$err_string</div>"); // : ".$this->error." ($q)
 	    }
 	    return $this->result;
+	}
+
+	/** Executes database query and finished with message about error in
+         * $line of $file in $method of some class.
+         * @param string $q SQL-request
+         * @param string $file filename which calls this method
+         * @param string $line line in filename which calls this method
+         * @param string $method method which calls this method
+         * @return link on result table of request to DB
+         */
+	public function query_err(string $q, 
+                                  string $file='', 
+                                  string $line='', 
+                                  string $method='')  
+        {
+	    $this->result = @parent::query($q);
+
+	    if ($this->result)	{
+                return $this->result;
+            }
+                
+	    if (!$file) {
+		$err_string = "SQL error: <b>$q</b>";
+	    } else {
+                $err_string = "Query failed";
+                if ($method) {
+                    $err_string .= "in $method";
+                }
+                $err_string .= " in file <b>$file</b>";
+                if ($line) {
+                    $err_string .= ", string <b>$line</b>";
+                }
+            }
+            
+            die("<div style=\"color:#666666;\">$err_string</div>"); // : ".$this->error." ($q)
 	}
 
 	/* Determine number of rows result set */
