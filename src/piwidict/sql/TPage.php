@@ -37,7 +37,15 @@ class TPage {
     /* @var array TLangPOS[] language-POS parts of page which have the same page_title */
     private $lang_pos;
     
-    public function __construct($id, $page_title, $word_count, $wiki_link_count, $is_in_wiktionary, $is_redirect, $redirect_target, $lang_pos)
+    public function __construct(
+                        int     $id = 0, 
+                        String  $page_title = '', 
+                        int     $word_count = 0, 
+                        int     $wiki_link_count = 0, 
+                        int     $is_in_wiktionary = 0, 
+                        int     $is_redirect = NULL, 
+                        String  $redirect_target = NULL, 
+                        array   $lang_pos = array())
     {
         $this->id               = $id;
         $this->page_title       = $page_title;
@@ -126,17 +134,17 @@ class TPage {
         return $row -> id;
     }
 
-    /** Gets TPage object by property $property_name with value $property_value.
-     * @return TPage or NULL in case of error
+    /** Gets array of TPage objects with SQL "WHERE" $condition .
+     * @return array[TPage] or empty array in case of error
      */
-    static public function getPage($property_name, $property_value) {
+    public function getPage(String $condition) : array {
         $link_db = Piwidict::getDatabaseConnection();
         
-        $query = "SELECT * FROM page WHERE `$property_name` like '$property_value' order by page_title";
+        $query = "SELECT * FROM page WHERE $condition order by page_title";
         $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         if ($link_db -> query_count($result) == 0)
-            return NULL;
+            return array();
 
         $page_arr = array();
 
@@ -149,7 +157,7 @@ class TPage {
                 $row->is_in_wiktionary,
                 $row->is_redirect,
                 $row->redirect_target,
-                '');
+                array());
             $page->lang_pos = TLangPOS::getByPage($row->id,$page);
             $page_arr[]=$page;
         }
@@ -162,16 +170,23 @@ class TPage {
     /** Gets TPage object by page ID.
      * @return TPage or NULL in case of error
      */
-    static public function getByID($page_id) {
-        $page_arr = TPage::getPage("id",$page_id);
+    public function getByID(int $page_id) : TPage {
+        $page_arr = $this->getPage("id = ".(int)$page_id);
         return $page_arr[0];
     }
 
-   /** Gets TPage object by page title.
+   /** Gets array of TPage objects by page title.
+    * @return array[TPage] or empty array in case of error
+    */
+    public function getByTitle(String $page_title) : array {
+        return $this->getPage("page_title like '$page_title'");
+    }
+
+   /** Gets array of TPage objects by page title if this entry does exist in Wiktionary.
     * @return TPage or NULL in case of error
     */
-    static public function getByTitle($page_title) {
-        return Tpage::getPage("page_title",$page_title);
+    public function getByTitleIfExists(String $page_title) : array {
+        return $this->getPage("page_title like '$page_title' and is_in_wiktionary=1");
     }
 
    /** Gets URL to Wiktionary page, where link text is explicitly given.
@@ -180,7 +195,7 @@ class TPage {
     * @param String $link_text Link text (visible text)
     * @return String HTML hyperlink
     */
-    static public function getURLWithLinkText($page_title, $link_text='') : String {
+    public function getURLWithLinkText(String $page_title, String $link_text='') : String {
         $wikt_lang = Piwidict::getWiktLang();
         if (!$link_text) 
             $link_text = $wikt_lang.".wiktionary.org";
@@ -194,8 +209,8 @@ class TPage {
     * @param String $page_title Title of the Wiktionary entry
     * @return String HTML hyperlink
     */
-    static public function getURL($page_title) : String {
-        return self::getURLWithLinkText($page_title, $page_title);
+    public function getURL(String $page_title) : String {
+        return $this->getURLWithLinkText($page_title, $page_title);
     }
 }
 ?>

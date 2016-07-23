@@ -121,17 +121,18 @@ class TLangPOS {
 	    return $langPOS_arr;
     }
 
-    /** Gets TLangPOS object by property $property_name with value $property_value.
-     * @return TLangPOS or NULL in case of error
+    /** Gets array of TLangPOS objects by property $property_name with value $property_value.
+     * @return array[TLangPOS] or empty array in case of error
      */
-    static public function getLangPOS($property_name, $property_value,$page_obj=NULL) {
+    static public function getLangPOS( String $property_name, String $property_value,
+                                       TPage $page_obj=NULL) : array {
         $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM lang_pos WHERE lang_id is not NULL and pos_id is not NULL and `$property_name`='$property_value' order by id";
 	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
 	if ($link_db -> query_count($result) == 0)
-	    return NULL;
+	    return array();
 	
 	$lang_pos_arr = array();
 
@@ -164,21 +165,21 @@ class TLangPOS {
 
     /** Gets TLangPOS object by ID.
      * @return TLangPOS or NULL if data is absent. */
-    static public function getByID ($lang_pos_id) {
+    static public function getByID (int $lang_pos_id) : TLangPOS {
 	$lang_pos_arr = TLangPOS::getLangPOS("id",$lang_pos_id);
 	return $lang_pos_arr[0];
     }
 
-    /** Gets TLangPOS object by page_id.
-     * @return TLangPOS or NULL if data is absent. */
-    static public function getByPage ($page_id,$page_obj=NULL) {
+    /** Gets array of TLangPOS objects by page_id.
+     * @return array[TLangPOS] or empty array if data is absent. */
+    static public function getByPage (int $page_id, TPage $page_obj=NULL) : array {
 	   return TLangPOS::getLangPOS("page_id",$page_id,$page_obj);
     }
 
-    /** Gets TLangPOS object by lang_id.
-     * @return TLangPOS or NULL if data is absent. */
-    static public function getByLang ($lang_id,$lang_obj=NULL) {
-	   return TLangPOS::getLangPOS("lang_id",$lang_id,$lang_obj);
+    /** Gets array of TLangPOS objects by lang_id.
+     * @return array[TLangPOS] or empty array if data is absent. */
+    static public function getByLang (int $lang_id, TLang $lang_obj=NULL) : array {
+	   return TLangPOS::getLangPOS("lang_id", $lang_id,$lang_obj);
     }
 }
 ?>

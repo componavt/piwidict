@@ -46,8 +46,9 @@ function toggle(id) {
 <?php
 if (isset($page_title)) {
 	if (isset($search_type) && $search_type=='sub') $page_title = "%$page_title%";
-
-	$pageObj_arr = Tpage::getByTitle($page_title);
+        
+        $tpage = new TPage();
+	$pageObj_arr = $tpage->getByTitle($page_title);
 	if ($pageObj_arr == NULL) {
 	    print "<p>The word has not founded.</p>\n";
 	} else {
