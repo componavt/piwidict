@@ -42,7 +42,7 @@ class TLabelCategory {
     /** Gets TRelation object by property $property_name with value $property_value.
      * @return TLabelCategory or NULL in case of error
      */
-    public function getLabelCategory($property_name, $property_value, $parent_obj=NULL) {
+    public static function getLabelCategory($property_name, $property_value, $parent_obj=NULL) {
         $link_db = Piwidict::getDatabaseConnection();
         
      	$query = "SELECT * FROM label_category WHERE `$property_name`='$property_value' order by id";
@@ -79,8 +79,8 @@ class TLabelCategory {
     /** Gets TLabelCategory object by parent_id
      * @return TLabelCategory or NULL in case of error
      */
-    public function getByParent ($parent_id,$parent_obj=NULL) {
-	return $this->getLabelCategory("parent_id",$parent_id,$parent_obj);
+    public static function getByParent ($parent_id,$parent_obj=NULL) {
+	return self::getLabelCategory("parent_id",$parent_id,$parent_obj);
     }
 }
 ?>
