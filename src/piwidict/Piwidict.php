@@ -6,7 +6,6 @@ use piwidict\sql\semantic_relations;
 /** Main class in this project.
  * It contains some important variables: WIKT_LANG, INTERFACE_LANGUAGE.
 */
-
 class Piwidict {
     
     /* @var DB database connection. */
