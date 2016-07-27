@@ -33,4 +33,8 @@ $ composer update
 ```
 
 Great artisan commans:
+
+``` bash
 $ php artisan route:list   // prints list of routes
+```
+
