@@ -31,3 +31,6 @@ $ composer clearcache
 $ composer dumpautoload -o
 $ composer update
 ```
+
+Great artisan commans:
+$ php artisan route:list   // prints list of routes
