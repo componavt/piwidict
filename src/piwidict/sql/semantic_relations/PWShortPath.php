@@ -44,7 +44,7 @@ class PWShortPath {
     static public function getLangCode()
     {
         return self::$lang_code;
-    }*
+    }*/
 
     static public function getTableName()
     {
