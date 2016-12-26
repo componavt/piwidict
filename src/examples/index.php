@@ -26,6 +26,10 @@ include(LIB_DIR."header.php");
 <h1>Example index</h1>
 <p>This page contains the list of examples of using Piwidict PHP-library.</p>
 
+
+<p><a href="../init/index.php">Init-script</a></li> generates additional database tables in order to work with Piwidict.</p>
+
+
 <h2>Definitions / meanings</h2>
 
 <h2>Context labels</h2>

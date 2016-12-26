@@ -1,17 +1,21 @@
-<?php
+<?php namespace piwidict\export;
 
 use piwidict\Piwidict;
+use piwidict\sql\semantic_relations\{PWLemma, PWRelatedWords};
+
+//use \DomDocument as DomDocument;
 
 class PWGEXF {
     
     static public function getRelatedWords() {
+        
         $link_db = Piwidict::getDatabaseConnection();
         
         $node_table = PWLemma::getTableName();
         $edge_table = PWRelatedWords::getTableName();
 
         // Construct DOM elements
-        $xml = new DomDocument('1.0', 'UTF-8');
+        $xml = new \DomDocument('1.0', 'UTF-8');
         $xml->formatOutput = true;              // Nicely formats output with indentation and extra space
         $gexf = $xml->createElementNS(null, 'gexf');  // Create new element node with an associated namespace
         $gexf = $xml->appendChild($gexf);
@@ -34,7 +38,8 @@ class PWGEXF {
         $edges = $graph->appendChild($xml->createElement('edges'));
 
         // Add Nodes!
-        $res_node = $link_db -> query_e("SELECT * FROM $node_table WHERE id in (select lemma_id1 from $edge_table) or id in (select lemma_id2 from $edge_table) order by id","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $sql_string = "SELECT * FROM $node_table WHERE id in (select lemma_id1 from $edge_table) or id in (select lemma_id2 from $edge_table) order by id";
+        $res_node = $link_db -> query_e($sql_string,"Query `${sql_string}` failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 	    while ($row_node = $res_node->fetch_object()) {
             $node = $xml->createElement('node');
             $node->setAttribute('id', $row_node->id);
@@ -80,3 +85,4 @@ class PWGEXF {
         return $xml->saveXML();
     }
 }
+?>
