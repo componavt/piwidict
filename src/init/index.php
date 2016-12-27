@@ -1,12 +1,12 @@
 <?php
 
-require '../../../vendor/autoload.php';
+require '../../vendor/autoload.php';
 
 use piwidict\Piwidict;
 use piwidict\PWInit;
 
-require '../config_examples.php';
-require '../config_password.php';
+require '../examples/config_examples.php';
+require '../examples/config_password.php';
 
 include(LIB_DIR."header.php");
 
@@ -22,7 +22,7 @@ Piwidict::setWiktLang ($wikt_lang);
     <p><input type='checkbox' name='pw_reverse_dict' value='1'<?php 
         if (isset($pw_reverse_dict) && $pw_reverse_dict) print " checked";?>> reverse dictionary (apple, Moscow -> elppa, wocsoM); table 'pw_reverse_dict'</p>
     <p><input type='checkbox' name='pw_vocabulary' value='1'<?php
-        if (isset($pw_vocabulary) && $pw_vocabulary) print " checked";?>> russian vocabulary; table 'pw_vocabulary'</p>
+        if (isset($pw_vocabulary) && $pw_vocabulary) print " checked";?>> russian vocabulary; tables 'pw_lemma' and 'pw_related_words'</p>
     <p><input type='checkbox' name='pw_frequency' value='1'<?php 
         if (isset($pw_frequency) && $pw_frequency) print " checked";?>> count frequence of occurrence words in meanings and fill field `pw_lemma.frequence`</p>
     <input type="submit" name="execute" value="do!">
@@ -34,10 +34,10 @@ if (isset($execute) && $execute) {
 //    $link_db = new DB($config['hostname'], $config['admin_login'], $config['admin_password'], $config['dbname']);
  
     if (isset($pw_reverse_dict) && $pw_reverse_dict) 
-    	PWInit::createReverseTable();
+        PWInit::createReverseTable();
 
     if (isset($pw_vocabulary) && $pw_vocabulary) 
-    	PWInit::createVocabularyRelatedTables();
+        PWInit::createVocabularyRelatedTables();
 
     if (isset($pw_frequency) && $pw_frequency)
         PWInit::count_frequency_lemma_in_meaning();

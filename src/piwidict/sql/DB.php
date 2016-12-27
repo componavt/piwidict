@@ -40,7 +40,7 @@ class DB extends mysqli {
                 if (!$err_string) 
                     $err_string = "SQL error: <b>$q</b>";
 
-		die("<div style=\"color:#666666;\">$err_string</div>"); // : ".$this->error." ($q)
+		die("<div style=\"color:#666666;\">$err_string</div>: ".$this->error." ($q)"); // 
 	    }
 	    return $this->result;
 	}

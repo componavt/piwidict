@@ -1,6 +1,12 @@
 <?php namespace piwidict;
 
+use cijic\phpMorphy;
+
 use piwidict\Piwidict;
+use piwidict\sql\TLang;
+use piwidict\sql\semantic_relations\PWLemma;
+use piwidict\sql\semantic_relations\PWRelatedWords;
+use piwidict\algorithms\wsd_in_wikt\PWSemanticDistance;
 
 
 /*#########################################
@@ -51,7 +57,8 @@ class PWInit {
     static public function createVocabularyRelatedTables() {
         $link_db = Piwidict::getDatabaseConnection();
         
-        $lang_id = (int)TLang::getIDByLangCode(PWLemma::getLangCode());
+//        $lang_id = (int)TLang::getIDByLangCode(PWLemma::getLangCode());
+        $lang_id = (int)TLang::getIDByLangCode(Piwidict::getWiktLang());
         $l_table = PWLemma::getTableName();
         $rw_table = PWRelatedWords::getTableName();
 
@@ -59,8 +66,8 @@ class PWInit {
         $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         $query = "CREATE TABLE `$l_table`(".
-		     "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,".
-		     "`lemma` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,".
+             "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,".
+             "`lemma` varchar(255) CHARACTER SET latin1 COLLATE latin1_bin NOT NULL,".
              "`origin` tinyint(1) default 0,".
              "`frequency` int default 0,".
              "`meaning_id` int default 0,".
@@ -80,7 +87,7 @@ class PWInit {
                 $tmp = array();
             }
         } 
-	
+    
         if (sizeof($tmp)>1 && sizeof($tmp)<27000) {
             $link_db -> query_e("INSERT INTO `$l_table` VALUES ".join(', ',$tmp), "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
         }
@@ -89,9 +96,9 @@ class PWInit {
         $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         $query = "CREATE TABLE `$rw_table`(".
-		    "`lemma_id1` int(10) unsigned NOT NULL,".
-		    "`lemma_id2` int(10) unsigned NOT NULL,".
-		    "`weight` decimal(8,6) unsigned NOT NULL,".
+            "`lemma_id1` int(10) unsigned NOT NULL,".
+            "`lemma_id2` int(10) unsigned NOT NULL,".
+            "`weight` decimal(8,6) unsigned NOT NULL,".
                     "PRIMARY KEY (`lemma_id1`,`lemma_id2`))";
         $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
@@ -105,21 +112,26 @@ class PWInit {
 
             foreach ($related_words as $word => $coef) {
                 $word_s = str_replace("'","\'",$word);
-                $res_page_exists = $link_db -> query_e("SELECT id FROM $l_table where lemma LIKE '$word_s'","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
-
-                if ($link_db -> query_count($res_page_exists) == 0) {
-                    $link_db -> query_e("INSERT INTO `$l_table` (`lemma`,`origin`,`frequency`) VALUES ('$word_s',1,0)", "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
-                    $word_id = $link_db -> insert_id;
+                if (strlen($word_s)>255) {
+                    print "<p>The word <b>$word_s</b> was skipped as too long.</p>";
                 } else {
-                    $row_page_exists = $res_page_exists->fetch_object();
-                    $word_id = $row_page_exists->id;
-                }
-	        
-                if (sizeof($tmp)<27000) 
-                    $tmp[] = "('".$row_page->page_id."', '$word_id', '$coef')";
-                else {
-                    $link_db -> query_e("INSERT INTO `$rw_table` VALUES ".join(', ',$tmp), "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
-                    $tmp = array();
+                    $res_page_exists = $link_db -> query_e("SELECT id FROM $l_table where lemma LIKE '$word_s'","Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+                    if ($link_db -> query_count($res_page_exists) == 0) {
+                        $query = "INSERT INTO `$l_table` (`lemma`,`origin`,`frequency`) VALUES ('$word_s',1,0)";
+                        $link_db -> query_e($query, "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
+                        $word_id = $link_db -> insert_id;
+                    } else {
+                        $row_page_exists = $res_page_exists->fetch_object();
+                        $word_id = $row_page_exists->id;
+                    }
+
+                    if (sizeof($tmp)<27000) 
+                        $tmp[] = "('".$row_page->page_id."', '$word_id', '$coef')";
+                    else {
+                        $link_db -> query_e("INSERT INTO `$rw_table` VALUES ".join(', ',$tmp), "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
+                        $tmp = array();
+                    }
                 }
             }
         } 

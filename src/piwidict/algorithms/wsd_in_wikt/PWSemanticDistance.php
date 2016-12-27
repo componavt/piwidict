@@ -1,4 +1,5 @@
 <?php
+namespace piwidict\algorithms\wsd_in_wikt;
 
 use piwidict\Piwidict;
 
