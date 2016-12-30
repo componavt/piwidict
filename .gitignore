@@ -4,6 +4,7 @@ src/examples/semantic_relations/related_words_out.txt
 src/examples/semantic_relations/related_words_in1.txt
 src/examples/config_password.php
 /vendor
+/data
 composer.lock
 .idea
 

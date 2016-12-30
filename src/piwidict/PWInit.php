@@ -145,7 +145,7 @@ class PWInit {
 
     }
 
-    /** Counts frequency of occurance of lemmas in meanings and writes to field `pw_lemma_LANG_CODE.frequency`,
+    /** Counts frequency of occurrence of lemmas in meanings and writes to field `pw_lemma_LANG_CODE.frequency`,
      *  if this lemma does not exist in table, that it added there with origin=2 and meaning_id where it has be found.
      */
     static public function count_frequency_lemma_in_meaning() {
@@ -172,7 +172,7 @@ class PWInit {
 
         // Create phpMorphy instance
         try {
-            $morphy = new phpMorphy($dir, $lang, $opts);
+            $morphy = new \phpMorphy($dir, $lang, $opts);
         } catch(phpMorphy_Exception $e) {
             die('Error occured while creating phpMorphy instance: ' . PHP_EOL . $e);
         }

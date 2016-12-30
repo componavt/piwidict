@@ -2,6 +2,8 @@
 
 require '../../vendor/autoload.php';
 
+use cijic\phpMorphy;
+
 use piwidict\Piwidict;
 use piwidict\PWInit;
 

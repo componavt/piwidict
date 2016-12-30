@@ -29,8 +29,8 @@ $php_self = "related_words_for_Gephi.php";
 
 
         // Serve file as XML (prompt for download, remove if unnecessary)
-        //header('Content-type: "text/xml"; charset="utf8"');
-        //header('Content-disposition: attachment; filename="'.NAME_DB.'_'.date('Y-m-d').'.gexf"');
+        header('Content-type: "text/xml"; charset="utf8"');
+        header('Content-disposition: attachment; filename="'.NAME_DB.'_'.date('Y-m-d').'.gexf"');
 
         //echo \piwidict\export\PWGEXF::getRelatedWords();
         echo PWGEXF::getRelatedWords();
