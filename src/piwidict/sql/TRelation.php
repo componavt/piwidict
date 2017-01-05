@@ -47,25 +47,25 @@ class TRelation {
     
     /** Gets unique ID from database 
      * @return int */
-    public function getID() {
+    public function getID() : int {
         return $this->id;
     }
     
     /** Gets object of TMeaning
      * @return object */
-    public function getMeaning() {
+    public function getMeaning() : TMeaning {
         return $this->meaning;
     }
     
     /** Gets object of TWikiText
      * @return object */
-    public function getWikiText() {
+    public function getWikiText() : TWikiText {
         return $this->wiki_text;
     }
 
     /** Gets object of TRelationType
      * @return object */
-    public function getRelationType() {
+    public function getRelationType() : TRelationType {
         return $this->relation_type;
     }
 
@@ -75,35 +75,36 @@ class TRelation {
         return $this->meaning_summary;
     }
 
-    /** Gets TRelation object by property $property_name with value $property_value.
-     * @return TRelation or NULL in case of error
+    /** Gets array of TRelation objects by property $property_name with value $property_value.
+     * @return TRelation or empty array in case of error
      */
-    static public function getRelation($property_name, $property_value,$meaning_obj=NULL) {
-        $link_db = Piwidict::getDatabaseConnection();
-        
-     	$query = "SELECT * FROM relation WHERE `$property_name`='$property_value' order by id";
-	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+    static public function getRelation( String $property_name, String $property_value,
+                                        $meaning_obj=NULL) : array {
 
-	if ($link_db -> query_count($result) == 0)
-	    return NULL;
-	
-	$relation_arr = array();
+        $link_db = Piwidict::getDatabaseConnection();
+
+        $query = "SELECT * FROM relation WHERE `$property_name`='$property_value' order by id";
+        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+
+        if ($link_db -> query_count($result) == 0)
+            return array();
+
+        $relation_arr = array();
 
         while ($row = $result -> fetch_object()) {
 /*
-	    if ($meaning_obj == NULL)
-	  	$meaning_obj = TMeaning::getByID($row->meaning_id);
+        if ($meaning_obj == NULL)
+            $meaning_obj = TMeaning::getByID($row->meaning_id);
 */
             $relation_arr[] = new TRelation(
-		$row->id, 
-		$meaning_obj,
-		TWikiText::getByID($row->wiki_text_id),
-		TRelationType::getByID($row->relation_type_id),
-		$row->meaning_summary 
-	    );
-	}
-
-	return $relation_arr;
+                                    $row->id, 
+                                    $meaning_obj,
+                                    TWikiText::getByID($row->wiki_text_id),
+                                    TRelationType::getByID($row->relation_type_id),
+                                    $row->meaning_summary 
+                                    );
+        }
+        return $relation_arr;
     }
 
     /** Gets TRelation object by ID
@@ -117,37 +118,37 @@ class TRelation {
     /** Gets TRelation object by meaning_id
      * @return TRelation or NULL in case of error
      */
-    static public function getByMeaning ($meaning_id,$meaning_obj) {
-	return TRelation::getRelation("meaning_id",$meaning_id,$meaning_obj);
+    static public function getByMeaning (int $meaning_id, TMeaning $meaning_obj) {
+        return TRelation::getRelation("meaning_id", $meaning_id,$meaning_obj);
     }
+
 
     /** Gets list of semantically related words.
      * If page title is not exist, then return empty array.
      * @return array, where keys are related words, values are arrays of their relation type names
      */
-
-    static public function getPageRelations($page_title) {
-	$relations = array();
+    static public function getPageRelations($page_title) : array {
+        $relations = array();
 
         // return array, if exact search then returns only one word
-	list($page_obj) = TPage::getByTitle($page_title); 
+        list($page_obj) = TPage::getByTitle($page_title); 
 
-	$lang_pos_arr = $page_obj -> getLangPOS();
-	if (is_array($lang_pos_arr)) foreach ($lang_pos_arr as $lang_pos_obj) {
-	    $meaning_arr = $lang_pos_obj -> getMeaning();
+        $lang_pos_arr = $page_obj -> getLangPOS();
+        if (is_array($lang_pos_arr)) foreach ($lang_pos_arr as $lang_pos_obj) {
+            $meaning_arr = $lang_pos_obj -> getMeaning();
 
-	    if (is_array($meaning_arr)) foreach ($meaning_arr as $meaning_obj) {
-		$relation_arr = $meaning_obj -> getRelation();
+            if (is_array($meaning_arr)) foreach ($meaning_arr as $meaning_obj) {
+                $relation_arr = $meaning_obj -> getRelation();
 
-		if (is_array($relation_arr)) foreach ($relation_arr as $relation_obj) {
-		    $relations[$relation_obj->getWikiText()->getText()][] 
-                        = $relation_obj->getRelationType()->getName();
+                if (is_array($relation_arr)) foreach ($relation_arr as $relation_obj) {
+                    $relations[$relation_obj->getWikiText()->getText()][] 
+                                = $relation_obj->getRelationType()->getName();
                 }
-            }	    
-	}
-	ksort($relations);
+            }
+        }
+        ksort($relations);
 
-	return $relations;
+        return $relations;
     }
 
 }

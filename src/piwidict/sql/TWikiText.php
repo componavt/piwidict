@@ -39,42 +39,43 @@ class TWikiText {
     
     /** Gets text (without wikification) from database 
      * @return String */
-    public function getText() {
+    public function getText() : String {
         return $this->text;
     }
     
     /** Gets text (with wikification) from database
      * @return String */
-    public function getWikifiedText() {
+    public function getWikifiedText() : String {
         return $this->wikified_text;
     }
    
     /** Gets TWikiText object (text, ID and wiki_text) by ID.
      * @return object or NULL if it is unknown ID.
      */
-    static public function getByID($_id) {
+    static public function getByID(int $_id) {
         $link_db = Piwidict::getDatabaseConnection();
 
-    	$query = "SELECT * FROM wiki_text where id=".(int)$_id;
-	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $query = "SELECT * FROM wiki_text where id=".(int)$_id;
+        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($link_db -> query_count($result) == 0)
-	    return NULL;
+        if ($link_db -> query_count($result) == 0)
+            return NULL;
 
-        $row = $result -> fetch_object();
+            $row = $result -> fetch_object();
 
         return new TWikiText(
                 $row->id,
                 $row->text,
                 $row->wikified_text);
     }
+
     /** Selection of text in a special way (e.g., by bold font)
      * @return string
      */
-    static public function selectText($string,$substring,$start='<b>',$finish='</b>') {
-	$substring = mb_ereg_replace("%",".*",$substring);
-	return mb_ereg_replace($substring, $start."\\0".$finish,$string, 'mi');
-
+    static public function selectText( String $string, String $substring, 
+                                       String $start='<b>', String $finish='</b>') : String {
+        $substring = mb_ereg_replace("%",".*",$substring);
+        return mb_ereg_replace($substring, $start."\\0".$finish,$string, 'mi');
     }
 }
 ?>

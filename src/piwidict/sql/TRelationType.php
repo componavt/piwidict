@@ -62,19 +62,19 @@ class TRelationType {
     /* Gets name of relation type by ID from the table 'relation_type'.
      * Returns NULL if ID is absent in the table.
      */
-    static public function getNameByID($_id) {
+    static public function getNameByID(int $_id) : String {
         
         $link_db = Piwidict::getDatabaseConnection();
 
-    	$query = "SELECT name FROM relation_type where id=".(int)$_id;
-	$result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
+        $query = "SELECT name FROM relation_type where id=".(int)$_id;
+        $result = $link_db -> query_e($query,"Query failed in ".__METHOD__." in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
-	if ($link_db -> query_count($result) == 0)
-	    return NULL;
+        if ($link_db -> query_count($result) == 0)
+            return NULL;
 
-        $row = $result -> fetch_object();
+            $row = $result -> fetch_object();
 
-	return $row -> name;
+        return $row -> name;
     }
 
 

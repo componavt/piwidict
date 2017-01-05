@@ -15,7 +15,7 @@ class TLabelMeaning {
      */
     private $meaning;               // int meaning_id;
 
-    public function __construct($label, $meaning)
+    public function __construct( TLabel $label, TMeaning $meaning)
     {
         $this->label = $label;
         $this->meaning = $meaning;
@@ -23,29 +23,29 @@ class TLabelMeaning {
     
     /** Gets object of TLabel
     /* @return object */
-    public function getLabel() {
+    public function getLabel() : TLabel {
         return $this->label;
     }
 
     /** Gets object of TMeaning
     /* @return object */
-    public function getMeaning() {
+    public function getMeaning() : TMeaning {
         return $this->meaning;
     }
     
     /** Gets TLabelMeaning object by property $property_name with value $property_value.
      * @return TLabelMeaning or NULL in case of error
      */
-    public static function getLabelMeaning($property_name, $property_value,$meaning_obj=NULL) {
+    public static function getLabelMeaning($property_name, $property_value, TMeaning $meaning_obj=NULL) {
         $link_db = Piwidict::getDatabaseConnection();
         
-     	$query = "SELECT * FROM label_meaning WHERE `$property_name`='$property_value'";
-	$result = $link_db -> query_err($query, __FILE__, __LINE__, __METHOD__);
+        $query = "SELECT * FROM label_meaning WHERE `$property_name`='$property_value'";
+        $result = $link_db -> query_err($query, __FILE__, __LINE__, __METHOD__);
 
-	if ($link_db -> query_count($result) == 0)
-	    return NULL;
+        if ($link_db -> query_count($result) == 0)
+            return NULL;
 	
-	$labelMeaning_arr = array();
+        $labelMeaning_arr = array();
 
         while ($row = $result -> fetch_object()) {
 /*
@@ -53,10 +53,9 @@ class TLabelMeaning {
 	  	$meaning_obj = TMeaning::getByID($row->meaning_id);
 */	   
             $labelMeaning_arr[] = new TLabelMeaning(
-		TLabel::getByID($row->label_id),
-		$meaning_obj
-	    );
-	}
+                    TLabel::getByID($row->label_id),
+                    $meaning_obj);
+    }
 
 	return $labelMeaning_arr;
     }
@@ -64,16 +63,16 @@ class TLabelMeaning {
     /** Gets TLabelMeaning object by ID
      * @return TLabelMeaning or NULL in case of error
      */
-    public static function getByID ($_id) {
-	$LabelMeaning_arr = self::getLabelMeaning("id",$_id);
-	return $LabelMeaning_arr[0];
+    public static function getByID (int $_id) : array {
+        $LabelMeaning_arr = self::getLabelMeaning("id",$_id);
+        return $LabelMeaning_arr[0];
     }
 
     /** Gets TLabelMeaning object by meaning_id
      * @return TLabelMeaning or NULL in case of error
      */
-    public static function getByMeaning ($meaning_id,$meaning_obj=NULL) {
-	return self::getLabelMeaning("meaning_id",$meaning_id,$meaning_obj);
+    public static function getByMeaning (int $meaning_id, TMeaning $meaning_obj=NULL) {
+        return self::getLabelMeaning("meaning_id",$meaning_id,$meaning_obj);
     }
 
 }

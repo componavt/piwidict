@@ -28,10 +28,15 @@ Piwidict::setWiktLang ($wikt_lang);
 $php_self = "related_words_for_Gephi.php";
 
 
+$pos_name = "noun";
+//$pos_name = "adjective"; ++
+//$pos_name = "verb";
+
+$pos_id = TPOS::getIDByName($pos_name);
         // Serve file as XML (prompt for download, remove if unnecessary)
         header('Content-type: "text/xml"; charset="utf8"');
-        header('Content-disposition: attachment; filename="'.NAME_DB.'_'.date('Y-m-d').'.gexf"');
+        header('Content-disposition: attachment; filename="'.NAME_DB.'_'.date('Y-m-d').'_'.$pos_name.'.gexf"');
 
         //echo \piwidict\export\PWGEXF::getRelatedWords();
-        echo PWGEXF::getRelatedWords();
+        echo PWGEXF::getRelatedWords($pos_id);
 ?>

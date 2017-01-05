@@ -75,7 +75,8 @@ class PWInit {
         $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         // writing words from page table
-        $query = "SELECT DISTINCT page.id, trim(page_title) as page_title FROM page, lang_pos WHERE lang_pos.page_id=page.id and lang_id=$lang_id ORDER BY page_id";
+        // FROM page, lang_pos, pos_id
+        $query = "SELECT DISTINCT page.id, trim(page_title) as page_title FROM page, lang_pos WHERE lang_pos.page_id=page.id and lang_id=$lang_id ORDER BY page.id";
         $res_page = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         $tmp = array();
@@ -108,7 +109,7 @@ class PWInit {
         $res_page = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         while ($row_page = $res_page->fetch_object()) {
-            $related_words = PWSemanticDistance::getRelatedWords($row_page->page_id);
+            $related_words = PWSemanticDistance::getRelatedWords($row_page->page_id, $lang_id);
 
             foreach ($related_words as $word => $coef) {
                 $word_s = str_replace("'","\'",$word);

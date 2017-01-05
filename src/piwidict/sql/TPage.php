@@ -60,19 +60,19 @@ class TPage {
     
     /** Gets page unique ID and word itself. 
      * @return String */
-    public function toString() {
+    public function toString() : String {
         return "id=" + $this->id + "; page_title=" + $this->page_title;
     }
     
     /** Gets page unique ID. 
      * @return int */
-    public function getID() {
+    public function getID() : int {
         return $this->id;
     }
     
     /** Gets title of the wiki page, word or phrase.
      * @return String */
-    public function getPageTitle() {
+    public function getPageTitle() : String {
         return $this->page_title;
     }
     
@@ -114,16 +114,20 @@ class TPage {
      *  @return array
      */
     public function getLangPOS() {
-    return $this->lang_pos;
+        return $this->lang_pos;
     }
 
     /** Gets ID from the table page by the page title. 
      * @return int or NULL if it is unknown code.
      */
-    public function getIDByPageTitle($page_title) {
+    public static function getIDByPageTitle(String $page_title) {
         $link_db = Piwidict::getDatabaseConnection();
 
+        $page_title = $link_db->real_escape_string( $page_title );
+
         $query = "SELECT id FROM page where page_title like '$page_title'";
+        // print "<BR>\nquery = $query;";
+
         $result = $link_db -> query_err($query, __FILE__, __LINE__, __METHOD__);
 
         if ($link_db -> query_count($result) == 0)
@@ -137,7 +141,7 @@ class TPage {
     /** Gets array of TPage objects with SQL "WHERE" $condition .
      * @return array[TPage] or empty array in case of error
      */
-    public function getPage(string $condition) : array {
+    public static function getPage(string $condition) : array {
         $link_db = Piwidict::getDatabaseConnection();
         $limit = Piwidict::getLimitRequest();
         
@@ -165,31 +169,29 @@ class TPage {
             $page_arr[]=$page;
         }
 
-//  if (sizeof($page_arr
-
         return $page_arr;
     }
 
     /** Gets TPage object by page ID.
      * @return TPage or NULL in case of error
      */
-    public function getByID(int $page_id) : TPage {
-        $page_arr = $this->getPage("id = ".(int)$page_id);
+    public static function getByID(int $page_id) : TPage {
+        $page_arr = self::getPage("id = ".(int)$page_id);
         return $page_arr[0];
     }
 
    /** Gets array of TPage objects by page title.
     * @return array[TPage] or empty array in case of error
     */
-    public function getByTitle(String $page_title) : array {
-        return $this->getPage("page_title like '$page_title'");
+    public static function getByTitle(String $page_title) : array {
+        return self::getPage("page_title like '$page_title'");
     }
 
    /** Gets array of TPage objects by page title if this entry does exist in Wiktionary.
     * @return TPage or NULL in case of error
     */
-    public function getByTitleIfExists(String $page_title) : array {
-        return $this->getPage("page_title like '$page_title' and is_in_wiktionary=1");
+    public static function getByTitleIfExists(String $page_title) : array {
+        return self::getPage("page_title like '$page_title' and is_in_wiktionary=1");
     }
 
     /** Gets a count of record for request with $condition .
@@ -207,15 +209,15 @@ class TPage {
     /** Gets a count of record for request for search by page title.
      * @return Int
      */
-    public function countPageByTitle(String $page_title) : int {
-        return $this->countPage("page_title like '$page_title'");
+    public static function countPageByTitle(String $page_title) : int {
+        return self::countPage("page_title like '$page_title'");
     }
 
     /** Gets a count of record for request for search by page title.
      * @return Int
      */
-    public function countPageByTitleIfExists(String $page_title) : int {
-        return $this->countPage("page_title like '$page_title' and is_in_wiktionary=1");
+    public static function countPageByTitleIfExists(String $page_title) : int {
+        return self::countPage("page_title like '$page_title' and is_in_wiktionary=1");
     }
 
    /** Gets URL to Wiktionary page, where link text is explicitly given.
@@ -224,7 +226,7 @@ class TPage {
     * @param String $link_text Link text (visible text)
     * @return String HTML hyperlink
     */
-    public function getURLWithLinkText(String $page_title, String $link_text='') : String {
+    public static function getURLWithLinkText(String $page_title, String $link_text='') : String {
         $wikt_lang = Piwidict::getWiktLang();
         if (!$link_text) 
             $link_text = $wikt_lang.".wiktionary.org";
