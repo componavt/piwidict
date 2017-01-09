@@ -52,7 +52,7 @@ class PWInit {
     }
 
     /** Creates the table with Russian vocabulary from page_title and related words.
-     * pw_lemma_ru.id=page.id if word is exist in Wiktionary or next id 
+     * pw_lemma_ru.id=lang_pos.id if word is exist in Wiktionary or next id 
      */
     static public function createVocabularyRelatedTables() {
         $link_db = Piwidict::getDatabaseConnection();
@@ -71,18 +71,25 @@ class PWInit {
              "`origin` tinyint(1) default 0,".
              "`frequency` int default 0,".
              "`meaning_id` int default 0,".
-             "PRIMARY KEY (`id`), UNIQUE(`lemma`), KEY `origin` (`origin`))";
+             "`pos_id` int default 0, ".
+             "PRIMARY KEY (`id`), KEY(`lemma`), KEY `origin` (`origin`), KEY `pos_id` (`pos_id`))";
         $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         // writing words from page table
         // FROM page, lang_pos, pos_id
-        $query = "SELECT DISTINCT page.id, trim(page_title) as page_title FROM page, lang_pos WHERE lang_pos.page_id=page.id and lang_id=$lang_id ORDER BY page.id";
+        $query = "SELECT lang_pos.id as lang_pos_id, "
+                . "trim(page_title) as page_title, "
+                . "pos_id "
+                . "FROM page, lang_pos "
+                . "WHERE lang_pos.page_id=page.id and "
+                . "lang_id=$lang_id "
+                . "ORDER BY lang_pos_id";
         $res_page = $link_db -> query_e($query,"Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");
 
         $tmp = array();
         while ($row = $res_page->fetch_object()){
             if (sizeof($tmp)<27000) 
-                $tmp[] = "(".$row->id.", '".str_replace("'","\'",$row->page_title)."',0,0,0)";
+                $tmp[] = "(".$row->lang_pos_id.", '".str_replace("'","\'",$row->page_title)."',0,0,0,".$row->pos_id.")";
             else {
                 $link_db -> query_e("INSERT INTO `$l_table` VALUES ".join(', ',$tmp), "Query failed in file <b>".__FILE__."</b>, string <b>".__LINE__."</b>");  
                 $tmp = array();
