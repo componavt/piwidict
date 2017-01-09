@@ -5,9 +5,9 @@ Machine-readable Wiktionary PHP API.
 
 "piwidict" = PHP+wiki+wiktionary+dictionary, https://github.com/componavt/piwidict
 
-wikokit (c) 2005-2016, Wiktionary parser, https://github.com/componavt/wikokit
+wikokit (c) 2005-2017, Wiktionary parser, https://github.com/componavt/wikokit
 
-piwidict (c) 2014-2016, PHP framework to work with the Wiktionary parsed database.
+piwidict (c) 2014-2017, PHP framework to work with the Wiktionary parsed database.
 
 Download machine-readable Wiktionary 
 http://whinger.krc.karelia.ru/soft/wikokit/index.html
@@ -25,11 +25,11 @@ $ composer update componavt/piwidict
 See [componavt/piwidict](https://packagist.org/packages/componavt/piwidict) at packagist.org
 
 
-Cool Composer commands:
+Use Composer commands in order to update dependencies:
 ``` bash
 $ composer clearcache
-$ composer dumpautoload -o
 $ composer update
+$ composer dumpautoload -o
 ```
 
 Great artisan commans:
