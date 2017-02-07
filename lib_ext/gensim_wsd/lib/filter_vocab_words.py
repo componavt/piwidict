@@ -2,7 +2,7 @@
 
 # Filters words, skip words which are absent in the vocabulary 'vocab'.
 def filterVocabWords( word_list, vocab ):
-    "Skip words which are absent in the model vocabulary"    
+    "Skip words which are absent in the model vocabulary"
     
     # result filtered list
     result = []

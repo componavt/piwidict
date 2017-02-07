@@ -60,7 +60,7 @@ topn = 20;
 #most_similar_words = model.most_similar( ['woman'], [], topn)
 most_similar_words_source = model.most_similar( word, [ ], topn)
 
-most_similar_words = lib.filter_vocab_words.filterVocabWordSimilarity( most_similar_words_source, model.vocab )
+most_similar_words = lib.filter_vocab_words.filterVocabWordSimilarity( most_similar_words_source, model.wv.vocab )
 #print string_util.joinUtf8( ",", words )                                # after filter, now there are only words with vectors
 
 print 
