@@ -11,7 +11,9 @@ class PWGEXF {
     
     // only words for this POS should be found
     static public function getRelatedWords($pos_id_filter='', String $lang_code_filter='ru') {
-        
+    
+        // ? todo filter Names with no Inlinks (in order to skip names of rivers, cities, peoples)
+
         $link_db = Piwidict::getDatabaseConnection();
         
         $node_table = PWLemma::getTableName();
@@ -67,7 +69,8 @@ class PWGEXF {
         while ( // $counter<$limit &&  // DEBUG
                 $page_obj = $res_page_id->fetch_object()) {
 
-            // DEBUG if( $page_obj->page_id < 2340) continue;
+            //DEBUG 
+            // if( $page_obj->page_id < 151000) continue;
 
             // get list of page_id of related words (synonyms, antonyms, etc.)
             // po - page object with all fields retrieved from the parsed wiktionary database

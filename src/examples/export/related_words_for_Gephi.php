@@ -28,9 +28,10 @@ Piwidict::setWiktLang ($wikt_lang);
 $php_self = "related_words_for_Gephi.php";
 
 
-$pos_name = "noun";
-//$pos_name = "adjective"; ++
-//$pos_name = "verb";
+$pos_name = "noun"; // failed counter:139829
+//$pos_name = "adjective"; // +++
+//$pos_name = "verb"; // +++ only cmd php
+//$pos_name = "adverb"; // +++ only cmd php
 
 $pos_id = TPOS::getIDByName($pos_name);
         // Serve file as XML (prompt for download, remove if unnecessary)
