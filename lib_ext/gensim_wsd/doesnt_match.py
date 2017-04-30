@@ -29,7 +29,7 @@ source_words = [u'лить', u'кутить', u'сосредоточиватьс
 
 # 0/6 = |IntS|/|S|, [[абсолют]],  OutS(абсолют логос первооснова творец совершенство идеал) 
 
-words = lib.filter_vocab_words.filterVocabWords( source_words, model.vocab )
+words = lib.filter_vocab_words.filterVocabWords( source_words, model.wv.vocab )
 #print string_util.joinUtf8( ",", words )                                # after filter, now there are only words with vectors
 
 while words:
