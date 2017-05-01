@@ -14,7 +14,7 @@ import collections
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
-from gensim.models import Word2Vec
+from gensim.models import word2vec, keyedvectors
 import numpy as np
 
 sys.path.append(os.path.abspath('../')) # add parent folder, access to 'lib'
@@ -23,7 +23,7 @@ import lib.string_util
 import lib.synset
 
 import configus
-model = Word2Vec.load_word2vec_format(configus.MODEL_PATH, binary=True)
+model = keyedvectors.KeyedVectors.load_word2vec_format(configus.MODEL_PATH, binary=True)
 
 
 # 2/6 = |IntS|/|S|, [[сосредоточиваться]],  IntS(сосредоточиваться сосредотачиваться)  OutS(собираться отвлекаться фокусироваться концентрироваться) 

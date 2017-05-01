@@ -38,7 +38,20 @@ try {
 // $morphy->getEncoding() returns dictionary encoding
 
 #$words = array('������������', '�����', '����', '�', '����', 'abc');
-$words = array('КРАКОЗЯБЛИКИ', 'СТАЛИ', 'ВИНА', 'ВБРОД', 'БАНЯ', 'ДУХИ', 'abc');
+#$words = array('КРАКОЗЯБЛИКИ', 'СТАЛИ', 'ВИНА', 'ВБРОД', 'БАНЯ', 'ДУХИ', 'abc');
+
+$text = "Он плотнее застегнул свой лёгкий пиджачок: ветер пронизывал его насквозь.";
+
+# split text to words[]
+$delim = ' \n\t,.!?:;';  # see http://stackoverflow.com/a/790600/1173350
+$tok = strtok($text, $delim);
+while ($tok !== false) {
+    $words[] = mb_strtoupper($tok);
+    #echo "Word=$tok\n";
+    #
+    $tok = strtok($delim);
+
+}
 
 if(function_exists('iconv')) {
     foreach($words as &$word) {
