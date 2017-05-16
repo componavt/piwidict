@@ -24,7 +24,7 @@ def getInternalSet( arr_words, model):
     Parameters
     ----------
     arr_words : array of Strings
-        Array of source words, for example a ynonym set or a sentence' words.
+        Array of source words, for example a synonym set or a sentence' words.
     model : object
         Word2Vec model.
         
