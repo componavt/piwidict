@@ -23,14 +23,14 @@ tree sapling seedling plant oak birch maple fir pine
 
  */
 
-require '../../../vendor/autoload.php';
+require '../../../../vendor/autoload.php';
 
 use piwidict\Piwidict;
 //use piwidict\sql\{TLang, TPage, TPOS, TRelationType};
 //use piwidict\widget\WForm;
 
-require '../config_examples.php';
-require '../config_password.php';
+require '../../config_examples.php';
+require '../../config_password.php';
 
 include(LIB_DIR."header.php");
 
