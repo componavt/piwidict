@@ -74,7 +74,7 @@ foreach ($relations as $relation) {
 
         if ($num > 0) { 
             while ($row_relation = $result_relation -> fetch_object()) {
-                $relations['first_word'][]= "u'". $row_relation->relation_word. "'";
+                $relations[$row->first_word][]= "u'". $row_relation->relation_word. "'";
             }            
         }
     }
