@@ -26,8 +26,8 @@ tree sapling seedling plant oak birch maple fir pine
 require '../../../../vendor/autoload.php';
 
 use piwidict\Piwidict;
-//use piwidict\sql\{TLang, TPage, TPOS, TRelationType};
-//use piwidict\widget\WForm;
+use piwidict\sql\{TLang, TPage, TPOS, TRelationType};
+use piwidict\widget\WForm;
 
 require '../../config_examples.php';
 require '../../config_password.php';
@@ -41,7 +41,8 @@ $link_db = Piwidict::getDatabaseConnection();
 $wikt_lang = "ru"; // Russian language is the main language in ruwikt (Russian Wiktionary)
 Piwidict::setWiktLang ($wikt_lang);
 
-$pos_name = "adjective";
+//$pos_name = "adjective";
+$pos_name = "noun";
 $lang_id = TLang::getIDByLangCode("ru");
 $pos_id = TPOS::getIDByName($pos_name);
 $syn_id = TRelationType::getIDByName("synonyms");
