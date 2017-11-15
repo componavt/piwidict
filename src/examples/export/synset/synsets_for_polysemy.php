@@ -48,10 +48,8 @@ $relation = "synonyms";
 $rel_id = TRelationType::getIDByName($relation);
 $max_meaning=2;
 
-$fh = fopen('synsets_for_polysemy.txt','w');
-fwrite($fh, "{\n");
-
 $relations =[];
+$words = [];
 
 $query = "SELECT page_title as first_word, lang_pos.id as lang_pos_id, part_of_speech.name as pos_name
           FROM lang_pos, page, part_of_speech 
@@ -86,26 +84,29 @@ while ($row_page = $result_page -> fetch_object()) {
                 while ($row_relation = $result_relation -> fetch_object()) {
                     $synset[] = $row_relation->relation_word;
                 }   
-                if (sizeof($synset)) {
-                    $synsets[] = "           ['".join("', '",$synset)."']\n";
+                if (sizeof($synset)>$max_meaning) {
+                    $synsets[] = "           [\"".join("\", \"",$synset)."\"]";
                 }
             }
         }
         $synsets = array_unique($synsets);
         if (sizeof($synsets) >= $max_meaning) {
-            fwrite($fh, "    {\n".
-                        "        'word':'".$row_page->first_word."',\n".
-                        "        'POS':'".$row_page->pos_name."',\n".
-                        "        'synsets':\n".
-                        "        [\n".
-                        join("",$synsets).
-                        "        ]\n".
-                        "    }\n");
+            $words[] = "    {\n".
+                       "        \"word\": \"".$row_page->first_word."\",\n".
+                       "        \"POS\": \"".$row_page->pos_name."\",\n".
+                       "        \"synsets\":\n".
+                       "        [\n".
+                       join(",\n",$synsets).
+                       "        ]\n".
+                       "    }";
         }
     }
 }
 
-fwrite($fh, "}\n");
+$fh = fopen('synsets_for_polysemy.json','w');
+fwrite($fh, "[\n");
+fwrite($fh, join(",\n",$words));
+fwrite($fh, "]\n");
 fclose($fh);
 
 include(LIB_DIR."footer.php");
