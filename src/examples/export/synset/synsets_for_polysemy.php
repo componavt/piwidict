@@ -1,7 +1,7 @@
 <?php
 /*
  * This script generates the list of synonyms
- * for multi-valued words in Russian Wiktionary.
+ * for polysemous words in Russian Wiktionary.
  * Entries are lexicographically ordered.
  * Only Russian entries exported.
  * 
@@ -9,7 +9,7 @@
  * - semantic relation - only synonyms,
  * - 2 and more meanings,
  * - single words (without spaces)
- * - russian language
+ * - Russian language
  * - unique synsets
 
 Example of the fragment of generated JSON file:
