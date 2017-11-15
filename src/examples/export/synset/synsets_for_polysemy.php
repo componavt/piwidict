@@ -8,9 +8,10 @@
  * The restrictions:
  * - semantic relation - only synonyms,
  * - 2 and more meanings,
- * - single words (without spaces)
- * - Russian language
- * - unique synsets
+ * - single words (without spaces),
+ * - Russian language,
+ * - unique synsets,
+ * - only synsets with 2 or more words.
 
 Example of the fragment of generated JSON file:
 {
@@ -26,7 +27,6 @@ Example of the fragment of generated JSON file:
  */
 
 require '../../../../vendor/autoload.php';
-
 use piwidict\Piwidict;
 use piwidict\sql\{TLang, TPage, TPOS, TRelationType};
 //use piwidict\widget\WForm;
