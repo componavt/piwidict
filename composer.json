@@ -1,7 +1,7 @@
 {
     "name": "componavt/piwidict",
     "description": "Machine-readable Wiktionary PHP API",
-    "license": "BSD",
+    "license": "Apache-2.0",
     "keywords": ["Wiktionary"],
     "homepage": "https://github.com/componavt/piwidict",
     "authors": [
